@@ -4,12 +4,12 @@ import javax.media.opengl.GL;
 
 public class Window {
 
-	private float x;
-	private float y;
-	private float sizeX;
-	private float sizeY;
-	private int screenWidth, screenHeight;
-	private float[] originalSizes;
+	protected float x;
+	protected float y;
+	protected float sizeX;
+	protected float sizeY;
+	protected int screenWidth, screenHeight;
+	protected float[] originalSizes;
 
 	public Window(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 

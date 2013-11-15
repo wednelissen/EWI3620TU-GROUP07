@@ -40,10 +40,11 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 
 	// Screen size.
 	private int screenWidth = 800, screenHeight = 600;
-
 	// A GLCanvas is a component that can be added to a frame. The drawing
 	// happens on this component.
 	private GLCanvas canvas;
+	
+	private boolean mapCreated = false;
 
 	private static final byte doNothing = 0;
 	private static final byte mapClick = 1;
@@ -71,7 +72,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private float[] loadCoords = new float[] { 720, 565, 75, 20 };
 	
 	//define the windows
-	private Window map = new Window(mapCoords, screenWidth, screenHeight);
+	private MapMenu map = new MapMenu(mapCoords, screenWidth, screenHeight);
 	private Window items = new Window(itemCoords, screenWidth, screenHeight);
 	private Window placedItems = new Window(placedItemsCoords, screenWidth, screenHeight);
 	private Window placedItemsProperties = new Window(placedItemsPropertiesCoords, screenWidth, screenHeight);
@@ -190,10 +191,12 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
-		drawButtons(gl);
+		drawWindows(gl);
 
 		// Draw a figure based on the current draw mode and user input
-		// drawFigure(gl);
+		
+		// check if map can be drawed
+		mapCreated = map.hasHeightAndWidth();
 
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
@@ -204,12 +207,16 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	 * 
 	 * @param gl
 	 */
-	private void drawButtons(GL gl) {
+	private void drawWindows(GL gl) {
 		// Draw the background boxes
 
-		
+		if(mapCreated){
 		gl.glColor3f(0, 0.5f, 0f);
-		map.draw(gl);
+		map.drawBlocks(gl);
+		}
+		else{
+			map.drawLines(gl);
+		}
 		
 		gl.glColor3f(0, 0.5f, 0f);
 		items.draw(gl);
@@ -303,7 +310,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// check of op 1 van de buttons is gedrukt.
 		
 		if(map.clickedOnIt(me.getX(), me.getY())){
-			Mode = mapClick;				
+			Mode = mapClick;
 		}else if(items.clickedOnIt(me.getX(), me.getY())){
 			Mode = itemsClick;
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){
@@ -327,6 +334,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			int a = newMaze.getWidth();
 			int b = newMaze.getHeight();
 			System.out.println("Breedte: "+a+" Hoogte: "+b);
+			map.setTotalBuildingBlocks(newMaze.getWidth(),newMaze.getHeight());
+
 		}
 
 
@@ -366,13 +375,13 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	@Override
 	public void keyReleased(KeyEvent event)
 	{
-		char key = event.getKeyChar();
 		
+		int keycode = event.getKeyCode();
+		char key = event.getKeyChar();
 		switch (Mode) {
 			case doNothing:
 				break;
 			case mapClick:
-				newMaze.removeWidth();
 				break;
 			case itemsClick:	
 				break;
@@ -386,19 +395,33 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				break;
 				
 			case setHeightClick:
-				if(key != 'l' || key != 'e'){
+				if(keycode > 95 && keycode < 106){
 					newMaze.setHeight(key);	
-				}
-				else
+				}else if(keycode == 10){ //er is op 'enter' gedrukt
 					Mode = doNothing;
+					int a = newMaze.getWidth();
+					int b = newMaze.getHeight();
+					System.out.println("Breedte: "+a+" Hoogte: "+b);
+					map.setTotalBuildingBlocks(newMaze.getWidth(),newMaze.getHeight());
+				}else if(keycode == 8){ //er is op 'backspace' gedrukt
+					newMaze.removeHeight();
+					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
+				}
 				break;
 				
 			case setWidthClick:
-				if(key != 'l' && key != 'e' && key != 'p'){
+				if(keycode > 95 && keycode < 106){
 					newMaze.setWidth(key);	
-				}
-				else
+				}else if(keycode == 10){ //er is op 'enter' gedrukt
 					Mode = doNothing;
+					int a = newMaze.getWidth();
+					int b = newMaze.getHeight();
+					System.out.println("Breedte: "+a+" Hoogte: "+b);
+					map.setTotalBuildingBlocks(newMaze.getWidth(),newMaze.getHeight());
+				}else if(keycode == 8){ //er is op 'backspace' gedrukt
+					newMaze.removeWidth();
+					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
+				}
 				break;
 					
 			case saveClick:
