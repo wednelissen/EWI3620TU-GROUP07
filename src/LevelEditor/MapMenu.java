@@ -6,12 +6,76 @@ public class MapMenu extends Window {
 	
 	private BuildingBlock[][] BuildingBlocks; // = new BuildingBlock[10][10];
 	private int TotalBuildingBlockX, TotalBuildingBlockY;
+	private int width, height;
+	private String printWidth, printHeight;
+	
+	
 
 	public MapMenu(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 		super(sizes, screenWidthFrame, screenHeightFrame);
 		TotalBuildingBlockX = 0;
 		TotalBuildingBlockY = 0;
+		width = 0;
+		height = 0;
 		// TODO Auto-generated constructor stub
+	}
+	
+	public void setWidth(char key){
+		if(printWidth == null){	
+			printWidth = ""+key;
+		}
+		else{
+			printWidth = printWidth + key;
+		}
+		//de input van type String wordt omgezet naar een integer
+		width = Integer.parseInt(printWidth);
+		
+	}
+	
+	public void setHeight(char key){
+		if(printHeight == null){	
+			printHeight = ""+key;
+		}
+		else{
+			printHeight = printHeight + key;
+		}
+		
+		//de input van type String wordt omgezet naar een integer
+		height = Integer.parseInt(printHeight);
+	}
+	
+	public void removeWidth(){
+		if(printWidth != null){
+			if(printWidth.length()>1){
+				printWidth = printWidth.substring(0,printWidth.length()-1);
+				width = Integer.parseInt(printWidth);
+			}
+			else{
+				printWidth = null;
+				width = 0;
+			}
+		}		
+	}
+	
+	public void removeHeight(){
+		if(printHeight != null){
+			if(printHeight.length()>1){
+				printHeight = printHeight.substring(0,printHeight.length()-1);
+				height = Integer.parseInt(printHeight);
+			}
+			else{
+				printHeight = null;
+				height = 0;
+			}
+		}		
+	}
+	
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
 	}
 	
 	public void drawLines(GL gl) {
@@ -23,9 +87,9 @@ public class MapMenu extends Window {
 		gl.glEnd();
 	}
 	
-	public void setTotalBuildingBlocks(int x, int y){
-		TotalBuildingBlockX = x;
-		TotalBuildingBlockY = y;
+	public void setTotalBuildingBlocks(){
+		TotalBuildingBlockX = width;
+		TotalBuildingBlockY = height;
 		BuildingBlocks = new BuildingBlock[TotalBuildingBlockX][TotalBuildingBlockY];
 		this.createTotalBuildingBlocks();
 	}
@@ -50,7 +114,7 @@ public class MapMenu extends Window {
 	public boolean hasHeightAndWidth(){
 		if(TotalBuildingBlockX>0 && TotalBuildingBlockY>0 && TotalBuildingBlockX<101 & TotalBuildingBlockY<101){return true;}
 		else if(TotalBuildingBlockX==0 && TotalBuildingBlockY==0){return false;}
-		System.out.println("De maze moet tussen de 0 en 100 groot zijn");
+		//System.out.println("De maze moet tussen de 0 en 100 groot zijn");
 		return false;
 	}
 
@@ -59,7 +123,12 @@ public class MapMenu extends Window {
 	public void drawBlocks(GL gl) {
 		for(int i=0; i < TotalBuildingBlockX; i++){
 			for(int j=0; j < TotalBuildingBlockY; j++){
+				if(BuildingBlocks[i][j].getFloor()){
 				BuildingBlocks[i][j].drawBlock(gl);
+				}
+				else{
+					BuildingBlocks[i][j].draw(gl);
+				}
 			}
 		}
 	}
@@ -82,6 +151,14 @@ public class MapMenu extends Window {
 			}
 		}
 		return null;
+	}
+	
+	public BuildingBlock getBuildingBlockByPosition(int x, int y){
+		return BuildingBlocks[x][y];
+	}
+	
+	public BuildingBlock[][] getAllBuildingBlocks(){
+		return BuildingBlocks;
 	}
 		
 }

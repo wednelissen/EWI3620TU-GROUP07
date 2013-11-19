@@ -84,10 +84,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Button setWidth = new Button(setWidthCoords, screenWidth, screenHeight);
 	private Button save = new Button(saveCoords, screenWidth, screenHeight);
 	private Button load = new Button(loadCoords, screenWidth, screenHeight);
+	private SaveInput StoreMaze;
 
-	private MazePlan newMaze = new MazePlan();
-
-
+	
 	/**
 	 * When instantiating, a GLCanvas is added for us to play with. An animator
 	 * is created to continuously render the canvas.
@@ -311,23 +310,32 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// check of op 1 van de buttons is gedrukt.
 		
 		if(map.clickedOnIt(me.getX(), me.getY())){
-			Mode = mapClick;
 			System.out.println("er is in de map geklikt op een item");
 			
+			if(Mode == itemsClick){
 			//de wall wordt geset.
 			map.getClickedBuildingBlock(me.getX(), me.getY()).setWall();
+			}
+			if(Mode == placedItemsClick){
+			//de wall wordt geset.
+			map.getClickedBuildingBlock(me.getX(), me.getY()).setFloor();
+			}
 			
 			//hier word de posite van de opgevragen buildingBlock getoont.
 			BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 			int[] tempPositie = temp.getPosition();
 			System.out.println(tempPositie[0]+", "+tempPositie[1]);
 			System.out.println("wall = "+temp.getWall() + " floor = "+ temp.getFloor());
+		
 			
 			
 		}else if(items.clickedOnIt(me.getX(), me.getY())){
 			Mode = itemsClick;
+			
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){
 			Mode = placedItemsClick;
+			//doordat de positie van de buildingblokken kunnen worden opgevraagd kan zo het blok worden terug gevonden.
+			
 		}else if(placedItemsProperties.clickedOnIt(me.getX(), me.getY())){
 			Mode = placedItemsPropertiesClick;
 		}else if(setStart.clickedOnIt(me.getX(), me.getY())){
@@ -339,13 +347,15 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		}else if(setWidth.clickedOnIt(me.getX(), me.getY())){
 			Mode = setWidthClick;
 		}else if(save.clickedOnIt(me.getX(), me.getY())){
-			Mode = saveClick;
+			//Mode = saveClick;
+			StoreMaze = new SaveInput(map);
+			StoreMaze.floorPlanMaze();
 		}else if(load.clickedOnIt(me.getX(), me.getY())){
 			Mode = loadClick;
 		}else{
 			Mode = doNothing;
-			int a = newMaze.getWidth();
-			int b = newMaze.getHeight();
+			int a = map.getWidth();
+			int b = map.getHeight();
 			System.out.println("Breedte: "+a+" Hoogte: "+b);
 		}
 
@@ -389,6 +399,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		int keycode = event.getKeyCode();
 		char key = event.getKeyChar();
+		//System.out.println(key+" = "+keycode);
 		switch (Mode) {
 			case doNothing:
 				break;
@@ -406,31 +417,31 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				break;
 				
 			case setHeightClick:
-				if(keycode > 95 && keycode < 106){
-					newMaze.setHeight(key);	
+				if((keycode > 95 && keycode < 106) || (keycode > 47 && keycode < 58)){
+					map.setHeight(key);	
 				}else if(keycode == 10){ //er is op 'enter' gedrukt
 					Mode = doNothing;
-					int a = newMaze.getWidth();
-					int b = newMaze.getHeight();
+					int a = map.getWidth();
+					int b = map.getHeight();
 					System.out.println("Breedte: "+a+" Hoogte: "+b);
-					map.setTotalBuildingBlocks(newMaze.getWidth(),newMaze.getHeight());
+					map.setTotalBuildingBlocks();
 				}else if(keycode == 8){ //er is op 'backspace' gedrukt
-					newMaze.removeHeight();
+					map.removeHeight();
 					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
 				}
 				break;
 				
 			case setWidthClick:
-				if(keycode > 95 && keycode < 106){
-					newMaze.setWidth(key);	
+				if((keycode > 95 && keycode < 106) || (keycode > 47 && keycode < 58)){
+					map.setWidth(key);	
 				}else if(keycode == 10){ //er is op 'enter' gedrukt
 					Mode = doNothing;
-					int a = newMaze.getWidth();
-					int b = newMaze.getHeight();
+					int a = map.getWidth();
+					int b = map.getHeight();
 					System.out.println("Breedte: "+a+" Hoogte: "+b);
-					map.setTotalBuildingBlocks(newMaze.getWidth(),newMaze.getHeight());
+					map.setTotalBuildingBlocks();
 				}else if(keycode == 8){ //er is op 'backspace' gedrukt
-					newMaze.removeWidth();
+					map.removeWidth();
 					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
 				}
 				break;
