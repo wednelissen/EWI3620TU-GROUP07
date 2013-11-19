@@ -42,11 +42,9 @@ public class MapMenu extends Window {
 				float[] BuildingBlockSizes = new float[] {BuildingBlock_LinksBovenX,BuildingBlock_LinksBovenY,BuildingBlockSizeX,BuildingBlockSizeY};
 				
 				//System.out.println(BuildingBlock_LinksBovenX+" , "+BuildingBlock_LinksBovenY+" , "+BuildingBlockSizeX+" , " + BuildingBlockSizeY);
-				BuildingBlocks[i][j] = new BuildingBlock(BuildingBlockSizes,screenWidth, screenHeight);	
+				BuildingBlocks[i][j] = new BuildingBlock(BuildingBlockSizes,screenWidth, screenHeight, i, j);	
 			}
-		}
-		
-		
+		}		
 	}
 	
 	public boolean hasHeightAndWidth(){
@@ -75,21 +73,15 @@ public class MapMenu extends Window {
 		}
 	}
 			
-/*public void update(int screenWidthFrame, int screenHeightFrame) {
-
-		float x_linksOnder = originalSizes[0];
-		float y_rechtsOnder = originalSizes[1];
-		float buttonSizeX = originalSizes[2];
-		float buttonSizeY = originalSizes[3];
-
-		screenWidth = screenWidthFrame;
-		screenHeight = screenHeightFrame;
-
-		x = x_linksOnder / 800 * screenWidth;
-		y = (600 - y_rechtsOnder) / 600 * screenHeight;
+	public BuildingBlock getClickedBuildingBlock(int xclick, int yclick){
+		for(int i=0; i < TotalBuildingBlockX; i++){
+			for(int j=0; j < TotalBuildingBlockY; j++){
+				if(BuildingBlocks[i][j].clickedOnIt(xclick, yclick)){
+					return BuildingBlocks[i][j];
+				}
+			}
+		}
+		return null;
+	}
 		
-		sizeX = buttonSizeX / 800 * screenWidth;
-		sizeY = buttonSizeY / 600 * screenHeight;
-	}*/			
-			
 }

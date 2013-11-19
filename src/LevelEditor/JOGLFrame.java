@@ -312,6 +312,18 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		if(map.clickedOnIt(me.getX(), me.getY())){
 			Mode = mapClick;
+			System.out.println("er is in de map geklikt op een item");
+			
+			//de wall wordt geset.
+			map.getClickedBuildingBlock(me.getX(), me.getY()).setWall();
+			
+			//hier word de posite van de opgevragen buildingBlock getoont.
+			BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+			int[] tempPositie = temp.getPosition();
+			System.out.println(tempPositie[0]+", "+tempPositie[1]);
+			System.out.println("wall = "+temp.getWall() + " floor = "+ temp.getFloor());
+			
+			
 		}else if(items.clickedOnIt(me.getX(), me.getY())){
 			Mode = itemsClick;
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){

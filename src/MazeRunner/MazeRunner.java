@@ -26,7 +26,7 @@ import java.util.Iterator;
  */
 
 
-public class MazeRunner extends Frame implements GLEventListener {
+public class MazeRunner implements GLEventListener {
 	static final long serialVersionUID = 7526471155622776147L;
 	public static boolean GOD_MODE = false;
 
@@ -44,7 +44,6 @@ public class MazeRunner extends Frame implements GLEventListener {
 	private UserInput input;								// The user input object that controls the player.
 	private Maze maze; 										// The maze.
 	private long previousTime = Calendar.getInstance().getTimeInMillis(); // Used to calculate elapsed time.
-
 /*
  * **********************************************
  * *		Initialization methods				*
@@ -59,28 +58,26 @@ public class MazeRunner extends Frame implements GLEventListener {
 	 * display MazeRunner. Finally, it adds itself as the OpenGL event listener, to be able 
 	 * to function as the view controller.
 	 */
-	public MazeRunner() {
+	public MazeRunner(GLCanvas canvas) {
 		// Make a new window.
-		super("MazeRunner");
+		//super("MazeRunner");
 		
 		// Let's change the window to our liking.
-		setSize( screenWidth, screenHeight);
-		setBackground( Color.white );
+//		setSize( screenWidth, screenHeight);
+//		setBackground( Color.white );
 
 		// The window also has to close when we want to.
-		this.addWindowListener( new WindowAdapter()
-		{
-			public void windowClosing( WindowEvent e )
-			{
-				System.exit(0);
-			}
-		});
-
+//		this.addWindowListener( new WindowAdapter()
+//		{
+//			public void windowClosing( WindowEvent e )
+//			{
+//				System.exit(0);
+//			}
+//		});
+		GOD_MODE = false;
+		this.canvas = canvas;
 		initJOGL();							// Initialize JOGL.
 		initObjects();						// Initialize all the objects!
-		
-		// Set the frame to visible. This automatically calls upon OpenGL to prevent a blank screen.
-		setVisible(true);
 	}
 	
 	/**
@@ -91,15 +88,15 @@ public class MazeRunner extends Frame implements GLEventListener {
 	 * continuous loop, it uses an Animator, which is part of the JOGL api.
 	 */
 	private void initJOGL()	{
-		// First, we set up JOGL. We start with the default settings.
-		GLCapabilities caps = new GLCapabilities();
-		// Then we make sure that JOGL is hardware accelerated and uses double buffering.
-		caps.setDoubleBuffered( true );
-		caps.setHardwareAccelerated( true );
-
-		// Now we add the canvas, where OpenGL will actually draw for us. We'll use settings we've just defined. 
-		canvas = new GLCanvas( caps );
-		add( canvas );
+//		// First, we set up JOGL. We start with the default settings.
+//		GLCapabilities caps = new GLCapabilities();
+//		// Then we make sure that JOGL is hardware accelerated and uses double buffering.
+//		caps.setDoubleBuffered( true );
+//		caps.setHardwareAccelerated( true );
+//
+//		// Now we add the canvas, where OpenGL will actually draw for us. We'll use settings we've just defined. 
+//		canvas = new GLCanvas( caps );
+//		add( canvas );
 		/* We need to add a GLEventListener to interpret OpenGL events for us. Since MazeRunner implements
 		 * GLEventListener, this means that we add the necesary init(), display(), displayChanged() and reshape()
 		 * methods to this class.
@@ -110,8 +107,8 @@ public class MazeRunner extends Frame implements GLEventListener {
 		/* We need to create an internal thread that instructs OpenGL to continuously repaint itself.
 		 * The Animator class handles that for JOGL.
 		 */
-		Animator anim = new Animator( canvas );
-		anim.start();
+//		Animator anim = new Animator( canvas );
+//		anim.start();
 	}
 	
 	/**
@@ -133,21 +130,23 @@ public class MazeRunner extends Frame implements GLEventListener {
 		// We define an ArrayList of VisibleObjects to store all the objects that need to be
 		// displayed by MazeRunner.
 		visibleObjects = new ArrayList<VisibleObject>();
-		// Add the maze that we will be using.
-		maze = new Maze();
-		visibleObjects.add( maze );
-
-		// Initialize the player.
-		player = new Player( 6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// x-position
-							 maze.SQUARE_SIZE / 2,							// y-position
-							 5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// z-position
-							 90, 0 );										// horizontal and vertical angle
-
-		camera = new Camera( player.getLocationX(), player.getLocationY(), player.getLocationZ(), 
-				             player.getHorAngle(), player.getVerAngle() );
 		
-		input = new UserInput(canvas);
-		player.setControl(input);
+			// Add the maze that we will be using.
+			maze = new Maze();
+			visibleObjects.add( maze );
+
+			// Initialize the player.
+			player = new Player( 6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// x-position
+					maze.SQUARE_SIZE / 2,							// y-position
+					5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// z-position
+					90, 0 );										// horizontal and vertical angle
+
+			camera = new Camera( player.getLocationX(), player.getLocationY(), player.getLocationZ(), 
+					player.getHorAngle(), player.getVerAngle() );
+
+			input = new UserInput(canvas);
+			player.setControl(input);
+		
 	}
 
 /*
@@ -341,10 +340,10 @@ public class MazeRunner extends Frame implements GLEventListener {
 	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		//set default god mode
-		GOD_MODE = false;
-		// Create and run MazeRunner.
-		new MazeRunner();
-	}
+//	public static void main(String[] args) {
+//		//set default god mode
+//		GOD_MODE = false;
+//		// Create and run MazeRunner.
+//		new MazeRunner();
+//	}
 }

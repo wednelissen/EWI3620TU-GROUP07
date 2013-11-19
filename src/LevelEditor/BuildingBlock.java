@@ -3,10 +3,14 @@ package LevelEditor;
 import javax.media.opengl.GL;
 
 public class BuildingBlock extends Window{
+	private int positieX, positieY;
+	private boolean wall = false, floor = true;
 	
 
-	public BuildingBlock(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
+	public BuildingBlock(float[] sizes, int screenWidthFrame, int screenHeightFrame, int i, int j) {
 		super(sizes, screenWidthFrame, screenHeightFrame);
+		positieX = i;
+		positieY = j;
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -17,6 +21,29 @@ public class BuildingBlock extends Window{
 		gl.glVertex2f(x + sizeX, y - sizeY);
 		gl.glVertex2f(x, y - sizeY);
 		gl.glEnd();
+	}
+	
+	public int[] getPosition(){
+		int[] Positie = {positieX, positieY};
+		return Positie;
+	}
+	
+	public void setWall(){
+		wall = true;
+		floor = false;
+	}
+	
+	public void setFloor(){
+		wall = false;
+		floor = true;
+	}
+	
+	public boolean getWall(){
+		return wall;
+	}
+	
+	public boolean getFloor(){
+		return floor;
 	}
 	
 	
