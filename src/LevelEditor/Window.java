@@ -25,7 +25,7 @@ public class Window {
 			screenHeight = screenHeightFrame;
 
 			x = x_linksOnder / 800 * screenWidth;
-			y = y_rechtsOnder / 600 * screenHeight;
+			y = (600 - y_rechtsOnder) / 600 * screenHeight;
 			
 			sizeX = buttonSizeX / 800 * screenWidth;
 			sizeY = buttonSizeY / 600 * screenHeight;

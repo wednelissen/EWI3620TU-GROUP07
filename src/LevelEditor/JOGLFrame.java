@@ -279,6 +279,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		//update the windows and button sizes
 		map.update(screenWidth, screenHeight);
+		map.updateBlocks(screenWidth, screenHeight);
 		items.update(screenWidth, screenHeight);
 		placedItems.update(screenWidth, screenHeight);
 		placedItemsProperties.update(screenWidth, screenHeight);
@@ -334,8 +335,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			int a = newMaze.getWidth();
 			int b = newMaze.getHeight();
 			System.out.println("Breedte: "+a+" Hoogte: "+b);
-			map.setTotalBuildingBlocks(newMaze.getWidth(),newMaze.getHeight());
-
 		}
 
 
