@@ -1,31 +1,79 @@
 package MazeRunner;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 
-import com.sun.opengl.util.Animator;
 
-public class GameDriver {
 
+public class GameDriver implements KeyListener{
+
+
+	private static MazeRunner mazerunner;
+	private static GLCanvas canvas;
+	private static int screenWidth = 600, screenHeight = 600;		// Screen size.
+	
+	public GameDriver(){
+	}
+	
 	public static void main(String[] args){
 		
-		Window window = new Window();
+		//Initialize Window
+		initWindow();
+		//Show Main Menu
+		new StateMainMenu(canvas, true);
+	}
+	
+	private static void initWindow(){
+		//Initializes a window with the specified dimensions
+		Window window = new Window(screenWidth,screenHeight);
 		// First, we set up JOGL. We start with the default settings.
 		GLCapabilities caps = new GLCapabilities();
 		// Then we make sure that JOGL is hardware accelerated and uses double buffering.
 		caps.setDoubleBuffered( true );
 		caps.setHardwareAccelerated( true );
-		GLCanvas canvas = new GLCanvas( caps );
-//		StateMainMenu mainmenu = new StateMainMenu();
-		//canvas.addGLEventListener(mainmenu);
-		canvas.setSize(600,600);
+		// Now we add the canvas, where OpenGL will actually draw for us. We'll use settings we've just defined. 
+		canvas = new GLCanvas( caps );
+		canvas.setSize(screenWidth,screenHeight);
+		//Add a GameDriver as a KeyListener
+		GameDriver gamedriver = new GameDriver();
+		canvas.addKeyListener(gamedriver);
 		window.add(canvas);
-		new MazeRunner(canvas);
-		
-//		/* We need to create an internal thread that instructs OpenGL to continuously repaint itself.
-//		 * The Animator class handles that for JOGL.
-//		 */
-		Animator anim = new Animator( canvas );
-		anim.start();
+		canvas.requestFocus();
 	}
+
+	@Override
+	public void keyPressed(KeyEvent event) {
+		//not used
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent event) {
+		//These keyEvents are available at any point in the game.
+		//For instance, pressing escape exits the game.
+		int code = event.getKeyCode();
+		
+		switch(code){
+		case KeyEvent.VK_ESCAPE:
+			System.out.println("exiting...");
+			//System.exit(0);
+			break;
+		case KeyEvent.VK_P:
+			
+		}
+	}	
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static GLCanvas getCanvas(){
+		return GameDriver.canvas;
+	}
+	
+	
 }

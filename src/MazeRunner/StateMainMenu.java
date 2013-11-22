@@ -1,26 +1,69 @@
 package MazeRunner;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import LevelEditor.Button;
+
+import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 
-import com.sun.opengl.util.Animator;
-
-public class StateMainMenu implements GLEventListener{
+public class StateMainMenu implements GLEventListener, KeyListener, MouseListener{
 	
-	protected static GLCanvas canvas;
-
+	private static GLCanvas canvas;
+	private boolean startup = false;
 	
-	public StateMainMenu(){
-		
-		//this.addGLEventListenter(this);
+	private int screenWidth, screenHeight;
+	
+	//layout van het hoofdmenu
+	private float[] buttonStartGameCoords = new float[] { 150, 100, 300, 100};
+	
+	//define buttons
+	private Button buttonStartGame = new Button(buttonStartGameCoords, screenWidth, screenHeight);
+	
+	
+	/**
+	 * Constructor
+	 * Also calls init(), initializing the main menu on the given canvas.
+	 * @param canvas
+	 */
+	public StateMainMenu(GLCanvas canvas, boolean first){
+		StateMainMenu.canvas = canvas;
+		screenHeight = canvas.getHeight();
+		screenWidth = canvas.getWidth();
+		System.out.println("screenHeight: " + screenHeight);
+		canvas.addKeyListener(this);
+		canvas.addGLEventListener(this);
+		canvas.addMouseListener(this);
+		System.out.println("Main menu loaded");
+		if(!first){
+		startup = true;
+		}
 	}
 	
 	@Override
-	public void display(GLAutoDrawable arg0) {
-		// TODO Auto-generated method stub
+	public void display(GLAutoDrawable drawable) {
+        if(startup){
+        	init(drawable);
+        	startup = false;
+        }
+		
+		GL gl = drawable.getGL();
+
+		// Set the clear color and clear the screen.
+		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+
+		// Draw the buttons.
+		gl.glColor3f(0, 0.5f, 0f);
+		buttonStartGame.draw(gl); 
+		// Flush the OpenGL buffer, outputting the result to the screen.
+		gl.glFlush();
 		
 	}
 
@@ -36,19 +79,124 @@ public class StateMainMenu implements GLEventListener{
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("Init Called");
+		System.out.println("Main menu init");
+		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
-		gl.glClearColor(0, 1, 0, 1);
-		
+
+		// Set the matrix mode to GL_PROJECTION, allowing us to manipulate the
+		// projection matrix
+		gl.glMatrixMode(GL.GL_PROJECTION);
+
+		// Always reset the matrix before performing transformations, otherwise
+		// those transformations will stack with previous transformations!
+		gl.glLoadIdentity();
+
+		/*
+		 * glOrtho performs an "orthogonal projection" transformation on the
+		 * active matrix. In this case, a simple 2D projection is performed,
+		 * matching the viewing frustum to the screen size.
+		 */
+		gl.glOrtho(0, screenWidth, 0, screenHeight, -1, 1);
+
+		// Set the matrix mode to GL_MODELVIEW, allowing us to manipulate the
+		// model-view matrix.
+		gl.glMatrixMode(GL.GL_MODELVIEW);
+
+		// We leave the model view matrix as the identity matrix. As a result,
+		// we view the world 'looking forward' from the origin.
+		gl.glLoadIdentity();
+
+		// We have a simple 2D application, so we do not need to check for depth
+		// when rendering.
+		gl.glDisable(GL.GL_DEPTH_TEST);		
 	}
 
 
 
 	@Override
-	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3,
-			int arg4) {
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
+			int height) {
+		GL gl = drawable.getGL();
+
+		// Set the new screen size and adjusting the viewport
+		screenWidth = width;
+		screenHeight = height;
+		gl.glViewport(0, 0, screenWidth, screenHeight);
+		
+		buttonStartGame.update(width, height);
+		
+		// Update the projection to an orthogonal projection using the new
+		// screen size
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glLoadIdentity();
+		gl.glOrtho(0, screenWidth, 0, screenHeight, -1, 1);
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent event) {
+		int code = event.getKeyCode();
+		
+		switch(code){
+		case KeyEvent.VK_1:
+			startGame();
+			
+			break;
+		}
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent me) {
+		int xclick = me.getX();
+		int yclick = me.getY();
+		if(buttonStartGame.clickedOnIt(xclick, yclick)){
+			startGame();
+		}
+		
+	}
+
+	private void startGame() {
+		canvas.removeGLEventListener(this);
+		canvas.removeKeyListener(this);
+		canvas.removeMouseListener(this);
+		MazeRunner mazerunner = new MazeRunner(canvas);
+		System.out.println("Game started");
 	}
 
 }

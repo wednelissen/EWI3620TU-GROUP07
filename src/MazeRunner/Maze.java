@@ -1,4 +1,5 @@
 package MazeRunner;
+import LevelEditor.LoadLevel;
 import javax.media.opengl.GL;
 import com.sun.opengl.util.GLUT;
 
@@ -24,20 +25,25 @@ import com.sun.opengl.util.GLUT;
  */
 public class Maze implements VisibleObject {
 	
-	public final double MAZE_SIZE = 10;
+	private LoadLevel newMaze = new LoadLevel("level1");
+	//public final double MAZE_SIZE = 10;
+	public final double MAZE_SIZE_X = newMaze.getWidth();
+	public final double MAZE_SIZE_Z = newMaze.getHeight();
 	public final double SQUARE_SIZE = 5;
 
-	private int[][] maze = 
-	{	{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-		{  1,  0,  0,  0,  0,  0,  1,  1,  1,  1 },
-		{  1,  0,  1,  0,  0,  0,  1,  0,  0,  1 },
-		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-		{  1,  0,  0,  0,  1,  0,  1,  0,  0,  1 },
-		{  1,  0,  0,  0,  1,  1,  1,  0,  0,  1 },
-		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-		{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 }	};
+//	private int[][] maze = 
+//	{	{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
+//		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
+//		{  1,  0,  0,  0,  0,  0,  1,  1,  1,  1 },
+//		{  1,  0,  1,  0,  0,  0,  1,  0,  0,  1 },
+//		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
+//		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
+//		{  1,  0,  0,  0,  1,  0,  1,  0,  0,  1 },
+//		{  1,  0,  0,  0,  1,  1,  1,  0,  0,  1 },
+//		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
+//		{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 }	};
+	
+	private int[][] maze = newMaze.outputForMazeRunner();
 
 	
 	/**
@@ -51,8 +57,16 @@ public class Maze implements VisibleObject {
 	 */
 	public boolean isWall( int x, int z )
 	{
-		if( x >= 0 && x < MAZE_SIZE && z >= 0 && z < MAZE_SIZE )
+		if( x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z )
 			return maze[x][z] == 1;
+		else
+			return false;
+	}
+	
+	public boolean isBars( int x, int z )
+	{
+		if( x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z )
+			return maze[x][z] == 2;
 		else
 			return false;
 	}
@@ -95,25 +109,25 @@ public class Maze implements VisibleObject {
 	}
 	
 	public void display(GL gl) {
-		GLUT glut = new GLUT();
-
-        // Setting the wall colour and material.
-        float wallColour[] = { 0.5f, 0.0f, 0.7f, 1.0f };				// The walls are purple.
-        gl.glMaterialfv( GL.GL_FRONT, GL.GL_DIFFUSE, wallColour, 0);	// Set the materials used by the wall.
-
-        // draw the grid with the current material
-		for( int i = 0; i < MAZE_SIZE; i++ )
+		for( int i = 0; i < MAZE_SIZE_X; i++ )
 		{
-	        for( int j = 0; j < MAZE_SIZE; j++ )
+	        for( int j = 0; j < MAZE_SIZE_Z; j++ )
 			{
 	            gl.glPushMatrix();
-				gl.glTranslated( i * SQUARE_SIZE + SQUARE_SIZE / 2, SQUARE_SIZE / 2, j * SQUARE_SIZE + SQUARE_SIZE / 2 );
-				if ( isWall(i, j) )
-					glut.glutSolidCube( (float) SQUARE_SIZE );
+				gl.glTranslated( i * SQUARE_SIZE, 0, j * SQUARE_SIZE );
+				if ( isWall(i, j) ){
+					drawWall(gl, SQUARE_SIZE);
+				}
+				if (!isWall(i,j) ) {
+					drawFloor( gl, SQUARE_SIZE );
+					drawRoof(gl, SQUARE_SIZE);
+				}
+				if ( isBars(i, j) ){
+					drawBars(gl, SQUARE_SIZE);
+				}
 				gl.glPopMatrix();
 			}
 		}
-		paintSingleFloorTile( gl, MAZE_SIZE * SQUARE_SIZE );			// Paint the floor.
 	}
 	
 	/**
@@ -122,12 +136,13 @@ public class Maze implements VisibleObject {
 	 * @param gl	the GL context in which should be drawn
 	 * @param size	the size of the tile
 	 */
-	private void paintSingleFloorTile(GL gl, double size)
+	private void drawFloor(GL gl, double size)
 	{
         // Setting the floor color and material.
-        float wallColour[] = { 0.0f, 0.0f, 1.0f, 1.0f };				// The floor is blue.
+        float wallColour[] = { 1f, 0.0f, 1.0f, 1.0f };				// The floor is blue.
         gl.glMaterialfv( GL.GL_FRONT, GL.GL_DIFFUSE, wallColour, 0);	// Set the materials used by the floor.
 
+        // Sets the current normal vector
         gl.glNormal3d(0, 1, 0);
 		gl.glBegin(GL.GL_QUADS);
 	        gl.glVertex3d(0, 0, 0);
@@ -135,5 +150,77 @@ public class Maze implements VisibleObject {
 	        gl.glVertex3d(size, 0, size);
 	        gl.glVertex3d(size, 0, 0);		
 		gl.glEnd();	
-	}	
+	}
+	
+	/*
+	 * ******************EXTRA****************************************
+	 */
+	private void drawWall (GL gl, double size){
+		// set the colour for the wall
+        float wallColour[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+        // sets the material and lighting for the wall
+        gl.glMaterialfv( GL.GL_FRONT, GL.GL_DIFFUSE, wallColour, 0);
+        
+        //Voorzijde muur
+        gl.glBegin(GL.GL_QUADS);
+        	gl.glVertex3d(0, 0, 0);
+        	gl.glVertex3d(0, size, 0);
+        	gl.glVertex3d(size, size, 0);
+	        gl.glVertex3d(size, 0, 0);
+	    
+	    //Rechterzijde muur
+	    	gl.glVertex3d(0, size, 0);
+	    	gl.glVertex3d(0, size, size);
+	    	gl.glVertex3d(size, size, size);
+	    	gl.glVertex3d(size, size, 0);
+	    
+	    //Achterzijde muur
+	    	gl.glVertex3d(0, size, size);
+	    	gl.glVertex3d(0, 0, size);
+	    	gl.glVertex3d(size, 0, size);
+	    	gl.glVertex3d(size, size, size);
+	    
+	    //Linkerzijde muur
+	    	gl.glVertex3d(0, 0, size);
+	    	gl.glVertex3d(0, 0, 0);
+	    	gl.glVertex3d(size, 0, 0);
+	    	gl.glVertex3d(size, 0, size);
+	    	
+	    //Bovenzijde muur
+	    	gl.glVertex3d(size, 0, size);
+	    	gl.glVertex3d(size, 0, 0);
+	    	gl.glVertex3d(size, size, 0);
+	    	gl.glVertex3d(size, size, size);
+	    	
+	    //Onderzijde muur
+	    	gl.glVertex3d(0, 0, 0);
+	    	gl.glVertex3d(0, 0, size);
+	    	gl.glVertex3d(0, size, size);
+	    	gl.glVertex3d(0, size, 0);
+	    	
+	    gl.glEnd();
+	}
+	
+	private void drawBars (GL gl, double size){
+		GLUT glut = new GLUT();
+		float barColour[] = { 0.5f, 0.5f, 0.5f, 0.5f};
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, barColour, 0);
+		glut.glutSolidCylinder(1, 1, 1, 1);
+	}
+	
+	private void drawRoof(GL gl, double size)
+	{
+        // Setting the floor color and material.
+        float roofColour[] = { 1f, 0.0f, 0f, 0f };				// The floor is blue.
+        gl.glMaterialfv( GL.GL_FRONT, GL.GL_DIFFUSE, roofColour, 0);	// Set the materials used by the floor.
+
+        // Sets the current normal vector
+        gl.glNormal3d(0, 1, 0);
+		gl.glBegin(GL.GL_QUADS);
+	        gl.glVertex3d(0, size, 0);
+	        gl.glVertex3d(size, size, 0);	
+	        gl.glVertex3d(size, size, size);
+	        gl.glVertex3d(0, size, size); 	
+		gl.glEnd();	
+	}
 }

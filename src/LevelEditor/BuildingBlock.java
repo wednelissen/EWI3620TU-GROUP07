@@ -15,13 +15,24 @@ public class BuildingBlock extends Window{
 	}
 	
 	public void drawBlock(GL gl) {
-		gl.glBegin(GL.GL_LINE_LOOP);
+		gl.glBegin(GL.GL_QUADS);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + sizeX, y);
 		gl.glVertex2f(x + sizeX, y - sizeY);
 		gl.glVertex2f(x, y - sizeY);
 		gl.glEnd();
 	}
+	
+	public void drawGuardianPath(GL gl) {
+		gl.glBegin(GL.GL_LINES);
+		gl.glColor3f(0.5f, 0f, 0f);
+		gl.glVertex2f(x, y);
+		gl.glVertex2f(x + sizeX, y - sizeY);
+		gl.glVertex2f(x + sizeX, y);
+		gl.glVertex2f(x, y - sizeY);
+		gl.glColor3f(0f, 0.5f, 0f);
+		gl.glEnd();
+	}	
 	
 	public int[] getPosition(){
 		int[] Positie = {positieX, positieY};

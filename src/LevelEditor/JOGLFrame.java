@@ -8,10 +8,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;  
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+
+
+
+
+
+
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -35,28 +43,30 @@ import java.awt.event.*;
  * 
  * @author Kang extends JFrame implements ActionListener{
  */
-public class JOGLFrame extends Frame implements GLEventListener, MouseListener, KeyListener {
+public class JOGLFrame extends Frame implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
 	static final long serialVersionUID = 7526471155622776147L;
 
 	// Screen size.
 	private int screenWidth = 800, screenHeight = 600;
-
 	// A GLCanvas is a component that can be added to a frame. The drawing
 	// happens on this component.
 	private GLCanvas canvas;
+	
+	private boolean mapCreated = false;
 
-	private static final byte doNothing = 0;
-	private static final byte mapClick = 1;
-	private static final byte itemsClick = 2;
-	private static final byte placedItemsClick = 3;
-	private static final byte placedItemsPropertiesClick = 4;
-	private static final byte setStartClick = 5;
-	private static final byte setEndClick = 6;
-	private static final byte setHeightClick = 7;
-	private static final byte setWidthClick = 8;
-	private static final byte saveClick = 9;
-	private static final byte loadClick = 10;
-	private byte Mode = doNothing;
+//	private static final byte doNothing = 0;
+//	private static final byte mapClick = 1;
+//	private static final byte itemsClick = 2;
+//	private static final byte placedItemsClick = 3;
+//	private static final byte placedItemsPropertiesClick = 4;
+//	private static final byte setStartClick = 5;
+//	private static final byte setEndClick = 6;
+//	private static final byte setHeightClick = 7;
+//	private static final byte setWidthClick = 8;
+//	private static final byte saveClick = 9;
+//	private static final byte loadClick = 10;
+//	private byte Mode = doNothing;
+	ClickOptions Mode = ClickOptions.doNothing; 
 
 	//layout van de level editor
 	private float[] mapCoords = new float[] { 205, 5, 590, 550 };
@@ -71,7 +81,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private float[] loadCoords = new float[] { 720, 565, 75, 20 };
 	
 	//define the windows
-	private Window map = new Window(mapCoords, screenWidth, screenHeight);
+	private MapMenu map = new MapMenu(mapCoords, screenWidth, screenHeight);
 	private Window items = new Window(itemCoords, screenWidth, screenHeight);
 	private Window placedItems = new Window(placedItemsCoords, screenWidth, screenHeight);
 	private Window placedItemsProperties = new Window(placedItemsPropertiesCoords, screenWidth, screenHeight);
@@ -83,10 +93,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Button setWidth = new Button(setWidthCoords, screenWidth, screenHeight);
 	private Button save = new Button(saveCoords, screenWidth, screenHeight);
 	private Button load = new Button(loadCoords, screenWidth, screenHeight);
+	private SaveInput StoreMaze;
 
-	private MazePlan newMaze = new MazePlan();
-
-
+	
 	/**
 	 * When instantiating, a GLCanvas is added for us to play with. An animator
 	 * is created to continuously render the canvas.
@@ -126,6 +135,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// Also add this class as mouse listener, allowing this class to react
 		// to mouse events that happen inside the GLCanvas.
 		canvas.addMouseListener(this);
+		canvas.addMouseMotionListener(this);
 		//key listener
 		canvas.addKeyListener(this);
 		// An Animator is a JOGL help class that can be used to make sure our
@@ -190,10 +200,12 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
-		drawButtons(gl);
+		drawWindows(gl);
 
 		// Draw a figure based on the current draw mode and user input
-		// drawFigure(gl);
+		
+		// check if map can be drawed
+		mapCreated = map.hasHeightAndWidth();
 
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
@@ -204,12 +216,16 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	 * 
 	 * @param gl
 	 */
-	private void drawButtons(GL gl) {
+	private void drawWindows(GL gl) {
 		// Draw the background boxes
 
-		
+		if(mapCreated){
 		gl.glColor3f(0, 0.5f, 0f);
-		map.draw(gl);
+		map.drawBlocks(gl);
+		}
+		else{
+			map.draw(gl);
+		}
 		
 		gl.glColor3f(0, 0.5f, 0f);
 		items.draw(gl);
@@ -272,6 +288,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		//update the windows and button sizes
 		map.update(screenWidth, screenHeight);
+		map.updateBlocks(screenWidth, screenHeight);
 		items.update(screenWidth, screenHeight);
 		placedItems.update(screenWidth, screenHeight);
 		placedItemsProperties.update(screenWidth, screenHeight);
@@ -303,59 +320,95 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// check of op 1 van de buttons is gedrukt.
 		
 		if(map.clickedOnIt(me.getX(), me.getY())){
-			Mode = mapClick;				
+			System.out.println("er is in de map geklikt op een item");
+			if(map.BuildingBlocksExists()){
+				System.out.println("X: "+me.getX()+" Y: "+me.getY());
+				if(Mode == ClickOptions.items){
+					//de wall wordt geset.
+					map.getClickedBuildingBlock(me.getX(), me.getY()).setWall();
+				}
+				if(Mode == ClickOptions.placedItems){
+					//de wall wordt geset.
+					map.getClickedBuildingBlock(me.getX(), me.getY()).setFloor();
+				}
+				
+				//hier word de posite van de opgevragen buildingBlock getoont.
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				int[] tempPositie = temp.getPosition();
+				System.out.println(tempPositie[0]+", "+tempPositie[1]);
+				System.out.println("wall = "+temp.getWall() + " floor = "+ temp.getFloor());
+			}
+			else System.out.println("Vul een lengte en breedte in.");
+		
+			
+			
 		}else if(items.clickedOnIt(me.getX(), me.getY())){
-			Mode = itemsClick;
+			Mode = ClickOptions.items;
+			
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){
-			Mode = placedItemsClick;
+			Mode = ClickOptions.placedItems;
+			//doordat de positie van de buildingblokken kunnen worden opgevraagd kan zo het blok worden terug gevonden.
+			
 		}else if(placedItemsProperties.clickedOnIt(me.getX(), me.getY())){
-			Mode = placedItemsPropertiesClick;
+			Mode = ClickOptions.placedItemsProperties;
 		}else if(setStart.clickedOnIt(me.getX(), me.getY())){
-			Mode = setStartClick;
+			Mode = ClickOptions.setStart;
 		}else if(setEnd.clickedOnIt(me.getX(), me.getY())){
-			Mode = setEndClick;
+			Mode = ClickOptions.setEnd;
 		}else if(setHeight.clickedOnIt(me.getX(), me.getY())){
-			Mode = setHeightClick;
+			Mode = ClickOptions.setHeight;
 		}else if(setWidth.clickedOnIt(me.getX(), me.getY())){
-			Mode = setWidthClick;
+			Mode = ClickOptions.setWidth;
 		}else if(save.clickedOnIt(me.getX(), me.getY())){
-			Mode = saveClick;
+			//Mode = saveClick;
+			StoreMaze = new SaveInput(map);
+			StoreMaze.floorPlanMaze();
+			StoreMaze.write("level1");
 		}else if(load.clickedOnIt(me.getX(), me.getY())){
-			Mode = loadClick;
+			Mode = ClickOptions.load;
+			LoadLevel newlevel = new LoadLevel("level1");
 		}else{
-			Mode = doNothing;
-			int a = newMaze.getWidth();
-			int b = newMaze.getHeight();
+			Mode = ClickOptions.doNothing;
+			int a = map.getWidth();
+			int b = map.getHeight();
 			System.out.println("Breedte: "+a+" Hoogte: "+b);
 		}
 
 
-	}
-
+	}	
+	
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(MouseEvent me) {
 		// Not needed.
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// Not needed.
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
+	public void mouseEntered(MouseEvent me) {
 		// Not needed.
 
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-
+	public void mouseExited(MouseEvent me) {
 		// Not needed.
+	}
 
+	@Override
+	public void mousePressed(MouseEvent me) {
+		// Not needed.
+		
+
+	}
+	public void mouseDragged(MouseEvent me)
+	{		
+		mouseReleased(me);
 	}
 	
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		
+		
+	}
 	@Override
 	public void keyPressed(KeyEvent event){  
 
@@ -366,44 +419,59 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	@Override
 	public void keyReleased(KeyEvent event)
 	{
-		char key = event.getKeyChar();
 		
+		int keycode = event.getKeyCode();
+		char key = event.getKeyChar();
+		//System.out.println(key+" = "+keycode);
 		switch (Mode) {
 			case doNothing:
 				break;
-			case mapClick:
-				newMaze.removeWidth();
+			case map:
 				break;
-			case itemsClick:	
+			case items:	
 				break;
-			case placedItemsClick:
+			case placedItems:
 				break;
-			case placedItemsPropertiesClick:
+			case placedItemsProperties:
 				break;
-			case setStartClick:
+			case setStart:
 				break;
-			case setEndClick:
-				break;
-				
-			case setHeightClick:
-				if(key != 'l' || key != 'e'){
-					newMaze.setHeight(key);	
-				}
-				else
-					Mode = doNothing;
+			case setEnd:
 				break;
 				
-			case setWidthClick:
-				if(key != 'l' && key != 'e' && key != 'p'){
-					newMaze.setWidth(key);	
+			case setHeight:
+				if((keycode > 95 && keycode < 106) || (keycode > 47 && keycode < 58)){
+					map.setHeight(key);	
+				}else if(keycode == 10){ //er is op 'enter' gedrukt
+					Mode = ClickOptions.doNothing;
+					int a = map.getWidth();
+					int b = map.getHeight();
+					System.out.println("Breedte: "+a+" Hoogte: "+b);
+					map.setTotalBuildingBlocks();
+				}else if(keycode == 8){ //er is op 'backspace' gedrukt
+					map.removeHeight();
+					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
 				}
-				else
-					Mode = doNothing;
+				break;
+				
+			case setWidth:
+				if((keycode > 95 && keycode < 106) || (keycode > 47 && keycode < 58)){
+					map.setWidth(key);	
+				}else if(keycode == 10){ //er is op 'enter' gedrukt
+					Mode = ClickOptions.doNothing;
+					int a = map.getWidth();
+					int b = map.getHeight();
+					System.out.println("Breedte: "+a+" Hoogte: "+b);
+					map.setTotalBuildingBlocks();
+				}else if(keycode == 8){ //er is op 'backspace' gedrukt
+					map.removeWidth();
+					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
+				}
 				break;
 					
-			case saveClick:
+			case save:
 				break;
-			case loadClick:
+			case load:
 				break;
 		
 		}
@@ -415,5 +483,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// Not needed.
 		
 	}
+
+
 }
 

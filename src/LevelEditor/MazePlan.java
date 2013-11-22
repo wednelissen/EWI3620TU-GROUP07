@@ -1,12 +1,13 @@
 package LevelEditor;
 
 public class MazePlan {
-	private int width = 0, height = 0;
+	private int width, height;
 	private String printWidth, printHeight;
 	
 	
 	public MazePlan(){
-		
+		width = 0;
+		height = 0;
 	}
 	
 	public void setWidth(char key){
@@ -66,6 +67,7 @@ public class MazePlan {
 	public int getHeight(){
 		return height;
 	}
+
 	
 
 }

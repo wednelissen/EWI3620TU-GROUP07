@@ -4,12 +4,12 @@ import javax.media.opengl.GL;
 
 public class Window {
 
-	private float x;
-	private float y;
-	private float sizeX;
-	private float sizeY;
-	private int screenWidth, screenHeight;
-	private float[] originalSizes;
+	protected float x;
+	protected float y;
+	protected float sizeX;
+	protected float sizeY;
+	protected int screenWidth, screenHeight;
+	protected float[] originalSizes;
 
 	public Window(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 
@@ -25,7 +25,7 @@ public class Window {
 			screenHeight = screenHeightFrame;
 
 			x = x_linksOnder / 800 * screenWidth;
-			y = y_rechtsOnder / 600 * screenHeight;
+			y = (600 - y_rechtsOnder) / 600 * screenHeight;
 			
 			sizeX = buttonSizeX / 800 * screenWidth;
 			sizeY = buttonSizeY / 600 * screenHeight;
@@ -52,7 +52,7 @@ public class Window {
 	}
 	
 	public void draw(GL gl) {
-		gl.glBegin(GL.GL_QUADS);
+		gl.glBegin(GL.GL_LINE_LOOP);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + sizeX, y);
 		gl.glVertex2f(x + sizeX, y - sizeY);
@@ -61,7 +61,7 @@ public class Window {
 	}
 	
 	public boolean clickedOnIt(int xclick, int yclick) {
-		if(xclick > x && xclick < (x + sizeX) && yclick > (screenHeight - y) && yclick < ((screenHeight - y) + sizeY)){
+		if(xclick >= x && xclick < (x + sizeX) && yclick >= (screenHeight - y) && yclick < ((screenHeight - y) + sizeY)){
 			return true;
 		}
 		

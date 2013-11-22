@@ -78,15 +78,12 @@ public class MapMenu extends Window {
 		return height;
 	}
 	
-	public void drawLines(GL gl) {
-		gl.glBegin(GL.GL_LINE_LOOP);
-		gl.glVertex2f(x, y);
-		gl.glVertex2f(x + sizeX, y);
-		gl.glVertex2f(x + sizeX, y - sizeY);
-		gl.glVertex2f(x, y - sizeY);
-		gl.glEnd();
+	public boolean BuildingBlocksExists(){
+		if(width>0 && height>0){
+			return true;
+		}
+		else return false;
 	}
-	
 	public void setTotalBuildingBlocks(){
 		TotalBuildingBlockX = width;
 		TotalBuildingBlockY = height;
@@ -97,11 +94,11 @@ public class MapMenu extends Window {
 	public void createTotalBuildingBlocks(){
 		float BuildingBlockSizeX = originalSizes[2]/TotalBuildingBlockX;
 		float BuildingBlockSizeY = originalSizes[3]/TotalBuildingBlockY;
-						
-		for(int i=0; i < TotalBuildingBlockX; i++){
-			float BuildingBlock_LinksBovenX = originalSizes[0] + (BuildingBlockSizeX * (i));		
-			for(int j=0; j < TotalBuildingBlockY; j++){
-				float BuildingBlock_LinksBovenY = originalSizes[1] + (BuildingBlockSizeY * (j));
+							
+		for(int j=0; j < TotalBuildingBlockY; j++){
+			float BuildingBlock_LinksBovenY = originalSizes[1] + (BuildingBlockSizeY * (j));
+			for(int i=0; i < TotalBuildingBlockX; i++){
+				float BuildingBlock_LinksBovenX = originalSizes[0] + (BuildingBlockSizeX * (i));	
 				
 				float[] BuildingBlockSizes = new float[] {BuildingBlock_LinksBovenX,BuildingBlock_LinksBovenY,BuildingBlockSizeX,BuildingBlockSizeY};
 				
@@ -121,13 +118,13 @@ public class MapMenu extends Window {
 	//er worden blokjes in het vlak map getekend, waar op 
 	//geklikt kan worden zodat ieder element uit de maze items kunnen worden toegekent
 	public void drawBlocks(GL gl) {
-		for(int i=0; i < TotalBuildingBlockX; i++){
-			for(int j=0; j < TotalBuildingBlockY; j++){
+		for(int j=0; j < TotalBuildingBlockY; j++){
+			for(int i=0; i < TotalBuildingBlockX; i++){
 				if(BuildingBlocks[i][j].getFloor()){
-				BuildingBlocks[i][j].drawBlock(gl);
+					BuildingBlocks[i][j].draw(gl);
 				}
 				else{
-					BuildingBlocks[i][j].draw(gl);
+					BuildingBlocks[i][j].drawBlock(gl);
 				}
 			}
 		}
@@ -135,16 +132,16 @@ public class MapMenu extends Window {
 	
 	//wanneer het scherm reshaped, zullen ook de elementen in de map gereshaped worden
 	public void updateBlocks(int screenWidthFrame, int screenHeightFrame){
-		for(int i=0; i < TotalBuildingBlockX; i++){
-			for(int j=0; j < TotalBuildingBlockY; j++){
+		for(int j=0; j < TotalBuildingBlockY; j++){
+			for(int i=0; i < TotalBuildingBlockX; i++){
 				BuildingBlocks[i][j].update(screenWidthFrame, screenHeightFrame);	
 			}
 		}
 	}
 			
 	public BuildingBlock getClickedBuildingBlock(int xclick, int yclick){
-		for(int i=0; i < TotalBuildingBlockX; i++){
-			for(int j=0; j < TotalBuildingBlockY; j++){
+		for(int j=0; j < TotalBuildingBlockY; j++){
+			for(int i=0; i < TotalBuildingBlockX; i++){
 				if(BuildingBlocks[i][j].clickedOnIt(xclick, yclick)){
 					return BuildingBlocks[i][j];
 				}
@@ -160,5 +157,6 @@ public class MapMenu extends Window {
 	public BuildingBlock[][] getAllBuildingBlocks(){
 		return BuildingBlocks;
 	}
+	
 		
 }

@@ -3,6 +3,8 @@ import java.awt.event.*;
 
 import javax.media.opengl.GLCanvas;
 
+import com.sun.opengl.util.Animator;
+
 /**
  * The UserInput class is an extension of the Control class. It also implements three 
  * interfaces, each providing handler methods for the different kinds of user input.
@@ -22,14 +24,14 @@ import javax.media.opengl.GLCanvas;
 public class UserInput extends Control 
 		implements MouseListener, MouseMotionListener, KeyListener
 {
-	// TODO: Add fields to help calculate mouse movement
+	// Fields to help calculate mouse movement
 	private int Xbegin;
 	private int Ybegin;
 	private int Xdragged;
 	private int Ydragged;
 	private int dx;
 	private int dy;
-	boolean moveplayer = false; //werd gebruikt voor mouseMoved, maar dit werkt nog niet goed.
+	boolean gamepaused = false; 			//used for game pausing
 	
 	
 	
@@ -103,7 +105,7 @@ public class UserInput extends Control
 		// Set forward, back, left and right to corresponding key presses
 		
 		char key = event.getKeyChar();
-		//System.out.println("toets " + key);
+		System.out.println("toets " + key);
 		
 		if(key == 'w'){
 			Control.forward = true;
@@ -121,10 +123,11 @@ public class UserInput extends Control
 		
 		//pause the game
 		if(key == 'p'){
-			if(moveplayer == false)
-				moveplayer = true;
+			if(gamepaused == false)
+				gamepaused = true;
+			
 			else
-				moveplayer = false;
+				gamepaused = false;
 		}
 		
 		//turn on or of GOD mode
@@ -135,7 +138,10 @@ public class UserInput extends Control
 				MazeRunner.GOD_MODE = false;
 		}
 		
-
+		//open main menu
+		if(key == (KeyEvent.VK_ESCAPE)){
+			new StateMainMenu(GameDriver.getCanvas(), false);
+		}
 		
 	}
 
