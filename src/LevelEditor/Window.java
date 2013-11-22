@@ -4,12 +4,12 @@ import javax.media.opengl.GL;
 
 public class Window {
 
-	protected float x;
-	protected float y;
-	protected float sizeX;
-	protected float sizeY;
-	protected int screenWidth, screenHeight;
-	protected float[] originalSizes;
+	private float x;
+	private float y;
+	private float sizeX;
+	private float sizeY;
+	private int screenWidth, screenHeight;
+	private float[] originalSizes;
 
 	public Window(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 
@@ -25,7 +25,7 @@ public class Window {
 			screenHeight = screenHeightFrame;
 
 			x = x_linksOnder / 800 * screenWidth;
-			y = (600 - y_rechtsOnder) / 600 * screenHeight;
+			y = y_rechtsOnder / 600 * screenHeight;
 			
 			sizeX = buttonSizeX / 800 * screenWidth;
 			sizeY = buttonSizeY / 600 * screenHeight;
