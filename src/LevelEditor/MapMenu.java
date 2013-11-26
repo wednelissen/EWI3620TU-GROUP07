@@ -1,5 +1,7 @@
 package LevelEditor;
 
+import java.awt.Point;
+
 import javax.media.opengl.GL;
 
 public class MapMenu extends Window {
@@ -150,7 +152,9 @@ public class MapMenu extends Window {
 		return null;
 	}
 	
-	public BuildingBlock getBuildingBlockByPosition(int x, int y){
+	public BuildingBlock getBuildingBlockByPosition(Point a){
+		int x = (int)a.getX();
+		int y = (int)a.getY();
 		return BuildingBlocks[x][y];
 	}
 	

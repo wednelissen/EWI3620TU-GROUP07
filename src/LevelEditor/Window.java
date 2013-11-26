@@ -16,16 +16,16 @@ public class Window {
 		if (sizes.length == 4) {
 
 			originalSizes = sizes;
-			float x_linksOnder = sizes[0];
-			float y_rechtsOnder = sizes[1];
+			float x_linksBoven = sizes[0];
+			float y_rechtsBoven = sizes[1];
 			float buttonSizeX = sizes[2];
 			float buttonSizeY = sizes[3];
 
 			screenWidth = screenWidthFrame;
 			screenHeight = screenHeightFrame;
 
-			x = x_linksOnder / 800 * screenWidth;
-			y = (600 - y_rechtsOnder) / 600 * screenHeight;
+			x = x_linksBoven / 800 * screenWidth;
+			y = (600 - y_rechtsBoven) / 600 * screenHeight;
 			
 			sizeX = buttonSizeX / 800 * screenWidth;
 			sizeY = buttonSizeY / 600 * screenHeight;
@@ -36,16 +36,16 @@ public class Window {
 
 	public void update(int screenWidthFrame, int screenHeightFrame) {
 
-		float x_linksOnder = originalSizes[0];
-		float y_rechtsOnder = originalSizes[1];
+		float x_linksBoven = originalSizes[0];
+		float y_rechtsBoven = originalSizes[1];
 		float buttonSizeX = originalSizes[2];
 		float buttonSizeY = originalSizes[3];
 
 		screenWidth = screenWidthFrame;
 		screenHeight = screenHeightFrame;
 
-		x = x_linksOnder / 800 * screenWidth;
-		y = (600 - y_rechtsOnder) / 600 * screenHeight;
+		x = x_linksBoven / 800 * screenWidth;
+		y = (600 - y_rechtsBoven) / 600 * screenHeight;
 		
 		sizeX = buttonSizeX / 800 * screenWidth;
 		sizeY = buttonSizeY / 600 * screenHeight;

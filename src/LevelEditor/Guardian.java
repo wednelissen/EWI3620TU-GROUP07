@@ -3,23 +3,90 @@ package LevelEditor;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class Guardian {
-	private Point beginPositie;
+public class Guardian extends Window{
 	private ArrayList<Point> route;
+	private int xPrevious, yPrevious;
 	
-	public Guardian(Point begin){
+	public Guardian(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
+		super(sizes, screenWidthFrame, screenHeightFrame); //er wordt een display positie geset maar niet meteen gebruikt.
 		route = new ArrayList<Point>();
-		beginPositie = begin;
 	}
 	
+	//hier wordt de werkelijke positie van een guard geset.
+	public void updatePosition(float[] sizes, int screenWidthFrame, int screenHeightFrame){
+		if (sizes.length == 4) {
+
+			originalSizes = sizes;
+			float x_linksOnder = sizes[0];
+			float y_rechtsOnder = sizes[1];
+			float buttonSizeX = sizes[2];
+			float buttonSizeY = sizes[3];
+
+			screenWidth = screenWidthFrame;
+			screenHeight = screenHeightFrame;
+
+			x = x_linksOnder / 800 * screenWidth;
+			y = (600 - y_rechtsOnder) / 600 * screenHeight;
+			
+			sizeX = buttonSizeX / 800 * screenWidth;
+			sizeY = buttonSizeY / 600 * screenHeight;
+		} else {
+			System.out.println("geen geldige lengte voor input");
+		}		
+		
+	}
+	
+	
+	//wanneer het punt in de route nog niet bestaat en deze verticaal of horizontaal 
+	//naast het vorige punt ligt wordt deze toegevoegd.
 	public void addRoute(Point a){
-		if(!route.contains(a)){
+		if(route.size()>0){
+			if(!route.contains(a)){
+				int xNew = (int)a.getX();
+				int yNew = (int)a.getY();
+				if((Math.abs(xPrevious - xNew) == 1) && (Math.abs(yPrevious - yNew) == 0) || (Math.abs(xPrevious - xNew) == 0) && (Math.abs(yPrevious - yNew) == 1)){
+					route.add(a);
+					xPrevious = xNew;
+					yPrevious = yNew;
+				}
+			}
+		}
+		else{
 			route.add(a);
+			xPrevious = (int)a.getX();
+			yPrevious = (int)a.getY();
+			
 		}
 	}
 	
-	public int size(){
+	//lengte van het aantal punten dat een bewaker afloopt.
+	public int routeSize(){
 		return route.size();
+	}
+	
+	//geeft alle punten die de bewaker afloopt
+	public ArrayList<Point> getAllRoutes(){
+		return route;
+	}
+	
+	//geeft 1 specifiek punt die een bewaker afloopt
+	public Point getRoute(int i){
+		if (route.size() > 0){
+			return route.get(i);	
+		}
+		else
+			return null;
+	}
+	
+	//verwijderd laatste punt en update ook de x en y previous.
+	public void removeLastPoint(){
+		if(route.size()>0){
+			int i = route.size();
+			route.remove(i-1);
+			Point a = route.get(i-2);
+			xPrevious = (int)a.getX();
+			yPrevious = (int)a.getY();
+		}
 	}
 }
 

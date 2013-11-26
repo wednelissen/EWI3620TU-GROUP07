@@ -55,7 +55,7 @@ public class LoadLevel {
 		return fileName;
 	}
 	
-	//deze moet nog even goed gemaakt worden zodat hij alles netjes in een multidimensionale int array laad.
+	//geeft een tweedimensionale int array die direct gebruikt kan worden door de mazerunner om te spelen.
 	public int[][] outputForMazeRunner(){
 		int[][] maze = new int[width][height];
 		for(int j = 0; j < height; j++){

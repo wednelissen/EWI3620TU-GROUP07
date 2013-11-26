@@ -1,17 +1,17 @@
 package LevelEditor;
 
+import java.awt.Point;
+
 import javax.media.opengl.GL;
 
 public class BuildingBlock extends Window{
-	private int positieX, positieY;
+	private Point positie = new Point();
 	private boolean wall = false, floor = true;
 	
 
 	public BuildingBlock(float[] sizes, int screenWidthFrame, int screenHeightFrame, int i, int j) {
 		super(sizes, screenWidthFrame, screenHeightFrame);
-		positieX = i;
-		positieY = j;
-		// TODO Auto-generated constructor stub
+		positie.setLocation(i, j);
 	}
 	
 	public void drawBlock(GL gl) {
@@ -23,6 +23,7 @@ public class BuildingBlock extends Window{
 		gl.glEnd();
 	}
 	
+	//tekent een kruisje in het vlak wanneer een bewaker langs deze route loopt.
 	public void drawGuardianPath(GL gl) {
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor3f(0.5f, 0f, 0f);
@@ -34,9 +35,8 @@ public class BuildingBlock extends Window{
 		gl.glEnd();
 	}	
 	
-	public int[] getPosition(){
-		int[] Positie = {positieX, positieY};
-		return Positie;
+	public Point getPosition(){
+		return positie;
 	}
 	
 	public void setWall(){

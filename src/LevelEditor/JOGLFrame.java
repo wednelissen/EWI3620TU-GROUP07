@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -13,6 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
 
 
 
@@ -54,23 +56,15 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	
 	private boolean mapCreated = false;
 
-//	private static final byte doNothing = 0;
-//	private static final byte mapClick = 1;
-//	private static final byte itemsClick = 2;
-//	private static final byte placedItemsClick = 3;
-//	private static final byte placedItemsPropertiesClick = 4;
-//	private static final byte setStartClick = 5;
-//	private static final byte setEndClick = 6;
-//	private static final byte setHeightClick = 7;
-//	private static final byte setWidthClick = 8;
-//	private static final byte saveClick = 9;
-//	private static final byte loadClick = 10;
-//	private byte Mode = doNothing;
 	ClickOptions Mode = ClickOptions.doNothing; 
 
 	//layout van de level editor
 	private float[] mapCoords = new float[] { 205, 5, 590, 550 };
 	private float[] itemCoords = new float[] { 5, 5, 195, 200 };
+	private float[] itemFloorCoords = new float[] { 5, 5, 97.5f, 100 };
+	private float[] itemWallCoords = new float[] { 102.5f, 5, 97.5f, 100 };
+	private float[] itemGuardianCoords = new float[] { 5, 105, 97.5f, 100 };
+	private float[] itemKeyCoords = new float[] { 102.5f, 105, 97.5f, 100 };
 	private float[] placedItemsCoords = new float[] { 5, 235, 195, 200 };
 	private float[] placedItemsPropertiesCoords = new float[] { 5, 440, 195, 155 };
 	private float[] setStartCoords = new float[] { 5, 210, 75, 20 };
@@ -83,7 +77,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	//define the windows
 	private MapMenu map = new MapMenu(mapCoords, screenWidth, screenHeight);
 	private Window items = new Window(itemCoords, screenWidth, screenHeight);
-	private Window placedItems = new Window(placedItemsCoords, screenWidth, screenHeight);
+	private PlacedItemsMenu placedItems = new PlacedItemsMenu(placedItemsCoords, screenWidth, screenHeight);
 	private Window placedItemsProperties = new Window(placedItemsPropertiesCoords, screenWidth, screenHeight);
 	
 	//define the buttons
@@ -93,7 +87,14 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Button setWidth = new Button(setWidthCoords, screenWidth, screenHeight);
 	private Button save = new Button(saveCoords, screenWidth, screenHeight);
 	private Button load = new Button(loadCoords, screenWidth, screenHeight);
+	private Button itemFloor = new Button(itemFloorCoords, screenWidth, screenHeight);
+	private Button itemWall = new Button(itemWallCoords, screenWidth, screenHeight);
+	private Button itemGuardian = new Button(itemGuardianCoords, screenWidth, screenHeight);
+	private Button itemKey = new Button(itemKeyCoords, screenWidth, screenHeight);
+	
 	private SaveInput StoreMaze;
+	//private GuardianList allGuards = new GuardianList(placedItemsCoords, screenWidth, screenHeight);
+	private Guardian Guard = new Guardian(itemCoords, screenWidth, screenHeight);
 
 	
 	/**
@@ -204,7 +205,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 
 		// Draw a figure based on the current draw mode and user input
 		
-		// check if map can be drawed
+		// check if map can be drawn
 		mapCreated = map.hasHeightAndWidth();
 
 		// Flush the OpenGL buffer, outputting the result to the screen.
@@ -219,47 +220,55 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private void drawWindows(GL gl) {
 		// Draw the background boxes
 
+		//als de breedte en lengte zijn ingegeven mogen de buildingBlocks worden getekent in de map.
 		if(mapCreated){
-		gl.glColor3f(0, 0.5f, 0f);
-		map.drawBlocks(gl);
+			gl.glColor3f(0, 0.5f, 0f);
+			map.drawBlocks(gl);
+			
+			//er worden kruisjes getekend in de blokjes waar de guard loopt.
+			if(Guard.routeSize()>0 && Mode == ClickOptions.guardian){
+				for(int i = 0; i <Guard.routeSize(); i++){
+					Point a = Guard.getRoute(i);
+					map.getBuildingBlockByPosition(a).drawGuardianPath(gl);			
+				}
+				
+			}
 		}
 		else{
 			map.draw(gl);
 		}
-		
+
+		//het item Menu word getekent met de items waarop geklikt kan worden
 		gl.glColor3f(0, 0.5f, 0f);
 		items.draw(gl);
+		itemFloor.draw(gl);
+		itemWall.draw(gl);
+		itemGuardian.draw(gl);
+		itemKey.draw(gl);
+		
 		
 		gl.glColor3f(0, 0.5f, 0f);
 		placedItems.draw(gl);
+		placedItems.drawItems(gl);
+		if(placedItems.guardSize() >0){
+			//System.out.println(placedItems.guardSize());
+		}
+		
+		
 		
 		gl.glColor3f(0, 0.5f, 0f);
-		placedItemsProperties.draw(gl);
+		if(Mode == ClickOptions.guardian){
+			placedItemsProperties.draw(gl);
+		}
 		
 		
 		//draw the clickable boxes
-		gl.glColor3f(0, 0.5f, 0f);
 		setStart.draw(gl);
-		
-		gl.glColor3f(0, 0.5f, 0f);
 		setEnd.draw(gl);
-		
-		gl.glColor3f(0, 0.5f, 0f);
 		setHeight.draw(gl);
-		
-		gl.glColor3f(0, 0.5f, 0f);
 		setWidth.draw(gl);
-		
-		gl.glColor3f(0, 0.5f, 0f);
 		save.draw(gl);
-		
-		gl.glColor3f(0, 0.5f, 0f);
 		load.draw(gl);
-		
-		
-
-		
-
 	}
 
 	@Override
@@ -291,6 +300,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		map.updateBlocks(screenWidth, screenHeight);
 		items.update(screenWidth, screenHeight);
 		placedItems.update(screenWidth, screenHeight);
+		placedItems.updateItems(screenWidth, screenHeight);
 		placedItemsProperties.update(screenWidth, screenHeight);
 		setStart.update(screenWidth, screenHeight);
 		setEnd.update(screenWidth, screenHeight);
@@ -298,6 +308,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		setWidth.update(screenWidth, screenHeight);
 		save.update(screenWidth, screenHeight);
 		load.update(screenWidth, screenHeight);
+		itemFloor.update(screenWidth, screenHeight);
+		itemWall.update(screenWidth, screenHeight);
+		itemGuardian.update(screenWidth, screenHeight);
+		itemKey.update(screenWidth, screenHeight);
 		
 		//debugging
 		
@@ -323,27 +337,63 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			System.out.println("er is in de map geklikt op een item");
 			if(map.BuildingBlocksExists()){
 				System.out.println("X: "+me.getX()+" Y: "+me.getY());
-				if(Mode == ClickOptions.items){
+				if(Mode == ClickOptions.wall){
 					//de wall wordt geset.
 					map.getClickedBuildingBlock(me.getX(), me.getY()).setWall();
 				}
-				if(Mode == ClickOptions.placedItems){
+				if(Mode == ClickOptions.floor){
 					//de wall wordt geset.
 					map.getClickedBuildingBlock(me.getX(), me.getY()).setFloor();
 				}
+				if(Mode == ClickOptions.guardian){
+					/**
+					kijkt of het geklikte vlakje een floor bevat en voegt dit punt toe aan de 
+					route lijst van de bewaker. Dit punt moet wel horizontaal of verticaal grenzen
+					aan het vorig aangeklikte punt waar de bewaker loopt. de bewaker mag niet schuin
+					 lopen
+					**/
+					BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+					if(temp.getFloor()){
+						Point tempPositie = temp.getPosition();
+						Guard.addRoute(tempPositie);
+					}
+				}
 				
+				//DEBUG
 				//hier word de posite van de opgevragen buildingBlock getoont.
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
-				int[] tempPositie = temp.getPosition();
-				System.out.println(tempPositie[0]+", "+tempPositie[1]);
+				Point tempPositie = temp.getPosition();
+				System.out.println(tempPositie.getX()+", "+tempPositie.getY());
+				System.out.println(tempPositie);
 				System.out.println("wall = "+temp.getWall() + " floor = "+ temp.getFloor());
 			}
 			else System.out.println("Vul een lengte en breedte in.");
 		
 			
 			
-		}else if(items.clickedOnIt(me.getX(), me.getY())){
-			Mode = ClickOptions.items;
+		}else if(itemFloor.clickedOnIt(me.getX(), me.getY())){
+			Mode = ClickOptions.floor;
+		}else if(itemWall.clickedOnIt(me.getX(), me.getY())){
+			Mode = ClickOptions.wall;
+		}else if(itemGuardian.clickedOnIt(me.getX(), me.getY())){
+			Mode = ClickOptions.guardian;
+			Guard = new Guardian(itemCoords, screenWidth, screenHeight);
+			
+		}else if(itemKey.clickedOnIt(me.getX(), me.getY())){
+			Mode = ClickOptions.key;
+			
+			//debug om te kijken welke route er in een guard is opgeslagen.
+			ArrayList<Point> temp = Guard.getAllRoutes();
+			int routesize = Guard.routeSize();
+			for(int i=0; i<routesize;i++ ){
+				System.out.println(temp.get(i));
+			}
+			
+			//de Guardian wordt opgeslagen in de Guardian List.
+			placedItems.addGuard(Guard);
+			//er wordt een lege Guardian aangemaakt.
+			Guard = new Guardian(itemCoords, screenWidth, screenHeight);
+			
 			
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.placedItems;
@@ -352,7 +402,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		}else if(placedItemsProperties.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.placedItemsProperties;
 		}else if(setStart.clickedOnIt(me.getX(), me.getY())){
-			Mode = ClickOptions.setStart;
+			//Mode = ClickOptions.setStart;
+			Guard.removeLastPoint();
 		}else if(setEnd.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.setEnd;
 		}else if(setHeight.clickedOnIt(me.getX(), me.getY())){
@@ -361,10 +412,11 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			Mode = ClickOptions.setWidth;
 		}else if(save.clickedOnIt(me.getX(), me.getY())){
 			//Mode = saveClick;
-			StoreMaze = new SaveInput(map);
-			StoreMaze.floorPlanMaze();
-			StoreMaze.write("level1");
+			StoreMaze = new SaveInput(map); //de gegenereerde map wordt opgeslagen
+			StoreMaze.floorPlanMaze();	//de map wordt vertaald naar enen en nullen
+			StoreMaze.write("level1"); // de map wordt weggeschereven naar een bestand.
 		}else if(load.clickedOnIt(me.getX(), me.getY())){
+			//het level moet ingeladen worden en nog gedisplayd
 			Mode = ClickOptions.load;
 			LoadLevel newlevel = new LoadLevel("level1");
 		}else{
