@@ -1,18 +1,24 @@
 package MazeRunner;
 
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 
+import java.awt.Toolkit;
 
 
 public class GameDriver implements KeyListener{
-
-
-	private static MazeRunner mazerunner;
+	
+	private boolean gamerunning = false;
+	private MazeRunner mazerunner;
 	private static GLCanvas canvas;
-	private static int screenWidth = 600, screenHeight = 600;		// Screen size.
+	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
 	
 	public GameDriver(){
 	}
@@ -26,6 +32,11 @@ public class GameDriver implements KeyListener{
 	}
 	
 	private static void initWindow(){
+		//Automatically detect screen resolution
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		screenWidth = (int) screenSize.getWidth();
+		screenHeight = (int) screenSize.getHeight();
+		
 		//Initializes a window with the specified dimensions
 		Window window = new Window(screenWidth,screenHeight);
 		// First, we set up JOGL. We start with the default settings.
@@ -57,7 +68,7 @@ public class GameDriver implements KeyListener{
 		
 		switch(code){
 		case KeyEvent.VK_ESCAPE:
-			System.out.println("exiting...");
+			//System.out.println("exiting...");
 			//System.exit(0);
 			break;
 		case KeyEvent.VK_P:
@@ -74,6 +85,5 @@ public class GameDriver implements KeyListener{
 	public static GLCanvas getCanvas(){
 		return GameDriver.canvas;
 	}
-	
 	
 }

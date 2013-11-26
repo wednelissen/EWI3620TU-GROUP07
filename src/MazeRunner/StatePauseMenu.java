@@ -15,7 +15,7 @@ import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 
-public class StateMainMenu implements GLEventListener, KeyListener, MouseListener{
+public class StatePauseMenu implements GLEventListener, KeyListener, MouseListener{
 	
 	private static GLCanvas canvas;
 	private boolean startup = false;
@@ -23,10 +23,10 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 	private int screenWidth, screenHeight;
 	
 	//layout van het hoofdmenu
-	private float[] buttonStartGameCoords = new float[] { 150, 100, 300, 100};
+	private float[] buttonResumeGameCoords = new float[] { 600, 100, 400, 100};
 	
 	//define buttons
-	private Button buttonStartGame = new Button(buttonStartGameCoords, screenWidth, screenHeight);
+	private Button buttonResumeGame = new Button(buttonResumeGameCoords, screenWidth, screenHeight);
 	
 	
 	/**
@@ -36,18 +36,17 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 	 * @param first: only set true if StateMainMenu is the first state to be called,
 	 *  directly after the canvas is created
 	 */
-	public StateMainMenu(GLCanvas canvas, boolean first){
-		StateMainMenu.canvas = canvas;
+	public StatePauseMenu(GLCanvas canvas){
+		StatePauseMenu.canvas = canvas;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
-		System.out.println("screenHeight: " + screenHeight);
 		canvas.addKeyListener(this);
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
-		System.out.println("Main menu loaded");
-		if(!first){
+		System.out.println("Pause menu loaded");
+		
 		startup = true;
-		}
+		
 	}
 	
 	@Override
@@ -65,7 +64,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 		// Draw the buttons.
 		gl.glColor3f(0, 0.5f, 0f);
-		buttonStartGame.draw(gl); 
+		buttonResumeGame.draw(gl); 
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 		
@@ -83,7 +82,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("Main menu init");
+		System.out.println("Pause menu init");
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -112,7 +111,10 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 		// We have a simple 2D application, so we do not need to check for depth
 		// when rendering.
-		gl.glDisable(GL.GL_DEPTH_TEST);		
+		gl.glDisable(GL.GL_DEPTH_TEST);
+		startup = false;
+		display(drawable);
+		
 	}
 
 
@@ -127,7 +129,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		screenHeight = height;
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 		
-		buttonStartGame.update(width, height);
+		buttonResumeGame.update(width, height);
 		
 		// Update the projection to an orthogonal projection using the new
 		// screen size
@@ -189,7 +191,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 	public void mouseReleased(MouseEvent me) {
 		int xclick = me.getX();
 		int yclick = me.getY();
-		if(buttonStartGame.clickedOnIt(xclick, yclick)){
+		if(buttonResumeGame.clickedOnIt(xclick, yclick)){
 			startGame();
 		}
 		

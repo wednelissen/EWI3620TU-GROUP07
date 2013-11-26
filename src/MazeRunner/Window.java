@@ -28,8 +28,9 @@ public class Window extends Frame {
 				System.exit(0); 
 			}
 		});
-		
+		this.setUndecorated(true);
 		setVisible(true);
+		
 	}
 	
 	public GLCanvas getCanvas(){

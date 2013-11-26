@@ -1,6 +1,6 @@
 package MazeRunner;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
@@ -63,6 +63,12 @@ public class MazeRunner implements GLEventListener {
 	
 		GOD_MODE = false;
 		this.canvas = canvas;
+		//Set invisible cursor
+		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+			    cursorImg, new Point(0, 0), "blank cursor");
+				canvas.setCursor(blankCursor);
+				
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
 		System.out.println("Screen:" + screenHeight);
@@ -128,6 +134,7 @@ public class MazeRunner implements GLEventListener {
 					player.getHorAngle(), player.getVerAngle() );
 
 			input = new UserInput(canvas);
+			input.setMazeRunner(this);
 			player.setControl(input);
 		
 	}
@@ -193,6 +200,7 @@ public class MazeRunner implements GLEventListener {
         	init(drawable);
         	startup = false;
         }
+        if(!gamepaused){
 		GL gl = drawable.getGL();
 		GLU glu = new GLU();
 		
@@ -220,9 +228,7 @@ public class MazeRunner implements GLEventListener {
         gl.glLoadIdentity();
         // Flush the OpenGL buffer.
         gl.glFlush();
-        
-
-        
+        }
 	}
 
 	
@@ -257,6 +263,17 @@ public class MazeRunner implements GLEventListener {
 		gl.glLoadIdentity();
 		glu.gluPerspective( 60, screenWidth/screenHeight, .1, 200 );
 		gl.glMatrixMode( GL.GL_MODELVIEW );
+		
+		try {
+			Robot robot = new Robot();
+			
+			robot.mouseMove(screenWidth/2,screenHeight/2);
+			
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		canvas.requestFocus();
 	}
 
 /*
@@ -324,12 +341,10 @@ public class MazeRunner implements GLEventListener {
 	
 	public boolean pauseSwitch(){
 		if(!gamepaused && gameinitialized){
-		anim.stop();
 		gamepaused = true;
 		return true;
 		}
 		else if(gamepaused && gameinitialized){
-			anim.start();
 			gamepaused = false;
 			return true;
 		}

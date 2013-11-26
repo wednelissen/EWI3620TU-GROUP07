@@ -1,4 +1,6 @@
 package MazeRunner;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.*;
 
 import javax.media.opengl.GLCanvas;
@@ -31,8 +33,9 @@ public class UserInput extends Control
 	private int Ydragged;
 	private int dx;
 	private int dy;
+	private GLCanvas canvas;
 	boolean gamepaused = false; 			//used for game pausing
-	
+	private MazeRunner mazerunner;
 	
 	
 	/**
@@ -48,6 +51,7 @@ public class UserInput extends Control
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
 		canvas.addKeyListener(this);
+		this.canvas = canvas;
 	}
 	
 	/*
@@ -77,8 +81,8 @@ public class UserInput extends Control
 	public void mousePressed(MouseEvent event)
 	{
 		// TODO: Detect the location where the mouse has been pressed
-		Xbegin = event.getX();
-		Ybegin = event.getY();
+//		Xbegin = event.getX();
+//		Ybegin = event.getY();
 		//System.out.println("start punt: " + Xbegin + " " + Ybegin);
 		//System.out.println("god mode aan: " + MazeRunner.GOD_MODE);
 	}
@@ -86,16 +90,16 @@ public class UserInput extends Control
 	@Override
 	public void mouseDragged(MouseEvent event)
 	{		
-		// TODO: Detect mouse movement while the mouse button is down
-		Xdragged = event.getX();
-		Ydragged = event.getY();
-		
-		dx = Xbegin - Xdragged;
-		dy = Ybegin - Ydragged;
-		
-		Xbegin = Xdragged;
-		Ybegin = Ydragged;
-		
+		// NIET MEER NODIG
+//		Xdragged = event.getX();
+//		Ydragged = event.getY();
+//		
+//		dx = Xbegin - Xdragged;
+//		dy = Ybegin - Ydragged;
+//		
+//		Xbegin = Xdragged;
+//		Ybegin = Ydragged;
+//		
 		//System.out.println("dx: " + dx + " dy: " + dy);
 	}
 
@@ -105,7 +109,7 @@ public class UserInput extends Control
 		// Set forward, back, left and right to corresponding key presses
 		
 		char key = event.getKeyChar();
-		System.out.println("toets " + key);
+//		System.out.println("toets " + key);
 		
 		if(key == 'w'){
 			Control.forward = true;
@@ -123,11 +127,7 @@ public class UserInput extends Control
 		
 		//pause the game
 		if(key == 'p'){
-			if(gamepaused == false)
-				gamepaused = true;
-			
-			else
-				gamepaused = false;
+			mazerunner.pauseSwitch();
 		}
 		
 		//turn on or of GOD mode
@@ -140,7 +140,12 @@ public class UserInput extends Control
 		
 		//open main menu
 		if(key == (KeyEvent.VK_ESCAPE)){
-			new StateMainMenu(GameDriver.getCanvas(), false);
+			canvas.removeMouseListener(this);
+			canvas.removeMouseMotionListener(this);
+			canvas.removeKeyListener(this);
+			new StatePauseMenu(canvas);
+			canvas.setCursor(null);
+			
 		}
 		
 	}
@@ -174,20 +179,39 @@ public class UserInput extends Control
 	@Override
 	public void mouseMoved(MouseEvent event)
 	{
-		//werkt nog niet want de muis kan uit het scherm worden gesleept.
-		/*
-		if(moveplayer){
+				
+		boolean roboMouse = false;
+			Xbegin = 100;
+			Ybegin = 100;
+			//System.out.println(Xbegin + "," + Ybegin);
 			
 			Xdragged = event.getX();
 			Ydragged = event.getY();
-			
+			if(!roboMouse){
 			dx = Xbegin - Xdragged;
 			dy = Ybegin - Ydragged;
 			
-			Xbegin = Xdragged;
-			Ybegin = Ydragged;
-		}
-		*/
+			System.out.println("Xbegin: " + Xbegin + " Ybegin: " + Ybegin + " Xdragged,Ydragged: " +  Xdragged + "," + Ydragged);
+			}
+			try {
+				Robot robot = new Robot();
+				roboMouse = true;
+				robot.mouseMove(Xbegin,Ybegin);
+				roboMouse = false;
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//Xbegin = Xdragged;
+			//Ybegin = Ydragged;
+		
+		
+	}
+	
+	public void setMazeRunner(MazeRunner mazerunner){
+		this.mazerunner = mazerunner;
+		
 	}
 
 	@Override
