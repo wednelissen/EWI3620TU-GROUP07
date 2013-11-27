@@ -37,6 +37,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	 */
 	public StatePauseMenu(GLCanvas canvas, MazeRunner mazerunner){
 		StatePauseMenu.canvas = canvas;
+		canvas.setCursor(null);
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
 		canvas.addKeyListener(this);

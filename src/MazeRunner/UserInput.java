@@ -139,9 +139,7 @@ public class UserInput extends Control
 			System.out.println("Open Pause menu");
 			canvas.removeGLEventListener(mazerunner);
 			canvas.removeKeyListener(this);
-			new StatePauseMenu(canvas, this.mazerunner);
-			canvas.setCursor(null);
-			
+			new StatePauseMenu(canvas, this.mazerunner);			
 		}
 		
 	}

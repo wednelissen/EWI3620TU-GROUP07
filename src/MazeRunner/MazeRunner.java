@@ -63,11 +63,7 @@ public class MazeRunner implements GLEventListener {
 	
 		GOD_MODE = false;
 		this.canvas = canvas;
-		//Set invisible cursor
-		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-			    cursorImg, new Point(0, 0), "blank cursor");
-				canvas.setCursor(blankCursor);
+		
 				
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
@@ -184,6 +180,12 @@ public class MazeRunner implements GLEventListener {
         
         // Set the shading model.
         gl.glShadeModel( GL.GL_SMOOTH );
+        
+      //Set invisible cursor
+      		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+      		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+      			    cursorImg, new Point(0, 0), "blank cursor");
+      				canvas.setCursor(blankCursor);
 	}
 	
 	/**
