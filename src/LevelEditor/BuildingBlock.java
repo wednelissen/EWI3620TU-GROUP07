@@ -26,12 +26,10 @@ public class BuildingBlock extends Window{
 	//tekent een kruisje in het vlak wanneer een bewaker langs deze route loopt.
 	public void drawGuardianPath(GL gl) {
 		gl.glBegin(GL.GL_LINES);
-		gl.glColor3f(0.5f, 0f, 0f);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + sizeX, y - sizeY);
 		gl.glVertex2f(x + sizeX, y);
 		gl.glVertex2f(x, y - sizeY);
-		gl.glColor3f(0f, 0.5f, 0f);
 		gl.glEnd();
 	}	
 	

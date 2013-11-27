@@ -67,12 +67,7 @@ public class GameDriver implements KeyListener{
 		int code = event.getKeyCode();
 		
 		switch(code){
-		case KeyEvent.VK_ESCAPE:
-			//System.out.println("exiting...");
-			//System.exit(0);
-			break;
-		case KeyEvent.VK_P:
-			
+		
 		}
 	}	
 

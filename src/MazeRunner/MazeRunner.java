@@ -341,11 +341,21 @@ public class MazeRunner implements GLEventListener {
 	
 	public boolean pauseSwitch(){
 		if(!gamepaused && gameinitialized){
-		gamepaused = true;
+			canvas.removeMouseListener(input);
+			canvas.removeMouseMotionListener(input);
+			//canvas.removeKeyListener(input);
+			gamepaused = true;
+			canvas.removeGLEventListener(this);
 		return true;
 		}
 		else if(gamepaused && gameinitialized){
+			System.out.println("Mazerunner resume called");
+			canvas.addMouseListener(input);
+			canvas.addMouseMotionListener(input);
+			canvas.addKeyListener(input);
 			gamepaused = false;
+			canvas.addGLEventListener(this);
+			startup = true;
 			return true;
 		}
 		return false;

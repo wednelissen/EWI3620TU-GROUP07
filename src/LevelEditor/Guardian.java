@@ -12,6 +12,15 @@ public class Guardian extends Window{
 		route = new ArrayList<Point>();
 	}
 	
+	//copy constuctor
+//	public Guardian(Guardian another, float[] sizes, int screenWidthFrame, int screenHeightFrame){
+//		super(sizes, screenWidthFrame, screenHeightFrame); //er wordt een display positie geset maar niet meteen gebruikt.
+//		this.route = another.getAllRoutes();
+//		this.xPrevious = another.geXprevious();
+//		this.yPrevious = another.geYprevious();
+//	}
+	
+	
 	//hier wordt de werkelijke positie van een guard geset.
 	public void updatePosition(float[] sizes, int screenWidthFrame, int screenHeightFrame){
 		if (sizes.length == 4) {
@@ -59,14 +68,24 @@ public class Guardian extends Window{
 		}
 	}
 	
+	public void setTotalRoute(ArrayList<Point> newRoute, int x, int y){
+		route = newRoute;
+		xPrevious = x;
+		yPrevious = y;
+		
+	}
 	//lengte van het aantal punten dat een bewaker afloopt.
 	public int routeSize(){
 		return route.size();
 	}
 	
 	//geeft alle punten die de bewaker afloopt
-	public ArrayList<Point> getAllRoutes(){
-		return route;
+	public ArrayList<Point> getCopyRoutes(){
+		ArrayList<Point> newRoute = new ArrayList<Point>();
+		for(Point p: route){
+			newRoute.add(p);
+		}
+		return newRoute;
 	}
 	
 	//geeft 1 specifiek punt die een bewaker afloopt
@@ -78,14 +97,24 @@ public class Guardian extends Window{
 			return null;
 	}
 	
+	public int geXprevious(){
+		return xPrevious;
+	}
+	
+	public int geYprevious(){
+		return yPrevious;
+	}
+	
 	//verwijderd laatste punt en update ook de x en y previous.
 	public void removeLastPoint(){
 		if(route.size()>0){
 			int i = route.size();
 			route.remove(i-1);
-			Point a = route.get(i-2);
-			xPrevious = (int)a.getX();
-			yPrevious = (int)a.getY();
+			if(route.size() != 0){
+				Point a = route.get(i-2);
+				xPrevious = (int)a.getX();
+				yPrevious = (int)a.getY();
+			}
 		}
 	}
 }

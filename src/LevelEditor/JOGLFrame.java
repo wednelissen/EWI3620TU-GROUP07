@@ -41,10 +41,30 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- * A frame for us to draw on using OpenGL.
+ *TO DO:
+ *
+ *GUARDS:
+ *verwijderen van guards
+ *alle guards in het level weergeven met een knop. hier is plek voor bij de itemplacedproperties
+ *wanneer een guard is geplaatst kan er geen muur worden geplaatst.
+ *
+ *KEYS:
+ *key moet nog helemaal worden geimplementeerd, dit lijkt erg sterk op guards
+ *
+ *DOORS:
+ *er moeten deuren kunnen worden geplaatst in het level waar 1 of meerdere sleutels aan is gekoppeld.
+ *
+ *CAMERA'S:
+ *camera's moet nog helemaal worden geimplementeerd
+ *
+ *LEVEL:
+ *een popup window voor de hoogte
+ *een popup window voor sava om een naam in te geven en op te slaan
+ *een lijst met levels die je kunt spelen.
+ *het inladen van een saved level om verder te bewerken in de editor.
  * 
- * @author Kang extends JFrame implements ActionListener{
- */
+ **/
+
 public class JOGLFrame extends Frame implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
 	static final long serialVersionUID = 7526471155622776147L;
 
@@ -55,18 +75,28 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private GLCanvas canvas;
 	
 	private boolean mapCreated = false;
+	private boolean AllGuardsOnOff = false;
 
 	ClickOptions Mode = ClickOptions.doNothing; 
 
 	//layout van de level editor
 	private float[] mapCoords = new float[] { 205, 5, 590, 550 };
+	
 	private float[] itemCoords = new float[] { 5, 5, 195, 200 };
 	private float[] itemFloorCoords = new float[] { 5, 5, 97.5f, 100 };
 	private float[] itemWallCoords = new float[] { 102.5f, 5, 97.5f, 100 };
 	private float[] itemGuardianCoords = new float[] { 5, 105, 97.5f, 100 };
 	private float[] itemKeyCoords = new float[] { 102.5f, 105, 97.5f, 100 };
+	
 	private float[] placedItemsCoords = new float[] { 5, 235, 195, 200 };
+	
 	private float[] placedItemsPropertiesCoords = new float[] { 5, 440, 195, 155 };
+	private float[] addGuardOrKeyCoords = new float[] { 5, 440, 97.5f, 77.5f };
+	private float[] removeGuardOrKeyCoords = new float[] { 102.5f, 440, 97.5f, 77.5f };
+	private float[] removeLastPointGuardCoords = new float[] { 5, 517.5f, 97.5f, 77.5f };
+	private float[] showAllGuardsCoords = new float[] { 102.5f, 517.5f, 97.5f, 77.5f };
+
+	
 	private float[] setStartCoords = new float[] { 5, 210, 75, 20 };
 	private float[] setEndCoords = new float[] { 125, 210, 75, 20 };
 	private float[] setHeightCoords = new float[] { 205, 565, 75, 20 };
@@ -92,9 +122,22 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Button itemGuardian = new Button(itemGuardianCoords, screenWidth, screenHeight);
 	private Button itemKey = new Button(itemKeyCoords, screenWidth, screenHeight);
 	
+	private Button addGuardOrKey = new Button(addGuardOrKeyCoords, screenWidth, screenHeight);
+	private Button removeGuardOrKey = new Button(removeGuardOrKeyCoords, screenWidth, screenHeight);
+	private Button removeLastPointGuard = new Button(removeLastPointGuardCoords, screenWidth, screenHeight);
+	private Button showAllGuards = new Button(showAllGuardsCoords, screenWidth, screenHeight);
+	
+	/**
+	addGuardOrKey 
+	removeGuardOrKey 
+	removeLastPointGuard 
+	 **/
+	
 	private SaveInput StoreMaze;
 	//private GuardianList allGuards = new GuardianList(placedItemsCoords, screenWidth, screenHeight);
-	private Guardian Guard = new Guardian(itemCoords, screenWidth, screenHeight);
+	private Guardian guard = new Guardian(itemCoords, screenWidth, screenHeight);
+	private Key key = new Key(itemCoords, screenWidth, screenHeight);
+	
 
 	
 	/**
@@ -222,17 +265,34 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 
 		//als de breedte en lengte zijn ingegeven mogen de buildingBlocks worden getekent in de map.
 		if(mapCreated){
-			gl.glColor3f(0, 0.5f, 0f);
+			gl.glColor3f(0f, 0.5f, 0f);
 			map.drawBlocks(gl);
 			
-			//er worden kruisjes getekend in de blokjes waar de guard loopt.
-			if(Guard.routeSize()>0 && Mode == ClickOptions.guardian){
-				for(int i = 0; i <Guard.routeSize(); i++){
-					Point a = Guard.getRoute(i);
+			//alle guards zullen worden getekent met blauwe blokjes. 
+			//indien je 1 specifieke guard hebt geselecteerd word deze met rode blokjes getekent
+			if(AllGuardsOnOff){
+				gl.glColor3f(0f, 0f, 0.5f);
+				for(Guardian g: placedItems.getAllGuards()){
+					for(int i = 0; i <g.routeSize(); i++){
+						Point a = g.getRoute(i);
+						map.getBuildingBlockByPosition(a).drawGuardianPath(gl);			
+					}
+				}
+			}
+			
+			//er worden rode kruisjes getekend in de blokjes waar de guard loopt. 
+			//dit geld alleen voor deze ene geselecteerde guard.
+			if(guard.routeSize()>0 && Mode == ClickOptions.guardian){
+				gl.glColor3f(0.5f, 0, 0f);
+				for(int i = 0; i <guard.routeSize(); i++){
+					Point a = guard.getRoute(i);
 					map.getBuildingBlockByPosition(a).drawGuardianPath(gl);			
 				}
 				
 			}
+
+			
+			gl.glColor3f(0,0.5f, 0f);
 		}
 		else{
 			map.draw(gl);
@@ -259,6 +319,16 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		gl.glColor3f(0, 0.5f, 0f);
 		if(Mode == ClickOptions.guardian){
 			placedItemsProperties.draw(gl);
+			addGuardOrKey.draw(gl); 
+			removeGuardOrKey.draw(gl);  
+			removeLastPointGuard.draw(gl); 
+			showAllGuards.draw(gl); 
+		}
+		
+		if(Mode == ClickOptions.key){
+			placedItemsProperties.draw(gl);
+			addGuardOrKey.draw(gl); 
+			removeGuardOrKey.draw(gl);  
 		}
 		
 		
@@ -312,6 +382,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		itemWall.update(screenWidth, screenHeight);
 		itemGuardian.update(screenWidth, screenHeight);
 		itemKey.update(screenWidth, screenHeight);
+		addGuardOrKey.update(screenWidth, screenHeight);
+		removeGuardOrKey.update(screenWidth, screenHeight); 
+		removeLastPointGuard.update(screenWidth, screenHeight);
+		showAllGuards.update(screenWidth, screenHeight);
 		
 		//debugging
 		
@@ -334,42 +408,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// check of op 1 van de buttons is gedrukt.
 		
 		if(map.clickedOnIt(me.getX(), me.getY())){
-			System.out.println("er is in de map geklikt op een item");
-			if(map.BuildingBlocksExists()){
-				System.out.println("X: "+me.getX()+" Y: "+me.getY());
-				if(Mode == ClickOptions.wall){
-					//de wall wordt geset.
-					map.getClickedBuildingBlock(me.getX(), me.getY()).setWall();
-				}
-				if(Mode == ClickOptions.floor){
-					//de wall wordt geset.
-					map.getClickedBuildingBlock(me.getX(), me.getY()).setFloor();
-				}
-				if(Mode == ClickOptions.guardian){
-					/**
-					kijkt of het geklikte vlakje een floor bevat en voegt dit punt toe aan de 
-					route lijst van de bewaker. Dit punt moet wel horizontaal of verticaal grenzen
-					aan het vorig aangeklikte punt waar de bewaker loopt. de bewaker mag niet schuin
-					 lopen
-					**/
-					BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
-					if(temp.getFloor()){
-						Point tempPositie = temp.getPosition();
-						Guard.addRoute(tempPositie);
-					}
-				}
-				
-				//DEBUG
-				//hier word de posite van de opgevragen buildingBlock getoont.
-				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
-				Point tempPositie = temp.getPosition();
-				System.out.println(tempPositie.getX()+", "+tempPositie.getY());
-				System.out.println(tempPositie);
-				System.out.println("wall = "+temp.getWall() + " floor = "+ temp.getFloor());
-			}
-			else System.out.println("Vul een lengte en breedte in.");
-		
-			
+			mapClickHandler(me);			
 			
 		}else if(itemFloor.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.floor;
@@ -377,33 +416,28 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			Mode = ClickOptions.wall;
 		}else if(itemGuardian.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.guardian;
-			Guard = new Guardian(itemCoords, screenWidth, screenHeight);
+			guard = new Guardian(itemCoords, screenWidth, screenHeight);
 			
 		}else if(itemKey.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.key;
-			
-			//debug om te kijken welke route er in een guard is opgeslagen.
-			ArrayList<Point> temp = Guard.getAllRoutes();
-			int routesize = Guard.routeSize();
-			for(int i=0; i<routesize;i++ ){
-				System.out.println(temp.get(i));
-			}
-			
-			//de Guardian wordt opgeslagen in de Guardian List.
-			placedItems.addGuard(Guard);
-			//er wordt een lege Guardian aangemaakt.
-			Guard = new Guardian(itemCoords, screenWidth, screenHeight);
-			
+		
 			
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.placedItems;
-			//doordat de positie van de buildingblokken kunnen worden opgevraagd kan zo het blok worden terug gevonden.
+			if(placedItems.typeIsGuardian(me.getX(), me.getY())){
+				guard = placedItems.getClickedGuardian(me.getX(), me.getY());
+				Mode = ClickOptions.guardian;
+			}
+			if(placedItems.typeIsKey(me.getX(), me.getY())){
+				key = placedItems.getClickedKey(me.getX(), me.getY());
+				Mode = ClickOptions.key;
+			}
 			
 		}else if(placedItemsProperties.clickedOnIt(me.getX(), me.getY())){
-			Mode = ClickOptions.placedItemsProperties;
+			PlacedItemsPropertiesClickHandler(me);
+			
 		}else if(setStart.clickedOnIt(me.getX(), me.getY())){
-			//Mode = ClickOptions.setStart;
-			Guard.removeLastPoint();
+			Mode = ClickOptions.setStart;
 		}else if(setEnd.clickedOnIt(me.getX(), me.getY())){
 			Mode = ClickOptions.setEnd;
 		}else if(setHeight.clickedOnIt(me.getX(), me.getY())){
@@ -412,8 +446,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			Mode = ClickOptions.setWidth;
 		}else if(save.clickedOnIt(me.getX(), me.getY())){
 			//Mode = saveClick;
-			StoreMaze = new SaveInput(map); //de gegenereerde map wordt opgeslagen
+			StoreMaze = new SaveInput(map, placedItems); //de gegenereerde map wordt opgeslagen
 			StoreMaze.floorPlanMaze();	//de map wordt vertaald naar enen en nullen
+			StoreMaze.GuardsPlan();		//de bewakers worden weggeschreven
 			StoreMaze.write("level1"); // de map wordt weggeschereven naar een bestand.
 		}else if(load.clickedOnIt(me.getX(), me.getY())){
 			//het level moet ingeladen worden en nog gedisplayd
@@ -427,6 +462,86 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		}
 
 
+	}
+
+	private void mapClickHandler(MouseEvent me) {
+		System.out.println("er is in de map geklikt op een item");
+		if(map.BuildingBlocksExists()){
+			System.out.println("X: "+me.getX()+" Y: "+me.getY());
+			if(Mode == ClickOptions.wall){
+				//de wall wordt geset.
+				map.getClickedBuildingBlock(me.getX(), me.getY()).setWall();
+			}
+			if(Mode == ClickOptions.floor){
+				//de wall wordt geset.
+				map.getClickedBuildingBlock(me.getX(), me.getY()).setFloor();
+			}
+			if(Mode == ClickOptions.guardian){
+				/**
+				kijkt of het geklikte vlakje een floor bevat en voegt dit punt toe aan de 
+				route lijst van de bewaker. Dit punt moet wel horizontaal of verticaal grenzen
+				aan het vorig aangeklikte punt waar de bewaker loopt. de bewaker mag niet schuin
+				 lopen
+				**/
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				if(temp.getFloor()){
+					Point tempPositie = temp.getPosition();
+					guard.addRoute(tempPositie);
+				}
+			}
+			
+			//DEBUG
+			//hier word de posite van de opgevragen buildingBlock getoont.
+			BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+			Point tempPositie = temp.getPosition();
+			System.out.println(tempPositie.getX()+", "+tempPositie.getY());
+			System.out.println(tempPositie);
+			System.out.println("wall = "+temp.getWall() + " floor = "+ temp.getFloor());
+		}
+		else System.out.println("Vul een lengte en breedte in.");
+	}
+
+	private void PlacedItemsPropertiesClickHandler(MouseEvent me) {
+		//Mode = ClickOptions.placedItemsProperties;
+		//Guard --> add guard, remove guard, remove last point, show all guards
+		//Key --> add key, remove key, (change door)
+		
+		if(Mode == ClickOptions.guardian){
+			if(addGuardOrKey.clickedOnIt(me.getX(), me.getY())){		
+				//de Guardian wordt opgeslagen in de Guardian List.
+				Guardian copyGuard = new Guardian(itemCoords, screenWidth, screenHeight);	
+				copyGuard.setTotalRoute(guard.getCopyRoutes(),guard.geXprevious(), guard.geYprevious());
+				placedItems.addGuard(copyGuard);
+				//er wordt een lege Guardian aangemaakt.
+				guard = new Guardian(itemCoords, screenWidth, screenHeight);
+			}
+			if(removeGuardOrKey.clickedOnIt(me.getX(), me.getY())){
+				placedItems.removeGuard(guard);
+				//er wordt een lege Guardian aangemaakt.
+				guard = new Guardian(itemCoords, screenWidth, screenHeight);
+			}
+			if(removeLastPointGuard.clickedOnIt(me.getX(), me.getY())){
+				guard.removeLastPoint();
+			}
+			if(showAllGuards.clickedOnIt(me.getX(), me.getY())){
+				System.out.println("laat maar zien");
+				if(!AllGuardsOnOff){
+					AllGuardsOnOff = true;
+				}else{
+					AllGuardsOnOff = false;
+					}
+			}
+			 
+		} 
+		else if(Mode == ClickOptions.key){
+			if(addGuardOrKey.clickedOnIt(me.getX(), me.getY())){
+				placedItems.addKey(key);
+				key = new Key(itemCoords, screenWidth, screenHeight);
+			}
+			if(removeGuardOrKey.clickedOnIt(me.getX(), me.getY())){
+				System.out.println("Key wordt verwijderd");
+			}			 
+		}
 	}	
 	
 	@Override

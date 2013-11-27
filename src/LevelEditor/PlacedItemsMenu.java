@@ -29,22 +29,78 @@ public class PlacedItemsMenu extends Window{
 		}
 	}
 
-	
-	
-	
+	public void removeGuard(Guardian guard){
+		Guards.remove(guard);
+		setGuardAndKeySizes();
+		
+	}
 	public int guardSize(){
 		return Guards.size();
 	}
 	
-	//TO DO Keys moeten nog gedrawd worden!!!!!!!!!!! 
-	public void drawItems(GL gl){
-		int TotalGuards = Guards.size();
-		for(int i=0; i<TotalGuards; i++){
-			Guards.get(i).draw(gl);
-		}		
+	public ArrayList<Guardian> getAllGuards(){
+		return Guards;
 	}
 	
-	//TO DO Keys moeten nog geupdate worden!!!!!!!!!!! 
+	
+	public void addKey(Key key){
+		Keys.add(key);
+		//hier worden alle item posities opnieuw geset na het toevoegen van een guard of een key.	
+		setGuardAndKeySizes();
+	}
+	
+	public int keySize(){
+		return Keys.size();
+	}
+	
+	public boolean typeIsKey(int xclick, int yclick){
+		Key temp = this.getClickedKey(xclick,yclick);
+		if(temp == null){
+			return false;
+		}else
+			return true;
+	}
+	
+	public boolean typeIsGuardian(int xclick, int yclick){
+		Guardian temp = this.getClickedGuardian(xclick,yclick);
+		if(temp == null){
+			return false;
+		}else
+			return true;
+	}
+	
+	public Guardian getClickedGuardian(int xclick, int yclick){
+		int TotalGuards = Guards.size();
+		for(int i=0; i < TotalGuards; i++){	
+			if(Guards.get(i).clickedOnIt(xclick, yclick)){
+				return Guards.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public Key getClickedKey(int xclick, int yclick){
+		int TotalKeys= Keys.size();
+		for(int i=0; i < TotalKeys; i++){	
+			if(Keys.get(i).clickedOnIt(xclick, yclick)){
+				return Keys.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public void drawItems(GL gl){
+		int TotalGuards = Guards.size();
+		int TotalKeys= Keys.size();
+		for(int i=0; i<TotalGuards; i++){
+			Guards.get(i).draw(gl);
+		}	
+		
+		for(int i=0; i<TotalKeys; i++){
+			Keys.get(i).draw(gl);
+		}
+	}
+	
 	public void updateItems(int screenWidthFrame, int screenHeightFrame){
 		int TotalGuards = Guards.size();
 		int TotalKeys= Keys.size();
@@ -55,17 +111,6 @@ public class PlacedItemsMenu extends Window{
 			Keys.get(i).update(screenWidthFrame, screenHeightFrame);
 		}	
 	}
-	
-	/**
-	//wanneer het scherm reshaped, zullen ook de elementen in de map gereshaped worden
-	public void updateBlocks(int screenWidthFrame, int screenHeightFrame){
-		for(int j=0; j < TotalBuildingBlockY; j++){
-			for(int i=0; i < TotalBuildingBlockX; i++){
-				BuildingBlocks[i][j].update(screenWidthFrame, screenHeightFrame);	
-			}
-		}
-	}
-	**/
 	
 	
 	//alle item posities worden opnieuw geset.	
@@ -96,7 +141,6 @@ public class PlacedItemsMenu extends Window{
 				}
 				else if(teller >= TotalGuards){
 					System.out.println("Key: "+item_LinksBovenX+" , "+item_LinksBovenY+" , "+itemSizeX+" , " + itemSizeY);
-					System.out.println("update keys");
 				}
 				teller++;
 			}

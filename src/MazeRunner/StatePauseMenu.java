@@ -19,7 +19,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	
 	private static GLCanvas canvas;
 	private boolean startup = false;
-	
+	private MazeRunner mazerunner;
 	private int screenWidth, screenHeight;
 	
 	//layout van het hoofdmenu
@@ -31,12 +31,11 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	
 	/**
 	 * Constructor
-	 * Also calls init(), initializing the main menu on the given canvas (when first = false).
+	 * 	 
 	 * @param canvas
-	 * @param first: only set true if StateMainMenu is the first state to be called,
-	 *  directly after the canvas is created
+	 * @param mazerunner
 	 */
-	public StatePauseMenu(GLCanvas canvas){
+	public StatePauseMenu(GLCanvas canvas, MazeRunner mazerunner){
 		StatePauseMenu.canvas = canvas;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
@@ -46,7 +45,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		System.out.println("Pause menu loaded");
 		
 		startup = true;
-		
+		this.mazerunner = mazerunner;
 	}
 	
 	@Override
@@ -140,21 +139,25 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+	public void keyPressed(KeyEvent event) {
+		int code = event.getKeyCode();
+		
+		switch(code){
+		
+		case KeyEvent.VK_ESCAPE:
+			System.out.println("Return to game");
+			canvas.removeGLEventListener(this);
+			mazerunner.pauseSwitch();
+			canvas.removeMouseListener(this);
+			canvas.removeKeyListener(this);
+			break;
+		}
 		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		int code = event.getKeyCode();
 		
-		switch(code){
-		case KeyEvent.VK_1:
-			startGame();
-			
-			break;
-		}
 	}
 	
 	@Override
@@ -192,27 +195,8 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		int xclick = me.getX();
 		int yclick = me.getY();
 		if(buttonResumeGame.clickedOnIt(xclick, yclick)){
-			startGame();
+			
 		}
 		
 	}
-
-	private void startGame() {
-		canvas.removeGLEventListener(this);
-		canvas.removeKeyListener(this);
-		canvas.removeMouseListener(this);
-		
-		//Set mouse position to center of screen
-		try {
-			Robot robot = new Robot();
-			robot.mouseMove(100,100);
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		MazeRunner mazerunner = new MazeRunner(canvas);
-		
-		System.out.println("Game started");
-	}
-
 }

@@ -123,13 +123,7 @@ public class UserInput extends Control
 		if(key == 'd'){
 			Control.right = true;
 		}
-		
-		
-		//pause the game
-		if(key == 'p'){
-			mazerunner.pauseSwitch();
-		}
-		
+				
 		//turn on or of GOD mode
 		if(key == 'g'){
 			if(MazeRunner.GOD_MODE == false)
@@ -138,12 +132,14 @@ public class UserInput extends Control
 				MazeRunner.GOD_MODE = false;
 		}
 		
-		//open main menu
+		//open pause menu
 		if(key == (KeyEvent.VK_ESCAPE)){
-			canvas.removeMouseListener(this);
-			canvas.removeMouseMotionListener(this);
+			
+			gamepaused = mazerunner.pauseSwitch();
+			System.out.println("Open Pause menu");
+			canvas.removeGLEventListener(mazerunner);
 			canvas.removeKeyListener(this);
-			new StatePauseMenu(canvas);
+			new StatePauseMenu(canvas, this.mazerunner);
 			canvas.setCursor(null);
 			
 		}
