@@ -185,7 +185,7 @@ public class UserInput extends Control
 			dx = Xbegin - Xdragged;
 			dy = Ybegin - Ydragged;
 			
-			System.out.println("Xbegin: " + Xbegin + " Ybegin: " + Ybegin + " Xdragged,Ydragged: " +  Xdragged + "," + Ydragged);
+//			System.out.println("Xbegin: " + Xbegin + " Ybegin: " + Ybegin + " Xdragged,Ydragged: " +  Xdragged + "," + Ydragged);
 			}
 			try {
 				Robot robot = new Robot();
