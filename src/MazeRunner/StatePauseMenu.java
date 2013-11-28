@@ -152,8 +152,11 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 			canvas.removeMouseListener(this);
 			canvas.removeKeyListener(this);
 			break;
-		}
 		
+		case KeyEvent.VK_Q:
+			System.exit(0);
+			break;
+		}
 	}
 
 	@Override
