@@ -213,3 +213,5 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+lib/lib/gluegen-rt.jar
+lib/lib/jogl.jar
