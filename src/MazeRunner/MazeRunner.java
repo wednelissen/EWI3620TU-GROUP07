@@ -150,7 +150,7 @@ public class MazeRunner implements GLEventListener {
 	 * It is <b>very important</b> to realize that there should be no drawing at all in this method.
 	 */
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("init");
+		System.out.println("Mazerunner init");
 		drawable.setGL( new DebugGL(drawable.getGL() )); // We set the OpenGL pipeline to Debugging mode.
         GL gl = drawable.getGL();
         GLU glu = new GLU();
@@ -345,7 +345,7 @@ public class MazeRunner implements GLEventListener {
 		if(!gamepaused && gameinitialized){
 			canvas.removeMouseListener(input);
 			canvas.removeMouseMotionListener(input);
-			//canvas.removeKeyListener(input);
+			canvas.removeKeyListener(input);
 			gamepaused = true;
 			canvas.removeGLEventListener(this);
 		return true;

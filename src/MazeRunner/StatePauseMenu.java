@@ -148,9 +148,10 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		case KeyEvent.VK_ESCAPE:
 			System.out.println("Return to game");
 			canvas.removeGLEventListener(this);
-			mazerunner.pauseSwitch();
 			canvas.removeMouseListener(this);
 			canvas.removeKeyListener(this);
+			mazerunner.pauseSwitch();
+			
 			break;
 		
 		case KeyEvent.VK_Q:
