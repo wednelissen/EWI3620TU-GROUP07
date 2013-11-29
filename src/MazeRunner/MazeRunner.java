@@ -445,4 +445,8 @@ public class MazeRunner implements GLEventListener {
 			guards.add(res);
 		}
 	}
+
+	public void setWalkingSpeed(double speed){
+		player.setSpeed(speed);
+	}
 }
