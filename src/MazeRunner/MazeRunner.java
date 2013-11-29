@@ -45,14 +45,13 @@ public class MazeRunner implements GLEventListener {
 
 	/*
 	 * **********************************************
-	 * * Local variables * **********************************************
+	 * * Local variables 
+	 * **********************************************
 	 */
 	private GLCanvas canvas;
 	private LoadLevel newMaze = new LoadLevel("level1");
 	private int screenWidth, screenHeight; // Screen size.
-	private ArrayList<VisibleObject> visibleObjects; // A list of objects that
-														// will be displayed on
-														// screen.
+	private ArrayList<VisibleObject> visibleObjects; // A list of objects that will be displayed on screen.
 	private Player player; // The player object.
 	private Camera camera; // The camera object.
 	private UserInput input; // The user input object that controls the player.
@@ -60,21 +59,19 @@ public class MazeRunner implements GLEventListener {
 	private long previousTime = Calendar.getInstance().getTimeInMillis(); // Used
 
 	private ArrayList<Guardian> tempGuard = newMaze.getGuardians();
-	private ArrayList<Guard> guards = new ArrayList<Guard>(); // to
-	// calculate
-	// elapsed
-	// time.
+	private ArrayList<Guard> guards = new ArrayList<Guard>(); // to calculate elapsed time.
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
 
 	private boolean startup = true;
-	private GuardCamera guardcamera; // time.
+	private GuardCamera guardcamera;
 	private Guard guard;
 
 	/*
 	 * **********************************************
-	 * * Initialization methods * **********************************************
+	 * * Initialization methods 
+	 * **********************************************
 	 */
 	/**
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
@@ -102,21 +99,8 @@ public class MazeRunner implements GLEventListener {
 	 * Animator, which is part of the JOGL api.
 	 */
 	private void initJOGL() {
-
-		/*
-		 * We need to add a GLEventListener to interpret OpenGL events for us.
-		 * Since MazeRunner implements GLEventListener, this means that we add
-		 * the necessary init(), display(), displayChanged() and reshape()
-		 * methods to this class. These will be called when we are ready to
-		 * perform the OpenGL phases of MazeRunner.
-		 */
+		
 		canvas.addGLEventListener(this);
-
-		/*
-		 * We need to create an internal thread that instructs OpenGL to
-		 * continuously repaint itself. The Animator class handles that for
-		 * JOGL.
-		 */
 		anim = new Animator(canvas);
 		anim.start();
 	}
@@ -149,14 +133,13 @@ public class MazeRunner implements GLEventListener {
 		visibleObjects.add(maze);
 		for (Guard temp : guards) {
 			visibleObjects.add(temp);
-
 		}
 
 		// Initialize the player.
-		player = new Player(6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, // x-position
-				maze.SQUARE_SIZE / 2, // y-position
-				5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, // z-position
-				90, 0); // horizontal and vertical angle
+		player = new Player(6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// x-position
+				maze.SQUARE_SIZE / 2, 										// y-position
+				5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 				// z-position
+				90, 0); 													// horizontal and vertical angle
 
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
 				player.getLocationZ(), player.getHorAngle(),
@@ -168,12 +151,12 @@ public class MazeRunner implements GLEventListener {
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
 		player.setControl(input);
-
 	}
 
 	/*
 	 * **********************************************
-	 * * OpenGL event handlers * **********************************************
+	 * * OpenGL event handlers 
+	 * **********************************************
 	 */
 
 	/**
@@ -278,18 +261,6 @@ public class MazeRunner implements GLEventListener {
 	}
 
 	/**
-	 * displayChanged(GLAutoDrawable, boolean, boolean) is called upon whenever
-	 * the display mode changes.
-	 * <p>
-	 * Implemented through GLEventListener. Seeing as this does not happen very
-	 * often, we leave this unimplemented.
-	 */
-	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
-			boolean deviceChanged) {
-		// GL gl = drawable.getGL();
-	}
-
-	/**
 	 * reshape(GLAutoDrawable, int, int, int, int, int) is called upon whenever
 	 * the viewport changes shape, to update the viewport setting accordingly.
 	 * <p>
@@ -320,7 +291,6 @@ public class MazeRunner implements GLEventListener {
 			robot.mouseMove(screenWidth / 2, screenHeight / 2);
 
 		} catch (AWTException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		canvas.requestFocus();
@@ -328,7 +298,8 @@ public class MazeRunner implements GLEventListener {
 
 	/*
 	 * **********************************************
-	 * * Methods * **********************************************
+	 * * Methods 
+	 * **********************************************
 	 */
 
 	/**
@@ -344,60 +315,51 @@ public class MazeRunner implements GLEventListener {
 			temp.update(deltaTime);
 
 		}
-
 	}
 
 	private void playerWallChecker() {
+		int checkdistance = 3;
 		if (!GOD_MODE) {
 			if (maze.isWall(
-					player.getLocationX() + 2
+					player.getLocationX() + checkdistance
 							* -Math.sin(Math.PI * player.getHorAngle() / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ() + 2
+					player.getLocationZ() + checkdistance
 							* -Math.cos(Math.PI * player.getHorAngle() / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveForward(false);
 			}
 			// Check backward direction for obstacles
 			if (maze.isWall(
-					player.getLocationX() - 2
+					player.getLocationX() - checkdistance
 							* -Math.sin(Math.PI * player.getHorAngle() / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ() - 2
+					player.getLocationZ() - checkdistance
 							* -Math.cos(Math.PI * player.getHorAngle() / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveBack(false);
 			}
 			// Check left direction for obstacles
 			if (maze.isWall(
-					player.getLocationX()
-							+ 2
-							* -Math.sin(Math.PI * (player.getHorAngle() + 90)
-									/ 180)
+					player.getLocationX() + checkdistance
+							* -Math.sin(Math.PI * (player.getHorAngle() + 90) / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ()
-							+ 2
-							* -Math.cos(Math.PI * (player.getHorAngle() + 90)
-									/ 180)
+					player.getLocationZ() + checkdistance
+							* -Math.cos(Math.PI * (player.getHorAngle() + 90) / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveLeft(false);
 			}
 			// check right direction for obstacles
 			if (maze.isWall(
-					player.getLocationX()
-							- 2
-							* -Math.sin(Math.PI * (player.getHorAngle() + 90)
-									/ 180)
+					player.getLocationX() - checkdistance
+							* -Math.sin(Math.PI * (player.getHorAngle() + 90) / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ()
-							- 2
-							* -Math.cos(Math.PI * (player.getHorAngle() + 90)
-									/ 180)
+					player.getLocationZ() - checkdistance
+							* -Math.cos(Math.PI * (player.getHorAngle() + 90) / 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveRight(false);
 			}
 		}
-
 	}
 
 	/**
@@ -449,4 +411,20 @@ public class MazeRunner implements GLEventListener {
 	public void setWalkingSpeed(double speed){
 		player.setSpeed(speed);
 	}
+
+///////////////////////////////////////NOT USED////////////////////////////////////	
+	
+	/**
+	 * displayChanged(GLAutoDrawable, boolean, boolean) is called upon whenever
+	 * the display mode changes.
+	 * <p>
+	 * Implemented through GLEventListener. Seeing as this does not happen very
+	 * often, we leave this unimplemented.
+	 */
+	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
+			boolean deviceChanged) {
+	}
+
+
+
 }

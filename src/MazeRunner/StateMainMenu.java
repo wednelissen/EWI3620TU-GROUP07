@@ -5,14 +5,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import LevelEditor.Button;
-
-import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 
 public class StateMainMenu implements GLEventListener, KeyListener, MouseListener{

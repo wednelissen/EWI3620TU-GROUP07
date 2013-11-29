@@ -1,19 +1,12 @@
 package MazeRunner;
-import java.awt.AWTException;
-import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-
 import LevelEditor.Button;
-
-import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 
 public class StatePauseMenu implements GLEventListener, KeyListener, MouseListener{
