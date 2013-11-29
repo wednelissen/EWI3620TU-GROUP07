@@ -242,7 +242,11 @@ public class MazeRunner implements GLEventListener {
 		if (!gamepaused) {
 			GL gl = drawable.getGL();
 			GLU glu = new GLU();
-
+			
+			//ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
+			gl.glColor3f(1, 1, 1);
+			
+			
 			// Calculating time since last frame.
 			Calendar now = Calendar.getInstance();
 			long currentTime = now.getTimeInMillis();
