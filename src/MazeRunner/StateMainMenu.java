@@ -60,7 +60,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		GL gl = drawable.getGL();
 
 		// Set the clear color and clear the screen.
-		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
+		gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.

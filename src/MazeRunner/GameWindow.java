@@ -8,7 +8,7 @@ import java.awt.event.WindowEvent;
 import javax.media.opengl.GLCanvas;
 
 
-public class Window extends Frame {
+public class GameWindow extends Frame {
 
 	/**
 	 * 
@@ -16,7 +16,7 @@ public class Window extends Frame {
 	private static final long serialVersionUID = -5978973788071119247L;
 	private GLCanvas canvas;
 	
-	public Window(int screenWidth,int screenHeight) {
+	public GameWindow(int screenWidth,int screenHeight) {
 		
 		super("Spelletje");
 		setSize(screenWidth, screenHeight);

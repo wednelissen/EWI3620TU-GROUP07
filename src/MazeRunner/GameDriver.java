@@ -38,7 +38,7 @@ public class GameDriver implements KeyListener{
 		screenHeight = (int) screenSize.getHeight();
 		
 		//Initializes a window with the specified dimensions
-		Window window = new Window(screenWidth,screenHeight);
+		GameWindow window = new GameWindow(screenWidth,screenHeight);
 		// First, we set up JOGL. We start with the default settings.
 		GLCapabilities caps = new GLCapabilities();
 		// Then we make sure that JOGL is hardware accelerated and uses double buffering.
