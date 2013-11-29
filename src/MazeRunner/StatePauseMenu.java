@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import LevelEditor.Button;
 
@@ -23,13 +24,20 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	private int screenWidth, screenHeight;
 	
 	//layout van het hoofdmenu
-	private float[] buttonResumeGameCoords = new float[] { 200, 50, 400, 100};
-	private float[] buttonHighScoresCoords = new float[] { 200, 200, 400, 100};
-	private float[] buttonQuitCoords = new float[] {200, 500, 400, 100};
+	private float[] buttonResumeGameCoords = new float[] { 200, 25, 400, 75};
+	private float[] buttonMainMenuCoords = new float[] {200, 125, 400, 75};
+	private float[] buttonHighScoresCoords = new float[] { 200, 225, 400, 75};
+	private float[] buttonQuitCoords = new float[] {200, 325, 400, 75};
 	//define buttons
 	private Button buttonResumeGame = new Button(buttonResumeGameCoords, screenWidth, screenHeight);
+	private Button buttonMainMenu = new Button(buttonMainMenuCoords, screenWidth, screenHeight);
 	private Button buttonHighScores = new Button(buttonHighScoresCoords, screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
+	private Button[] buttonList = new Button[] {	buttonResumeGame,
+													buttonMainMenu,
+													buttonHighScores,
+													buttonQuit };
+
 	/**
 	 * Constructor
 	 * 	 
@@ -65,9 +73,11 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 
 		// Draw the buttons.
 		gl.glColor3f(0, 0.5f, 0f);
-		buttonResumeGame.draw(gl);
-		buttonHighScores.draw(gl);
-		buttonQuit.draw(gl);
+		
+		for(int i = 0; i< buttonList.length; i++){
+			buttonList[i].draw(gl);
+		};
+		
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 		
@@ -116,9 +126,9 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
 		startup = false;
-		buttonResumeGame.update(screenWidth, screenHeight);
-		buttonHighScores.update(screenWidth, screenHeight);
-		buttonQuit.update(screenWidth, screenHeight);
+		for(int i = 0; i< buttonList.length; i++){
+			buttonList[i].update(screenWidth,screenHeight);
+		};
 		display(drawable);
 		
 	}
@@ -135,7 +145,9 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		screenHeight = height;
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 		
-		buttonResumeGame.update(width, height);
+		for(int i = 0; i< buttonList.length; i++){
+			buttonList[i].update(screenWidth,screenHeight);
+		};
 		
 		// Update the projection to an orthogonal projection using the new
 		// screen size

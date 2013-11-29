@@ -86,21 +86,6 @@ public class UserInput extends Control implements MouseListener,
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent event) {
-		// NIET MEER NODIG
-		// Xdragged = event.getX();
-		// Ydragged = event.getY();
-		//
-		// dx = Xbegin - Xdragged;
-		// dy = Ybegin - Ydragged;
-		//
-		// Xbegin = Xdragged;
-		// Ybegin = Ydragged;
-		//
-		// System.out.println("dx: " + dx + " dy: " + dy);
-	}
-
-	@Override
 	public void keyPressed(KeyEvent event) {
 		// Set forward, back, left and right to corresponding key presses
 
@@ -166,11 +151,6 @@ public class UserInput extends Control implements MouseListener,
 		}
 	}
 
-	/*
-	 * **********************************************
-	 * * Unused event handlers * **********************************************
-	 */
-
 	@Override
 	public void mouseMoved(MouseEvent event) {
 
@@ -185,8 +165,6 @@ public class UserInput extends Control implements MouseListener,
 			dx = Xbegin - Xdragged;
 			dy = Ybegin - Ydragged;
 
-			// System.out.println("Xbegin: " + Xbegin + " Ybegin: " + Ybegin +
-			// " Xdragged,Ydragged: " + Xdragged + "," + Ydragged);
 		}
 		try {
 			Robot robot = new Robot();
@@ -198,16 +176,19 @@ public class UserInput extends Control implements MouseListener,
 			e.printStackTrace();
 		}
 
-		// Xbegin = Xdragged;
-		// Ybegin = Ydragged;
-
 	}
-
+	
 	public void setMazeRunner(MazeRunner mazerunner) {
 		this.mazerunner = mazerunner;
 
 	}
 
+	/*
+	 * **********************************************
+	 * * Unused event handlers 
+	 * **********************************************
+	 */
+	
 	@Override
 	public void keyTyped(KeyEvent event) {
 	}
@@ -228,4 +209,8 @@ public class UserInput extends Control implements MouseListener,
 	public void mouseReleased(MouseEvent event) {
 	}
 
+	@Override
+	public void mouseDragged(MouseEvent event) {
+		
+	}
 }
