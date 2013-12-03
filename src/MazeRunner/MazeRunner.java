@@ -310,15 +310,15 @@ public class MazeRunner implements GLEventListener {
 
 		// update locations
 		player.update(deltaTime);
-		playerWallChecker();
+		playerWallChecker(2);
 		for (Guard temp : guards) {
 			temp.update(deltaTime);
 
 		}
 	}
 
-	private void playerWallChecker() {
-		int checkdistance = 3;
+	private void playerWallChecker(int checkdistance) {
+
 		if (!GOD_MODE) {
 			if (maze.isWall(
 					player.getLocationX() + checkdistance
