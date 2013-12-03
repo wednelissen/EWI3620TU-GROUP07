@@ -169,9 +169,9 @@ public class Player extends GameObject {
 			if(verAngle <= -90){
 				verAngle = -89.99;
 			}
-			//System.out.println("horizon "+ horAngle + " verticla: " + verAngle);			
+			//System.out.println("horizon "+ horAngle + " vertical: " + verAngle);			
 			
-			// TODO: Move the player, according to control
+			
 			if(canMoveForward && control.getForward()){
 				locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180);
 				locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180);

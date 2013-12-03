@@ -12,14 +12,6 @@ public class Guardian extends Window{
 		route = new ArrayList<Point>();
 	}
 	
-	//copy constuctor
-//	public Guardian(Guardian another, float[] sizes, int screenWidthFrame, int screenHeightFrame){
-//		super(sizes, screenWidthFrame, screenHeightFrame); //er wordt een display positie geset maar niet meteen gebruikt.
-//		this.route = another.getAllRoutes();
-//		this.xPrevious = another.geXprevious();
-//		this.yPrevious = another.geYprevious();
-//	}
-	
 	
 	//hier wordt de werkelijke positie van een guard geset.
 	public void updatePosition(float[] sizes, int screenWidthFrame, int screenHeightFrame){

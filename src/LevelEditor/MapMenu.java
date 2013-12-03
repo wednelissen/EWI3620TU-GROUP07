@@ -125,6 +125,12 @@ public class MapMenu extends Window {
 				if(BuildingBlocks[i][j].getFloor()){
 					BuildingBlocks[i][j].draw(gl);
 				}
+				else if(BuildingBlocks[i][j].getDoor()){
+					gl.glColor3f(0.5f, 0.1f, 0f);
+					BuildingBlocks[i][j].drawBlock(gl);
+					gl.glColor3f(0.0f, 0, 0f);
+					
+				}
 				else{
 					BuildingBlocks[i][j].drawBlock(gl);
 				}
