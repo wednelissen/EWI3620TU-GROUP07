@@ -339,6 +339,7 @@ public class MazeRunner implements GLEventListener {
 		for (Guard temp : guards) {
 			temp.update(deltaTime);
 
+			temp.playerDetectie(player.locationX, player.locationZ);
 		}
 
 	}

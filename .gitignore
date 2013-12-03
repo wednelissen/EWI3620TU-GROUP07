@@ -182,6 +182,11 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 
+jogl.dll
+jogl_awt.dll
+jogl_cg.dll
+gluegen-rt.dll
+
 
 #############
 ## Python
@@ -213,5 +218,3 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-lib/lib/gluegen-rt.jar
-lib/lib/jogl.jar
