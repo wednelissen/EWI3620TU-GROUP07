@@ -13,7 +13,8 @@ public class PlacedItemsMenu extends Window{
 	
 	private ArrayList<Guardian> Guards;
 	private ArrayList<Key> Keys;
-	private float maxItemsInRij = 5; 
+	
+	private double maxItemsInRij = 5; 
 
 	public PlacedItemsMenu(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 		super(sizes, screenWidthFrame, screenHeightFrame);
@@ -24,7 +25,7 @@ public class PlacedItemsMenu extends Window{
 	public void addGuard(Guardian guard){
 		if(guard.routeSize()>0){ //er mogen geen guard toegevoegd worden zonder route.
 			Guards.add(guard);
-			//hier worden alle item posities opnieuw geset na het toevoegen van een guard of een key.	
+			//hier worden alle items posities opnieuw geset na het toevoegen van een guard of een key.	
 			setGuardAndKeySizes();
 		}
 	}
@@ -45,7 +46,7 @@ public class PlacedItemsMenu extends Window{
 	
 	public void addKey(Key key){
 		Keys.add(key);
-		//hier worden alle item posities opnieuw geset na het toevoegen van een guard of een key.	
+		//hier worden alle items posities opnieuw geset na het toevoegen van een guard of een key.	
 		setGuardAndKeySizes();
 	}
 	
@@ -120,12 +121,17 @@ public class PlacedItemsMenu extends Window{
 		int TotalItems = TotalGuards + TotalKeys;
 		int teller = 0;
 		
-		int tempY = (TotalGuards+TotalKeys)/(int)(maxItemsInRij+1); //bij de 6de guard is dit 1.
-		float itemSizeX = originalSizes[2]/maxItemsInRij; //zorgt voor de juiste breedte van een item
-		float itemSizeY = originalSizes[3]/(tempY+1); //tempY+1 anders kan het gedeeld door nul zijn.
+		//tempY zorgt ervoor dat de items van hoogte veranderen wanneer er meer dan maxItemsInRij items zijn.
+		double tempY = Math.ceil((TotalGuards+TotalKeys)/(maxItemsInRij)); //bij de 6de guard is dit 2.
+		float itemSizeX = originalSizes[2]/(float)maxItemsInRij; //zorgt voor de juiste breedte van een item
+		float itemSizeY = originalSizes[3]/((float)tempY); 
 		
+		if(TotalItems<6){
+			itemSizeY = originalSizes[3]/((float)tempY+1); //tempY+1 anders kan het gedeeld door nul zijn.
+		}
 
-		for(int j=0; j < (tempY+1); j++){
+
+		for(int j=0; j < (tempY); j++){
 			float item_LinksBovenY = originalSizes[1] + (itemSizeY * (j));
 			for(int i=0; i < maxItemsInRij; i++){
 				float item_LinksBovenX = originalSizes[0] + (itemSizeX * (i));	
@@ -140,6 +146,8 @@ public class PlacedItemsMenu extends Window{
 					Guards.get(teller).updatePosition(itemSizes, screenWidth, screenHeight);
 				}
 				else if(teller >= TotalGuards){
+					int tempIndex = teller - TotalGuards;
+					Keys.get(tempIndex).updatePosition(itemSizes, screenWidth, screenHeight);
 					System.out.println("Key: "+item_LinksBovenX+" , "+item_LinksBovenY+" , "+itemSizeX+" , " + itemSizeY);
 				}
 				teller++;

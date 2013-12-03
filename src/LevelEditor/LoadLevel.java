@@ -11,9 +11,17 @@ public class LoadLevel {
 	private int width, height;
 	private String printWidth, printHeight;
 	private String[] floorPlan;
+	private String StartPosition;
+	private String EndPosition;
+	private String[] spotPlan;
+	private int spotSize;	
+	private String[] cameraPlan;
+	private int cameraSize;
 	private String[] guardsPlan;
 	private String[] keysPlan;
 	private int guardSize;
+	
+	
 	
 	private float[] placedItemsCoords = new float[] { 5, 235, 195, 200 }; //wordt niet gebruikt
 	
@@ -36,6 +44,32 @@ public class LoadLevel {
 			for(int i = 0; i < height; i++){
 				floorPlan[i] = sc.next();				
 			}
+			//de begin en eind positie worden ingelezen
+			sc.next(); sc.next(); // laad het kopje met 'begin punt:'
+			//System.out.println(sc.nextLine());
+			StartPosition = sc.next();
+			//System.out.println(StartPosition);
+			sc.next(); sc.next(); // laad het kopje met 'eind punt:'
+			EndPosition = sc.next();
+			
+			//de spots worden ingelezen als cijfers die de punten voorstellen waar een spot staat.
+			sc.next(); //laad het kopje met tekst spots:
+			String spotSizePrint = sc.next();
+			spotSize = Integer.parseInt(spotSizePrint);
+			spotPlan = new String[spotSize];
+			for(int i = 0; i < spotSize; i++){
+				spotPlan[i] = sc.next();		
+			}	
+			
+			//de camera's worden ingelezen als cijfers die de punten voorstellen waar een camera staat.
+			sc.next(); //laad het kopje met tekst cameras:
+			String cameraSizePrint = sc.next();
+			cameraSize = Integer.parseInt(cameraSizePrint);
+			cameraPlan = new String[cameraSize];
+			for(int i = 0; i < cameraSize; i++){
+				cameraPlan[i] = sc.next();		
+			}	
+			
 			
 			//de guards worden ingelezen als cijfers die de punten voorstellen waar een bewaker loopt.
 			sc.next(); //laad het kopje met tekst Guards:
@@ -70,6 +104,28 @@ public class LoadLevel {
 		return fileName;
 	}
 	
+	public Point getStartPosition(){
+		String[] a = StartPosition.split(";");
+		String[] b = a[0].split(",");
+		int x = Integer.parseInt(b[0]);
+		int y = Integer.parseInt(b[1]);
+		
+		Point result = new Point(x,y);
+		System.out.println(result);
+		return result;
+	}
+	
+	public Point getEndPosition(){
+		String[] a = EndPosition.split(";");
+		String[] b = a[0].split(",");
+		int x = Integer.parseInt(b[0]);
+		int y = Integer.parseInt(b[1]);
+		
+		Point result = new Point(x,y);
+		System.out.println(result);
+		return result;
+	}
+	
 	//geeft een tweedimensionale int array die direct gebruikt kan worden door de mazerunner om te spelen.
 	public int[][] outputForMazeRunner(){
 		int[][] maze = new int[width][height];
@@ -93,6 +149,33 @@ public class LoadLevel {
 		
 		return maze;
 	}
+	
+	public ArrayList<Point> getSpots(){
+		ArrayList<Point> result = new ArrayList<Point>();
+		for(int i=0; i<spotSize; i++){
+			String[] a = spotPlan[i].split(";");
+			String[] b = a[0].split(",");
+			int x = Integer.parseInt(b[0]);
+			int y = Integer.parseInt(b[1]);
+			Point temp = new Point(x,y);
+			result.add(temp);	
+		}
+		return result;
+	}
+	
+	public ArrayList<Point> getCameras(){
+		ArrayList<Point> result = new ArrayList<Point>();
+		for(int i=0; i<cameraSize; i++){
+			String[] a = cameraPlan[i].split(";");
+			String[] b = a[0].split(",");
+			int x = Integer.parseInt(b[0]);
+			int y = Integer.parseInt(b[1]);
+			Point temp = new Point(x,y);
+			result.add(temp);	
+		}
+		return result;
+	}
+	
 	
 	//returnt een lijst met gardians en hun routes.
 	public ArrayList<Guardian> getGuardians(){	

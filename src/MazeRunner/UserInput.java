@@ -86,42 +86,30 @@ public class UserInput extends Control implements MouseListener,
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent event) {
-		// NIET MEER NODIG
-		// Xdragged = event.getX();
-		// Ydragged = event.getY();
-		//
-		// dx = Xbegin - Xdragged;
-		// dy = Ybegin - Ydragged;
-		//
-		// Xbegin = Xdragged;
-		// Ybegin = Ydragged;
-		//
-		// System.out.println("dx: " + dx + " dy: " + dy);
-	}
-
-	@Override
 	public void keyPressed(KeyEvent event) {
 		// Set forward, back, left and right to corresponding key presses
 
-		char key = event.getKeyChar();
+		int key = event.getKeyCode();
 		// System.out.println("toets " + key);
 
-		if (key == 'w') {
+		if (key == KeyEvent.VK_W) {
 			Control.forward = true;
 		}
-		if (key == 's') {
+		if (key == KeyEvent.VK_S) {
 			Control.back = true;
 		}
-		if (key == 'a') {
+		if (key == KeyEvent.VK_A) {
 			Control.left = true;
 		}
-		if (key == 'd') {
+		if (key == KeyEvent.VK_D) {
 			Control.right = true;
 		}
-
+		
+		if (key == KeyEvent.VK_SHIFT){
+			mazerunner.setWalkingSpeed(0.02);
+		}
 		// turn on or of GOD mode
-		if (key == 'g') {
+		if (key == KeyEvent.VK_G) {
 			if (MazeRunner.GOD_MODE == false)
 				MazeRunner.GOD_MODE = true;
 			else
@@ -129,7 +117,7 @@ public class UserInput extends Control implements MouseListener,
 		}
 
 		// open pause menu
-		if (key == (KeyEvent.VK_ESCAPE)) {
+		if (key == KeyEvent.VK_ESCAPE) {
 
 			gamepaused = mazerunner.pauseSwitch();
 			System.out.println("Open Pause menu");
@@ -143,26 +131,25 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void keyReleased(KeyEvent event) {
 		// Set forward, back, left and right to corresponding key presses
-		char key = event.getKeyChar();
+		int key = event.getKeyCode();
 
-		if (key == 'w') {
+		if (key == KeyEvent.VK_W) {
 			Control.forward = false;
 		}
-		if (key == 's') {
+		if (key == KeyEvent.VK_S) {
 			Control.back = false;
 		}
-		if (key == 'a') {
+		if (key == KeyEvent.VK_A) {
 			Control.left = false;
 		}
-		if (key == 'd') {
+		if (key == KeyEvent.VK_D) {
 			Control.right = false;
 		}
+		
+		if (key == KeyEvent.VK_SHIFT){
+			mazerunner.setWalkingSpeed(0.01);
+		}
 	}
-
-	/*
-	 * **********************************************
-	 * * Unused event handlers * **********************************************
-	 */
 
 	@Override
 	public void mouseMoved(MouseEvent event) {
@@ -178,8 +165,6 @@ public class UserInput extends Control implements MouseListener,
 			dx = Xbegin - Xdragged;
 			dy = Ybegin - Ydragged;
 
-			// System.out.println("Xbegin: " + Xbegin + " Ybegin: " + Ybegin +
-			// " Xdragged,Ydragged: " + Xdragged + "," + Ydragged);
 		}
 		try {
 			Robot robot = new Robot();
@@ -191,16 +176,19 @@ public class UserInput extends Control implements MouseListener,
 			e.printStackTrace();
 		}
 
-		// Xbegin = Xdragged;
-		// Ybegin = Ydragged;
-
 	}
-
+	
 	public void setMazeRunner(MazeRunner mazerunner) {
 		this.mazerunner = mazerunner;
 
 	}
 
+	/*
+	 * **********************************************
+	 * * Unused event handlers 
+	 * **********************************************
+	 */
+	
 	@Override
 	public void keyTyped(KeyEvent event) {
 	}
@@ -221,4 +209,8 @@ public class UserInput extends Control implements MouseListener,
 	public void mouseReleased(MouseEvent event) {
 	}
 
+	@Override
+	public void mouseDragged(MouseEvent event) {
+		
+	}
 }
