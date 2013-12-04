@@ -152,6 +152,8 @@ public class Player extends GameObject {
 
 	/**
 	 * Updates the physical location and orientation of the player
+	 * Booleans overRuleLeft and overRuleRight are used to 'follow' a
+	 * wall in stead of getting stuck.
 	 * @param deltaTime The time in milliseconds since the last update.
 	 */
 	public void update(int deltaTime)
@@ -173,11 +175,11 @@ public class Player extends GameObject {
 			
 			verAngle = verAngle + dy;
 			
-			if(verAngle >= 90){
-				verAngle = 89.99;
+			if(verAngle >= 70){
+				verAngle = 70;
 			}
-			if(verAngle <= -90){
-				verAngle = -89.99;
+			if(verAngle <= -70){
+				verAngle = -70;
 			}
 			
 			double absCos = Math.abs(Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5));
@@ -202,6 +204,13 @@ public class Player extends GameObject {
 				stepBack(deltaTime, speed);
 			}
 			
+			if(!canMoveBack && !canMoveRight && control.getBack()){
+				overRuleLeft = true;
+			}
+			
+			if(!canMoveBack && !canMoveLeft && control.getBack()){
+				overRuleRight = true;
+			}
 			if(canMoveLeft && control.getLeft()){
 				stepLeft(deltaTime, speed);
 			}
@@ -215,8 +224,8 @@ public class Player extends GameObject {
 				//locationX = locationX - Math.min(Math.abs(Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5)), Math.abs(Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5))) * speed * deltaTime * Math.sin(Math.PI * horAngle / 180 + Math.PI * 0.5);
 				//locationZ = locationZ - Math.min(Math.abs(Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5)), Math.abs(Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5))) * speed * deltaTime * Math.cos(Math.PI * horAngle / 180 + Math.PI * 0.5);
 				deltaTimeSum  = deltaTimeSum + deltaTime;
-				System.out.println(deltaTimeSum);
-				if(deltaTimeSum >= 500 | !control.getForward()){
+				//System.out.println(deltaTimeSum);
+				if(deltaTimeSum >= 500 | !(control.getForward() | control.getBack())){
 					overRuleLeft = false;
 					deltaTimeSum = 0;
 				}
@@ -225,7 +234,7 @@ public class Player extends GameObject {
 			if(overRuleRight){
 				stepRight(deltaTime, Math.min(absCos, absSin) * speed);
 				deltaTimeSum = deltaTimeSum + deltaTime;
-				if(deltaTimeSum >= 500 | !control.getForward()){
+				if(deltaTimeSum >= 500 | !(control.getForward() | control.getBack())){
 					overRuleRight = false;
 					deltaTimeSum = 0;
 				}

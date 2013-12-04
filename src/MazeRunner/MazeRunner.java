@@ -136,9 +136,9 @@ public class MazeRunner implements GLEventListener {
 		}
 
 		// Initialize the player.
-		player = new Player(6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// x-position
+		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// x-position
 				maze.SQUARE_SIZE / 2, 										// y-position
-				5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 				// z-position
+				maze.startPoint.getY() * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 				// z-position
 				90, 0); 													// horizontal and vertical angle
 
 		camera = new Camera(player.getLocationX(), player.getLocationY(),

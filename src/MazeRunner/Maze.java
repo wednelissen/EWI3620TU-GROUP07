@@ -1,5 +1,6 @@
 package MazeRunner;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -42,7 +43,8 @@ public class Maze implements VisibleObject {
 	public final double MAZE_SIZE_X = newMaze.getWidth();
 	public final double MAZE_SIZE_Z = newMaze.getHeight();
 	public final double SQUARE_SIZE = 5;
-
+	public final Point startPoint =  newMaze.getStartPosition();
+	
 	private Texture wallTexture;
 	private Texture floorTexture;
 	private Texture roofTexture;
