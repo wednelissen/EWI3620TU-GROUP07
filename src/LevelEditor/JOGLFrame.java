@@ -15,15 +15,6 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-
-
-
-
-
-
-
-
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -36,9 +27,7 @@ import MazeRunner.MazeRunner;
 import com.sun.opengl.util.Animator;
 
 import java.awt.*;
-
 import javax.swing.*;
-
 import java.awt.event.*;
 
 /**
@@ -85,6 +74,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	
 	private boolean mapCreated = false;
 	private boolean AllGuardsOnOff = false;
+	private boolean texLoaded = false;
 
 	ClickOptions Mode = ClickOptions.doNothing; 
 
@@ -156,15 +146,14 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	
 	private StartAndEndPosition StartEnd = new StartAndEndPosition();
 		
+	private LoadTexturesEditor loadedTexturesEditor;
 
-	
 	/**
 	 * When instantiating, a GLCanvas is added for us to play with. An animator
 	 * is created to continuously render the canvas.
 	 */
 	public JOGLFrame() {
 		super("Level Editor MazeRunner");
-
 
 		// Set the desired size and background color of the frame
 		setSize(screenWidth, screenHeight);
@@ -208,8 +197,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 
 		// With everything set up, the frame can now be displayed to the user.
 		setVisible(true);
-
-	}
+}
 
 	@Override
 	/**
@@ -220,7 +208,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	public void init(GLAutoDrawable drawable) {
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
-
+		
 		// Set the matrix mode to GL_PROJECTION, allowing us to manipulate the
 		// projection matrix
 		gl.glMatrixMode(GL.GL_PROJECTION);
@@ -261,6 +249,15 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
+		if (texLoaded == false)
+		{
+			System.out.println("texLoaded = false");
+			// Init Textures
+			System.out.println("Textures loading");
+			loadedTexturesEditor = new LoadTexturesEditor();
+			texLoaded = true;
+		}
+		
 		// Draw the buttons.
 		drawWindows(gl);
 
@@ -280,19 +277,19 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	 */
 	private void drawWindows(GL gl) {
 		// Draw the background boxes
-		gl.glColor3f(0f, 0f, 0f);
+//		gl.glColor3f(0f, 0f, 0f);
 		//als de breedte en lengte zijn ingegeven mogen de buildingBlocks worden getekent in de map.
 		if(mapCreated){
-			map.drawBlocks(gl);
+			map.drawBlocks(gl, loadedTexturesEditor);
 			
 			//alle guards zullen worden getekent met blauwe blokjes. 
 			//indien je 1 specifieke guard hebt geselecteerd word deze met rode blokjes getekent
 			if(AllGuardsOnOff){
-				gl.glColor3f(0f, 0f, 0.5f);
+//				gl.glColor3f(0f, 0f, 0.5f);
 				for(Guardian g: placedItems.getAllGuards()){
 					for(int i = 0; i <g.routeSize(); i++){
 						Point a = g.getRoute(i);
-						map.getBuildingBlockByPosition(a).drawGuardianPath(gl);			
+						map.getBuildingBlockByPosition(a).drawGuardianPath(gl, loadedTexturesEditor.getTexture("guardianStepsBlue"));			
 					}
 				}
 			}
@@ -300,99 +297,99 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			//er worden rode kruisjes getekend in de blokjes waar de guard loopt. 
 			//dit geld alleen voor deze ene geselecteerde guard.
 			if(guard.routeSize()>0 && Mode == ClickOptions.guardian){
-				gl.glColor3f(0.5f, 0, 0f);
+//				gl.glColor3f(0.5f, 0, 0f);
 				for(int i = 0; i <guard.routeSize(); i++){
 					Point a = guard.getRoute(i);
-					map.getBuildingBlockByPosition(a).drawGuardianPath(gl);			
+					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, loadedTexturesEditor.getTexture("guardianStepsRed"));			
 				}
 				
 			}
 			
 			if(cameraList.getCameras().size()>0){
-				gl.glColor3f(0.2f, 1f, 0.6f);
+//				gl.glColor3f(0.2f, 1f, 0.6f);
 				for(Camera s: cameraList.getCameras()){
 					Point a = s.getPosition();
 					//map.getBuildingBlockByPosition(a).drawSpot(gl);
-					map.getBuildingBlockByPosition(a).drawCameras(gl);
+					map.getBuildingBlockByPosition(a).drawCameras(gl, loadedTexturesEditor.getTexture("cameraEditor"));
 				}
 			}
 			
 			if(spotList.getSpots().size()>0){
-				gl.glColor3f(1f, 1f, 0f);
+//				gl.glColor3f(1f, 1f, 0f);
 				for(Spot s: spotList.getSpots()){
 					Point a = s.getPosition();
 					//map.getBuildingBlockByPosition(a).drawSpot(gl);
-					map.getBuildingBlockByPosition(a).drawSpot(gl);
+					map.getBuildingBlockByPosition(a).drawSpot(gl, loadedTexturesEditor.getTexture("spotEditor"));
 				}
 			}
 			
 			if(StartEnd.hasStart()){
-				gl.glColor3f(0.5f, 0, 0.6f);
+//				gl.glColor3f(0.5f, 0, 0.6f);
 				Point a = StartEnd.getStart();
-				map.getBuildingBlockByPosition(a).drawBlock(gl);
+				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("startPos"));
 			}
 			
 			if(StartEnd.hasEnd()){
-				gl.glColor3f(0.5f, 0.5f, 0f);
+//				gl.glColor3f(0.5f, 0.5f, 0f);
 				Point a = StartEnd.getEnd();
-				map.getBuildingBlockByPosition(a).drawBlock(gl);
+				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("endPos"));
 			}
 
 			
-			gl.glColor3f(0f, 0f, 0f);
+//			gl.glColor3f(0f, 0f, 0f);
 		}
 		else{
-			map.draw(gl);
+			map.draw(gl, null);
 		}
 
 		//het item Menu word getekent met de items waarop geklikt kan worden
-		items.draw(gl);
-		itemFloor.draw(gl);
-		itemWall.draw(gl);
-		itemDoor.draw(gl);
-		itemSpot.draw(gl);
-		itemGuardian.draw(gl);
-		itemKey.draw(gl);
-		itemCamera.draw(gl);
+		items.draw(gl, null);
+		itemFloor.draw(gl, loadedTexturesEditor.getTexture("floorEditor"));
+		itemWall.draw(gl, loadedTexturesEditor.getTexture("wallEditor"));
+		itemDoor.draw(gl, loadedTexturesEditor.getTexture("doorEditor"));
+		itemSpot.draw(gl, loadedTexturesEditor.getTexture("spotEditor"));
+		itemGuardian.draw(gl, loadedTexturesEditor.getTexture("guardianEditor"));
+		itemKey.draw(gl, loadedTexturesEditor.getTexture("keyEditor"));
+		itemCamera.draw(gl, loadedTexturesEditor.getTexture("cameraEditor"));
 		
 
-		placedItems.draw(gl);
-		placedItems.drawItems(gl);
+		placedItems.draw(gl, null);
+		placedItems.drawItems(gl, loadedTexturesEditor);
 		
 		if(Mode == ClickOptions.guardian){
-			placedItemsProperties.draw(gl);
-			addGuardKeySpotCamera.draw(gl); 
-			removeGuardKeySpotCamera.draw(gl);  
-			removeLastPointGuard.draw(gl); 
-			showAllGuards.draw(gl); 
+			placedItemsProperties.draw(gl, null);
+			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
+			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
+			removeLastPointGuard.draw(gl, loadedTexturesEditor.getTexture("removeLastPointGuardButton")); 
+			showAllGuards.draw(gl, loadedTexturesEditor.getTexture("showAllGuardsButton")); 
 		}
 		
 		if(Mode == ClickOptions.key){
-			placedItemsProperties.draw(gl);
-			addGuardKeySpotCamera.draw(gl); 
-			removeGuardKeySpotCamera.draw(gl);  
+			placedItemsProperties.draw(gl, null);
+			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
+			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
 		}
 		
 		if(Mode == ClickOptions.setSpot || Mode == ClickOptions.removeSpot){
-			placedItemsProperties.draw(gl);
-			addGuardKeySpotCamera.draw(gl); 
-			removeGuardKeySpotCamera.draw(gl);  
+			placedItemsProperties.draw(gl, null);
+			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
+			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
 		}
 		
 		if(Mode == ClickOptions.setCamera || Mode == ClickOptions.removeCamera){
-			placedItemsProperties.draw(gl);
-			addGuardKeySpotCamera.draw(gl); 
-			removeGuardKeySpotCamera.draw(gl);  
+			placedItemsProperties.draw(gl, null);
+			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
+			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
 		}
 		
 		
 		//draw the clickable boxes
-		setStart.draw(gl);
-		setEnd.draw(gl);
-		setHeight.draw(gl);
-		setWidth.draw(gl);
-		save.draw(gl);
-		load.draw(gl);
+		setStart.draw(gl, loadedTexturesEditor.getTexture("setStartButton"));
+		setEnd.draw(gl, loadedTexturesEditor.getTexture("setEndButton"));
+		setHeight.draw(gl, loadedTexturesEditor.getTexture("setHeightButton"));
+		setWidth.draw(gl, loadedTexturesEditor.getTexture("setWidthButton"));
+		save.draw(gl, loadedTexturesEditor.getTexture("saveButton"));
+		load.draw(gl, loadedTexturesEditor.getTexture("loadButton"));
 	}
 
 	@Override
