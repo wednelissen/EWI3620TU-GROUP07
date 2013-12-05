@@ -45,13 +45,14 @@ public class MazeRunner implements GLEventListener {
 
 	/*
 	 * **********************************************
-	 * * Local variables 
-	 * **********************************************
+	 * * Local variables **********************************************
 	 */
 	private GLCanvas canvas;
 	private LoadLevel newMaze = new LoadLevel("level1");
 	private int screenWidth, screenHeight; // Screen size.
-	private ArrayList<VisibleObject> visibleObjects; // A list of objects that will be displayed on screen.
+	private ArrayList<VisibleObject> visibleObjects; // A list of objects that
+														// will be displayed on
+														// screen.
 	private Player player; // The player object.
 	private Camera camera; // The camera object.
 	private UserInput input; // The user input object that controls the player.
@@ -59,7 +60,8 @@ public class MazeRunner implements GLEventListener {
 	private long previousTime = Calendar.getInstance().getTimeInMillis(); // Used
 
 	private ArrayList<Guardian> tempGuard = newMaze.getGuardians();
-	private ArrayList<Guard> guards = new ArrayList<Guard>(); // to calculate elapsed time.
+	private ArrayList<Guard> guards = new ArrayList<Guard>(); // to calculate
+																// elapsed time.
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
@@ -68,10 +70,11 @@ public class MazeRunner implements GLEventListener {
 	private GuardCamera guardcamera;
 	private Guard guard;
 
+	private LoadTexturesMaze loadedTexturesMaze;
+
 	/*
 	 * **********************************************
-	 * * Initialization methods 
-	 * **********************************************
+	 * * Initialization methods **********************************************
 	 */
 	/**
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
@@ -86,7 +89,6 @@ public class MazeRunner implements GLEventListener {
 		screenWidth = canvas.getWidth();
 
 		initJOGL(); // Initialize JOGL.
-		initObjects(); // Initialize all the objects!
 		gameinitialized = true;
 	}
 
@@ -99,7 +101,7 @@ public class MazeRunner implements GLEventListener {
 	 * Animator, which is part of the JOGL api.
 	 */
 	private void initJOGL() {
-		
+
 		canvas.addGLEventListener(this);
 		anim = new Animator(canvas);
 		anim.start();
@@ -123,23 +125,34 @@ public class MazeRunner implements GLEventListener {
 	 */
 	private void initObjects() {
 		// We define an ArrayList of VisibleObjects to store all the objects
-		// that need to be
-		// displayed by MazeRunner.
+		// that need to be displayed by MazeRunner.
 		visibleObjects = new ArrayList<VisibleObject>();
 		createGuards();
-		// Add the maze that we will be using.
-		maze = new Maze();
 
+		// Add the maze that we will be using.
+		maze = new Maze(loadedTexturesMaze);
 		visibleObjects.add(maze);
+
+		// Add the guards that we will be using
 		for (Guard temp : guards) {
 			visibleObjects.add(temp);
 		}
 
+		// Add the spots that we will be using
+//		for (int i = 0; i <  Loadlevel.getSpots.size(); i++) {
+//			Spotlight tempSpot = new Spotlight(maze.SQUARE_SIZE,
+//					loadedTexturesMaze.getTexture("spotlight"),
+//					Loadlevel.getSpotlight.get(i));
+//			visibleObjects.add(tempSpot);
+//		}
+
 		// Initialize the player.
-		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// x-position
-				maze.SQUARE_SIZE / 2, 										// y-position
-				maze.startPoint.getY() * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 				// z-position
-				90, 0); 													// horizontal and vertical angle
+		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE
+				+ maze.SQUARE_SIZE / 2, // x-position
+				maze.SQUARE_SIZE / 2, // y-position
+				maze.startPoint.getY() * maze.SQUARE_SIZE + maze.SQUARE_SIZE
+						/ 2, // z-position
+				90, 0); // horizontal and vertical angle
 
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
 				player.getLocationZ(), player.getHorAngle(),
@@ -151,12 +164,12 @@ public class MazeRunner implements GLEventListener {
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
 		player.setControl(input);
+		System.out.println("Klaar met creatie objecten");
 	}
 
 	/*
 	 * **********************************************
-	 * * OpenGL event handlers 
-	 * **********************************************
+	 * * OpenGL event handlers **********************************************
 	 */
 
 	/**
@@ -170,6 +183,10 @@ public class MazeRunner implements GLEventListener {
 	 * all in this method.
 	 */
 	public void init(GLAutoDrawable drawable) {
+		System.out.println("Maze textures init");
+		initTextures();
+		System.out.println("Creatie objects");
+		initObjects(); // Initialize all the objects!
 		System.out.println("Mazerunner init");
 		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
 														// pipeline to Debugging
@@ -207,6 +224,11 @@ public class MazeRunner implements GLEventListener {
 		canvas.setCursor(blankCursor);
 	}
 
+	public void initTextures() {
+		loadedTexturesMaze = new LoadTexturesMaze();
+		System.out.println("Textures geladen");
+	}
+
 	/**
 	 * display(GLAutoDrawable) is called upon whenever OpenGL is ready to draw a
 	 * new frame and handles all of the drawing.
@@ -222,14 +244,14 @@ public class MazeRunner implements GLEventListener {
 			init(drawable);
 			startup = false;
 		}
+
 		if (!gamepaused) {
 			GL gl = drawable.getGL();
 			GLU glu = new GLU();
-			
-			//ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
+
+			// ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
 			gl.glColor3f(1, 1, 1);
-			
-			
+
 			// Calculating time since last frame.
 			Calendar now = Calendar.getInstance();
 			long currentTime = now.getTimeInMillis();
@@ -298,8 +320,7 @@ public class MazeRunner implements GLEventListener {
 
 	/*
 	 * **********************************************
-	 * * Methods 
-	 * **********************************************
+	 * * Methods **********************************************
 	 */
 
 	/**
@@ -341,21 +362,29 @@ public class MazeRunner implements GLEventListener {
 			}
 			// Check left direction for obstacles
 			if (maze.isWall(
-					player.getLocationX() + checkdistance
-							* -Math.sin(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationX()
+							+ checkdistance
+							* -Math.sin(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ() + checkdistance
-							* -Math.cos(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationZ()
+							+ checkdistance
+							* -Math.cos(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveLeft(false);
 			}
 			// check right direction for obstacles
 			if (maze.isWall(
-					player.getLocationX() - checkdistance
-							* -Math.sin(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationX()
+							- checkdistance
+							* -Math.sin(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ() - checkdistance
-							* -Math.cos(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationZ()
+							- checkdistance
+							* -Math.cos(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveRight(false);
 			}
@@ -408,12 +437,13 @@ public class MazeRunner implements GLEventListener {
 		}
 	}
 
-	public void setWalkingSpeed(double speed){
+	public void setWalkingSpeed(double speed) {
 		player.setSpeed(speed);
 	}
 
-///////////////////////////////////////NOT USED////////////////////////////////////	
-	
+	// /////////////////////////////////////NOT
+	// USED////////////////////////////////////
+
 	/**
 	 * displayChanged(GLAutoDrawable, boolean, boolean) is called upon whenever
 	 * the display mode changes.
@@ -424,7 +454,5 @@ public class MazeRunner implements GLEventListener {
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
 			boolean deviceChanged) {
 	}
-
-
 
 }

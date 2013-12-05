@@ -32,6 +32,8 @@ public class LoadTexturesMaze {
 	 */
 	public LoadTexturesMaze() {
 		defaultTexture = loadingTexture("default.png");
+		addTextureToList(loadingTexture("wallTexture.png"), "wallTexture");
+		addTextureToList(loadingTexture("floorTexture.png"), "floorTexture");
 	}
 
 	/**
