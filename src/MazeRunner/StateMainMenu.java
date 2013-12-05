@@ -61,7 +61,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 		// Draw the buttons.
 		gl.glColor3f(0, 0.5f, 0f);
-		buttonStartGame.draw(gl, null); 
+		buttonStartGame.draw(gl); 
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 		
