@@ -1,5 +1,12 @@
 package MazeRunner;
 
+/**
+ * Deze klasse wordt gebruikt om de camera uit en aan te zetten.
+ * 
+ * @author Stijn
+ * 
+ */
+
 public class ThreadLoop extends Thread {
 	public boolean visible = true;
 
@@ -10,9 +17,9 @@ public class ThreadLoop extends Thread {
 
 	public void run() {
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(4000);
 
-//			System.out.println(visible + " -> " + !visible);
+			// System.out.println(visible + " -> " + !visible);
 			visible = !visible;
 
 			run();

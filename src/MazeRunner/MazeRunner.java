@@ -5,6 +5,8 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,39 +41,39 @@ import com.sun.opengl.util.Animator;
  * 
  */
 
-public class MazeRunner implements GLEventListener {
+public class MazeRunner implements GLEventListener, MouseListener {
 	static final long serialVersionUID = 7526471155622776147L;
 	public static boolean GOD_MODE = false;
 
 	/*
 	 * **********************************************
-	 * * Local variables 
-	 * **********************************************
+	 * * Local variables **********************************************
 	 */
 	private GLCanvas canvas;
 	private LoadLevel newMaze = new LoadLevel("level1");
-	private int screenWidth, screenHeight; // Screen size.
-	private ArrayList<VisibleObject> visibleObjects; // A list of objects that will be displayed on screen.
-	private Player player; // The player object.
-	private Camera camera; // The camera object.
-	private UserInput input; // The user input object that controls the player.
-	private Maze maze; // The maze.
-	private long previousTime = Calendar.getInstance().getTimeInMillis(); // Used
-
+	private int screenWidth, screenHeight;
+	private ArrayList<VisibleObject> visibleObjects;
+	static Player player;
+	private Camera camera;
+	private UserInput input;
+	private Maze maze;
+	private long previousTime = Calendar.getInstance().getTimeInMillis();
+	private int deltaTime;
 	private ArrayList<Guardian> tempGuard = newMaze.getGuardians();
-	private ArrayList<Guard> guards = new ArrayList<Guard>(); // to calculate elapsed time.
+	private ArrayList<Guard> guards = new ArrayList<Guard>();
+	private ArrayList<Point> tempCamera = newMaze.getCameras();
+	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
 
 	private boolean startup = true;
-	private GuardCamera guardcamera;
+
 	private Guard guard;
 
 	/*
 	 * **********************************************
-	 * * Initialization methods 
-	 * **********************************************
+	 * * Initialization methods **********************************************
 	 */
 	/**
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
@@ -99,7 +101,7 @@ public class MazeRunner implements GLEventListener {
 	 * Animator, which is part of the JOGL api.
 	 */
 	private void initJOGL() {
-		
+
 		canvas.addGLEventListener(this);
 		anim = new Animator(canvas);
 		anim.start();
@@ -127,6 +129,7 @@ public class MazeRunner implements GLEventListener {
 		// displayed by MazeRunner.
 		visibleObjects = new ArrayList<VisibleObject>();
 		createGuards();
+		createCameras();
 		// Add the maze that we will be using.
 		maze = new Maze();
 
@@ -134,19 +137,19 @@ public class MazeRunner implements GLEventListener {
 		for (Guard temp : guards) {
 			visibleObjects.add(temp);
 		}
+		for (GuardCamera temp : cameras) {
+			visibleObjects.add(temp);
+		}
 
 		// Initialize the player.
-		player = new Player(6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 	// x-position
-				maze.SQUARE_SIZE / 2, 										// y-position
-				5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, 				// z-position
-				90, 0); 													// horizontal and vertical angle
+		player = new Player(6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, // x-position
+				maze.SQUARE_SIZE / 2, // y-position
+				5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, // z-position
+				90, 0); // horizontal and vertical angle
 
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
 				player.getLocationZ(), player.getHorAngle(),
 				player.getVerAngle());
-		guardcamera = new GuardCamera(15, 15, 15, player.locationX,
-				player.locationZ, previousTime);
-		visibleObjects.add(guardcamera);
 
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
@@ -155,8 +158,7 @@ public class MazeRunner implements GLEventListener {
 
 	/*
 	 * **********************************************
-	 * * OpenGL event handlers 
-	 * **********************************************
+	 * * OpenGL event handlers **********************************************
 	 */
 
 	/**
@@ -225,11 +227,10 @@ public class MazeRunner implements GLEventListener {
 		if (!gamepaused) {
 			GL gl = drawable.getGL();
 			GLU glu = new GLU();
-			
-			//ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
+
+			// ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
 			gl.glColor3f(1, 1, 1);
-			
-			
+
 			// Calculating time since last frame.
 			Calendar now = Calendar.getInstance();
 			long currentTime = now.getTimeInMillis();
@@ -256,7 +257,7 @@ public class MazeRunner implements GLEventListener {
 			gl.glLoadIdentity();
 			// Flush the OpenGL buffer.
 			gl.glFlush();
-			guardcamera.updatePositie(player.locationX, player.locationZ);
+
 		}
 	}
 
@@ -298,8 +299,7 @@ public class MazeRunner implements GLEventListener {
 
 	/*
 	 * **********************************************
-	 * * Methods 
-	 * **********************************************
+	 * * Methods **********************************************
 	 */
 
 	/**
@@ -313,9 +313,19 @@ public class MazeRunner implements GLEventListener {
 		playerWallChecker();
 		for (Guard temp : guards) {
 			temp.update(deltaTime);
-
 			temp.playerDetectie(player.locationX, player.locationZ);
+			temp.aanvallen(player.locationX, player.locationZ, deltaTime);
 		}
+		for (GuardCamera temp : cameras) {
+			temp.updatePositie(player.locationX, player.locationZ);
+			temp.alarm();
+		}
+		RouteAlgoritme route = new RouteAlgoritme();
+		route.update();
+	}
+
+	public static Player getPlayer() {
+		return player;
 	}
 
 	private void playerWallChecker() {
@@ -342,21 +352,29 @@ public class MazeRunner implements GLEventListener {
 			}
 			// Check left direction for obstacles
 			if (maze.isWall(
-					player.getLocationX() + checkdistance
-							* -Math.sin(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationX()
+							+ checkdistance
+							* -Math.sin(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ() + checkdistance
-							* -Math.cos(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationZ()
+							+ checkdistance
+							* -Math.cos(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveLeft(false);
 			}
 			// check right direction for obstacles
 			if (maze.isWall(
-					player.getLocationX() - checkdistance
-							* -Math.sin(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationX()
+							- checkdistance
+							* -Math.sin(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180),
-					player.getLocationZ() - checkdistance
-							* -Math.cos(Math.PI * (player.getHorAngle() + 90) / 180)
+					player.getLocationZ()
+							- checkdistance
+							* -Math.cos(Math.PI * (player.getHorAngle() + 90)
+									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveRight(false);
 			}
@@ -400,6 +418,10 @@ public class MazeRunner implements GLEventListener {
 		return false;
 	}
 
+	/**
+	 * Maakt een arraylist van guardobjecten
+	 */
+
 	public void createGuards() {
 		for (Guardian temp : tempGuard) {
 			ArrayList<Point> temproute = temp.getCopyRoutes();
@@ -409,12 +431,23 @@ public class MazeRunner implements GLEventListener {
 		}
 	}
 
-	public void setWalkingSpeed(double speed){
+	/**
+	 * Maakt een arraylist van cameraobjecten
+	 */
+	public void createCameras() {
+		for (Point temp : tempCamera) {
+			GuardCamera res = new GuardCamera(temp.getX(), 6, temp.getY());
+			cameras.add(res);
+		}
+	}
+
+	public void setWalkingSpeed(double speed) {
 		player.setSpeed(speed);
 	}
 
-///////////////////////////////////////NOT USED////////////////////////////////////	
-	
+	// /////////////////////////////////////NOT
+	// USED////////////////////////////////////
+
 	/**
 	 * displayChanged(GLAutoDrawable, boolean, boolean) is called upon whenever
 	 * the display mode changes.
@@ -426,6 +459,36 @@ public class MazeRunner implements GLEventListener {
 			boolean deviceChanged) {
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent me) {
+		Kogel kogel = new Kogel(me.getX(), me.getY(), 0);
+		kogel.updateShoot(player.getHorAngle(), player.getVerAngle(), deltaTime);
+		visibleObjects.add(kogel);
 
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
 
 }
