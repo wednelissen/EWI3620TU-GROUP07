@@ -4,6 +4,8 @@ import java.awt.Point;
 
 import javax.media.opengl.GL;
 
+import com.sun.opengl.util.texture.Texture;
+
 public class MapMenu extends Window {
 	
 	private BuildingBlock[][] BuildingBlocks; // = new BuildingBlock[10][10];
@@ -119,20 +121,20 @@ public class MapMenu extends Window {
 
 	//er worden blokjes in het vlak map getekend, waar op 
 	//geklikt kan worden zodat ieder element uit de maze items kunnen worden toegekent
-	public void drawBlocks(GL gl) {
+	public void drawBlocks(GL gl, LoadTexturesEditor loadedTexturesEditor) {
 		for(int j=0; j < TotalBuildingBlockY; j++){
 			for(int i=0; i < TotalBuildingBlockX; i++){
 				if(BuildingBlocks[i][j].getFloor()){
-					BuildingBlocks[i][j].draw(gl);
+					BuildingBlocks[i][j].draw(gl, loadedTexturesEditor.getTexture("floorEditor"));
 				}
 				else if(BuildingBlocks[i][j].getDoor()){
-					gl.glColor3f(0.5f, 0.1f, 0f);
-					BuildingBlocks[i][j].drawBlock(gl);
-					gl.glColor3f(0.0f, 0, 0f);
+//					gl.glColor3f(0.5f, 0.1f, 0f);
+					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("doorEditor"));
+//					gl.glColor3f(0.0f, 0, 0f);
 					
 				}
 				else{
-					BuildingBlocks[i][j].drawBlock(gl);
+					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("wallEditor"));
 				}
 			}
 		}

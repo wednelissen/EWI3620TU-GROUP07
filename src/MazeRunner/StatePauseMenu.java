@@ -69,7 +69,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		gl.glColor3f(0, 0.5f, 0f);
 		
 		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].draw(gl);
+			buttonList[i].draw(gl, null);
 		};
 		
 		// Flush the OpenGL buffer, outputting the result to the screen.
