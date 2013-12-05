@@ -20,6 +20,7 @@ package MazeRunner;
 public class Player extends GameObject {	
 	private double horAngle, verAngle;
 	private boolean canMoveForward,canMoveBack,canMoveLeft,canMoveRight;
+	private boolean leftForwardWall, rightForwardWall;
 	private double speed;
 	
 	private Control control = null;
@@ -149,7 +150,21 @@ public class Player extends GameObject {
 	public void setCanMoveRight(boolean cmr){
 		this.canMoveRight = cmr;
 	}
-
+	
+	/**
+	 * Sets whether a wall is found in a 45 degree (CCW) direction
+	 */
+	public void setLeftForwardWall(boolean lfw){
+		this.leftForwardWall = lfw;
+	}
+	
+	/**
+	 * Sets whether a wall is found in a -45 degree (CCW) direction
+	 */
+	public void setRightForwardWall(boolean rfw){
+		this.leftForwardWall = rfw;
+	}
+	
 	/**
 	 * Updates the physical location and orientation of the player
 	 * Booleans overRuleLeft and overRuleRight are used to 'follow' a
@@ -190,6 +205,14 @@ public class Player extends GameObject {
 			
 			if(canMoveForward && control.getForward()){
 				stepForward(deltaTime, speed);
+				//try to dodge corners, to prevent looking inside the wall.
+				if(!canMoveRight && rightForwardWall){
+					overRuleLeft = true;
+				}
+				else if(!canMoveLeft && leftForwardWall){
+					overRuleRight = true;
+				}
+				
 			}
 						
 			if(!canMoveForward && !canMoveRight && control.getForward()){
@@ -221,11 +244,9 @@ public class Player extends GameObject {
 			
 			if(overRuleLeft){
 				stepLeft(deltaTime, Math.min(absCos,absSin) * speed);
-				//locationX = locationX - Math.min(Math.abs(Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5)), Math.abs(Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5))) * speed * deltaTime * Math.sin(Math.PI * horAngle / 180 + Math.PI * 0.5);
-				//locationZ = locationZ - Math.min(Math.abs(Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5)), Math.abs(Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5))) * speed * deltaTime * Math.cos(Math.PI * horAngle / 180 + Math.PI * 0.5);
 				deltaTimeSum  = deltaTimeSum + deltaTime;
-				//System.out.println(deltaTimeSum);
-				if(deltaTimeSum >= 500 | !(control.getForward() | control.getBack())){
+				System.out.println(deltaTimeSum);
+				if(deltaTimeSum >= 100 | !(control.getForward() | control.getBack())){
 					overRuleLeft = false;
 					deltaTimeSum = 0;
 				}
@@ -234,7 +255,8 @@ public class Player extends GameObject {
 			if(overRuleRight){
 				stepRight(deltaTime, Math.min(absCos, absSin) * speed);
 				deltaTimeSum = deltaTimeSum + deltaTime;
-				if(deltaTimeSum >= 500 | !(control.getForward() | control.getBack())){
+				System.out.println(deltaTimeSum);
+				if(deltaTimeSum >= 100 | !(control.getForward() | control.getBack())){
 					overRuleRight = false;
 					deltaTimeSum = 0;
 				}
@@ -244,6 +266,8 @@ public class Player extends GameObject {
 			canMoveBack = true;
 			canMoveLeft = true;
 			canMoveRight = true;
+			leftForwardWall = false;
+			rightForwardWall = false;
 		}
 	}
 

@@ -359,6 +359,28 @@ public class MazeRunner implements GLEventListener {
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveRight(false);
 			}
+			
+			// Check left-forward direction for obstacles
+			if (maze.isWall(
+					player.getLocationX() + checkdistance//Math.sqrt(2)
+					* -Math.sin(Math.PI * (player.getHorAngle() + 45) / 180)
+					* Math.cos(Math.PI * player.getVerAngle() / 180),
+					player.getLocationZ() + checkdistance/Math.sqrt(2)
+					* -Math.cos(Math.PI * (player.getHorAngle() + 45) / 180)
+					* Math.cos(Math.PI * player.getVerAngle() / 180))) {
+				player.setLeftForwardWall(true);
+			}
+			
+			// Check right-forward direction for obstacles
+			if (maze.isWall(
+					player.getLocationX() - checkdistance//Math.sqrt(2)
+					* -Math.sin(Math.PI * (player.getHorAngle() +135) / 180)
+					* Math.cos(Math.PI * player.getVerAngle() / 180),
+					player.getLocationZ() - checkdistance/Math.sqrt(2)
+					* -Math.cos(Math.PI * (player.getHorAngle() +135) / 180)
+					* Math.cos(Math.PI * player.getVerAngle() / 180))) {
+				player.setRightForwardWall(true);
+			}
 		}
 	}
 

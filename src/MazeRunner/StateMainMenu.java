@@ -5,7 +5,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import LevelEditor.Button;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -144,7 +146,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		int code = event.getKeyCode();
 		
 		switch(code){
-		case KeyEvent.VK_1:
+		case KeyEvent.VK_SPACE:
 			startGame();
 			
 			break;
@@ -204,6 +206,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		@SuppressWarnings("unused")
 		MazeRunner mazerunner = new MazeRunner(canvas);
 		
 		System.out.println("Game started");
