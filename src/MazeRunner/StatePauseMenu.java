@@ -32,10 +32,11 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 													buttonQuit };
 
 	/**
-	 * Constructor
+	 * Loads the Pause Menu on the given Canvas. Switches to the default cursor
+	 * and adds the Pause Menu as KeyListener etc.
 	 * 	 
-	 * @param canvas
-	 * @param mazerunner
+	 * @param canvas : The Canvas on which the Pause Menu will be drawn
+	 * @param mazerunner : The game which will be resumed when button resume is clicked
 	 */
 	public StatePauseMenu(GLCanvas canvas, MazeRunner mazerunner){
 		StatePauseMenu.canvas = canvas;
@@ -68,7 +69,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		gl.glColor3f(0, 0.5f, 0f);
 		
 		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].draw(gl);
+			buttonList[i].draw(gl, null);
 		};
 		
 		// Flush the OpenGL buffer, outputting the result to the screen.
@@ -80,7 +81,6 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -122,7 +122,6 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].update(screenWidth,screenHeight);
 		};
-		display(drawable);
 		
 	}
 
@@ -173,6 +172,9 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		int yclick = me.getY();
 		if(buttonResumeGame.clickedOnIt(xclick, yclick)){
 			resumeGame();
+		}
+		if(buttonMainMenu.clickedOnIt(xclick, yclick)){
+			
 		}
 		if(buttonHighScores.clickedOnIt(xclick, yclick)){
 			

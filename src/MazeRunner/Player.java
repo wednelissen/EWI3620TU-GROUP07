@@ -20,9 +20,13 @@ package MazeRunner;
 public class Player extends GameObject {	
 	private double horAngle, verAngle;
 	private boolean canMoveForward,canMoveBack,canMoveLeft,canMoveRight;
+	private boolean leftForwardWall, rightForwardWall;
 	private double speed;
 	
 	private Control control = null;
+	private boolean overRuleLeft;
+	private int deltaTimeSum = 0;
+	private boolean overRuleRight;
 	
 	/**
 	 * The Player constructor.
@@ -146,9 +150,25 @@ public class Player extends GameObject {
 	public void setCanMoveRight(boolean cmr){
 		this.canMoveRight = cmr;
 	}
-
+	
+	/**
+	 * Sets whether a wall is found in a 45 degree (CCW) direction
+	 */
+	public void setLeftForwardWall(boolean lfw){
+		this.leftForwardWall = lfw;
+	}
+	
+	/**
+	 * Sets whether a wall is found in a -45 degree (CCW) direction
+	 */
+	public void setRightForwardWall(boolean rfw){
+		this.leftForwardWall = rfw;
+	}
+	
 	/**
 	 * Updates the physical location and orientation of the player
+	 * Booleans overRuleLeft and overRuleRight are used to 'follow' a
+	 * wall in stead of getting stuck.
 	 * @param deltaTime The time in milliseconds since the last update.
 	 */
 	public void update(int deltaTime)
@@ -157,51 +177,123 @@ public class Player extends GameObject {
 		{
 			control.update();
 			
-			// TODO: Rotate the player, according to control
 			double dx = control.getdX();
 			double dy = control.getdY();
 			horAngle = horAngle + dx;
+			if(horAngle >= 	180){
+				horAngle = horAngle - 360;
+			}
+			
+			if(horAngle <= 	-180){
+				horAngle = horAngle + 360;
+			}
+			
 			verAngle = verAngle + dy;
 			
-			if(verAngle >= 90){
-				verAngle = 89.99;
+			if(verAngle >= 70){
+				verAngle = 70;
 			}
-			if(verAngle <= -90){
-				verAngle = -89.99;
+			if(verAngle <= -70){
+				verAngle = -70;
 			}
-			//System.out.println("horizon "+ horAngle + " vertical: " + verAngle);			
 			
+			double absCos = Math.abs(Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5));
+			double absSin = Math.abs(Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5));
+//			System.out.println("horizon "+ horAngle + " vertical: " + verAngle);			
+//			System.out.println("sin(horAngle) = "  + Math.sin(Math.PI * horAngle / 180));
+//			System.out.println("cos(horAngle) = " + Math.cos(Math.PI * horAngle / 180));
 			
 			if(canMoveForward && control.getForward()){
-				locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180);
-				locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180);
-				if(MazeRunner.GOD_MODE){
-					locationY = locationY + speed * deltaTime * Math.sin(Math.PI * verAngle / 180);
+				stepForward(deltaTime, speed);
+				//try to dodge corners, to prevent looking inside the wall.
+				if(!canMoveRight && rightForwardWall){
+					overRuleLeft = true;
 				}
+				else if(!canMoveLeft && leftForwardWall){
+					overRuleRight = true;
+				}
+				
+			}
+						
+			if(!canMoveForward && !canMoveRight && control.getForward()){
+				overRuleLeft = true;
+			}
+			
+			if(!canMoveForward && !canMoveLeft && control.getForward()){
+				overRuleRight = true;
 			}
 			
 			if(canMoveBack && control.getBack()){
-				locationX = locationX + speed * deltaTime * Math.sin(Math.PI * horAngle / 180);
-				locationZ = locationZ + speed * deltaTime * Math.cos(Math.PI * horAngle / 180);
-				if(MazeRunner.GOD_MODE){
-					locationY = locationY - speed * deltaTime * Math.sin(Math.PI * verAngle / 180);
-				}
+				stepBack(deltaTime, speed);
 			}
 			
+			if(!canMoveBack && !canMoveRight && control.getBack()){
+				overRuleLeft = true;
+			}
+			
+			if(!canMoveBack && !canMoveLeft && control.getBack()){
+				overRuleRight = true;
+			}
 			if(canMoveLeft && control.getLeft()){
-				locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180 + Math.PI * 0.5);
-				locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180 + Math.PI * 0.5);
+				stepLeft(deltaTime, speed);
 			}
 			
 			if(canMoveRight && control.getRight()){
-				locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5);
-				locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5);
+				stepRight(deltaTime, speed);
+			}
+			
+			if(overRuleLeft){
+				stepLeft(deltaTime, Math.min(absCos,absSin) * speed);
+				deltaTimeSum  = deltaTimeSum + deltaTime;
+				System.out.println(deltaTimeSum);
+				if(deltaTimeSum >= 100 | !(control.getForward() | control.getBack())){
+					overRuleLeft = false;
+					deltaTimeSum = 0;
+				}
+			}
+			
+			if(overRuleRight){
+				stepRight(deltaTime, Math.min(absCos, absSin) * speed);
+				deltaTimeSum = deltaTimeSum + deltaTime;
+				System.out.println(deltaTimeSum);
+				if(deltaTimeSum >= 100 | !(control.getForward() | control.getBack())){
+					overRuleRight = false;
+					deltaTimeSum = 0;
+				}
 			}
 			//Reset collision detectors
 			canMoveForward = true;
 			canMoveBack = true;
 			canMoveLeft = true;
 			canMoveRight = true;
+			leftForwardWall = false;
+			rightForwardWall = false;
 		}
+	}
+
+	private void stepForward(int deltaTime, double speed) {
+		locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180);
+		locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180);
+		if(MazeRunner.GOD_MODE){
+			locationY = locationY + speed * deltaTime * Math.sin(Math.PI * verAngle / 180);
+		}
+	}
+
+	private void stepBack(int deltaTime, double speed) {
+		locationX = locationX + speed * deltaTime * Math.sin(Math.PI * horAngle / 180);
+		locationZ = locationZ + speed * deltaTime * Math.cos(Math.PI * horAngle / 180);
+		if(MazeRunner.GOD_MODE){
+			locationY = locationY - speed * deltaTime * Math.sin(Math.PI * verAngle / 180);
+		}
+	}
+
+	private void stepLeft(int deltaTime, double speed) {
+		locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180 + Math.PI * 0.5);
+		locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180 + Math.PI * 0.5);
+	}
+
+	private void stepRight(int deltaTime, double speed) {
+		locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5);
+		locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5);
 	}
 }

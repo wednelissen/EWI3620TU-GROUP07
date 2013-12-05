@@ -142,9 +142,12 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 
 		// Initialize the player.
-		player = new Player(6 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, // x-position
+
+		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE
+				+ maze.SQUARE_SIZE / 2, // x-position
 				maze.SQUARE_SIZE / 2, // y-position
-				5 * maze.SQUARE_SIZE + maze.SQUARE_SIZE / 2, // z-position
+				maze.startPoint.getY() * maze.SQUARE_SIZE + maze.SQUARE_SIZE
+						/ 2, // z-position
 				90, 0); // horizontal and vertical angle
 
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
@@ -310,7 +313,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 		// update locations
 		player.update(deltaTime);
-		playerWallChecker();
+		playerWallChecker(2);
 		for (Guard temp : guards) {
 			temp.update(deltaTime);
 			temp.playerDetectie(player.locationX, player.locationZ);
@@ -328,8 +331,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		return player;
 	}
 
-	private void playerWallChecker() {
-		int checkdistance = 3;
+	private void playerWallChecker(int checkdistance) {
+
 		if (!GOD_MODE) {
 			if (maze.isWall(
 					player.getLocationX() + checkdistance
@@ -377,6 +380,38 @@ public class MazeRunner implements GLEventListener, MouseListener {
 									/ 180)
 							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
 				player.setCanMoveRight(false);
+			}
+
+			// Check left-forward direction for obstacles
+			if (maze.isWall(
+					player.getLocationX()
+							+ checkdistance// Math.sqrt(2)
+							* -Math.sin(Math.PI * (player.getHorAngle() + 45)
+									/ 180)
+							* Math.cos(Math.PI * player.getVerAngle() / 180),
+					player.getLocationZ()
+							+ checkdistance
+							/ Math.sqrt(2)
+							* -Math.cos(Math.PI * (player.getHorAngle() + 45)
+									/ 180)
+							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
+				player.setLeftForwardWall(true);
+			}
+
+			// Check right-forward direction for obstacles
+			if (maze.isWall(
+					player.getLocationX()
+							- checkdistance// Math.sqrt(2)
+							* -Math.sin(Math.PI * (player.getHorAngle() + 135)
+									/ 180)
+							* Math.cos(Math.PI * player.getVerAngle() / 180),
+					player.getLocationZ()
+							- checkdistance
+							/ Math.sqrt(2)
+							* -Math.cos(Math.PI * (player.getHorAngle() + 135)
+									/ 180)
+							* Math.cos(Math.PI * player.getVerAngle() / 180))) {
+				player.setRightForwardWall(true);
 			}
 		}
 	}
