@@ -1,58 +1,48 @@
 package MazeRunner;
-import java.awt.AWTException;
-import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import LevelEditor.Button;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 
-public class StateMainMenu implements GLEventListener, KeyListener, MouseListener{
+public class StateHighScores implements GLEventListener, KeyListener, MouseListener{
 	
 	private static GLCanvas canvas;
 	private boolean startup = false;
-	
+	private MazeRunner mazerunner;
 	private int screenWidth, screenHeight;
 	
 	//layout van het hoofdmenu
-	private float[] buttonStartGameCoords = new float[] { 200, 25, 400, 75};
-	private float[] buttonHighScoresCoords = new float[] { 200, 125, 400, 75};
-	private float[] buttonQuitCoords = new float[] {200, 225, 400, 75};
+	private float[] buttonBackCoords = new float[] { 0, 0, 25, 25};
 	
 	//define buttons
-	private Button buttonStartGame = new Button(buttonStartGameCoords, screenWidth, screenHeight);
-	private Button buttonHighScores = new Button(buttonHighScoresCoords, screenWidth, screenHeight);
-	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
-	
-	private Button[] buttonList = new Button[] {	buttonStartGame,
-													buttonHighScores,
-													buttonQuit };
-	
+	private Button buttonBack = new Button(buttonBackCoords, screenWidth, screenHeight);
+
+	private Button[] buttonList = new Button[] {	buttonBack
+													 };
+
 	/**
-	 * Constructor
-	 * Also calls init(), initializing the main menu on the given canvas (when first = false).
-	 * @param canvas
-	 * @param first: only set true if StateMainMenu is the first state to be called,
-	 *  directly after the canvas is created
+	 * Loads the HighSore state on the given Canvas. Switches to the default cursor
+	 * and adds the Pause Menu as KeyListener etc.
+	 * 	 
+	 * @param canvas : The Canvas on which the Pause Menu will be drawn
+	 * @param mazerunner : The game which will be resumed when button resume is clicked
 	 */
-	public StateMainMenu(GLCanvas canvas, boolean first){
-		StateMainMenu.canvas = canvas;
+	public StateHighScores(GLCanvas canvas){
+		StateHighScores.canvas = canvas;
+		canvas.setCursor(null);
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
-		System.out.println("screenHeight: " + screenHeight);
 		canvas.addKeyListener(this);
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
-		System.out.println("Main menu loaded");
-		if(!first){
+		System.out.println("Highscores loaded");
+		
 		startup = true;
-		}
 	}
 	
 	@Override
@@ -65,7 +55,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		GL gl = drawable.getGL();
 
 		// Set the clear color and clear the screen.
-		gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
+		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
@@ -74,6 +64,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].draw(gl, null);
 		};
+		
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 		
@@ -83,7 +74,6 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -91,7 +81,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("Main menu init");
+		System.out.println("Pause menu init");
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -120,7 +110,12 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 		// We have a simple 2D application, so we do not need to check for depth
 		// when rendering.
-		gl.glDisable(GL.GL_DEPTH_TEST);		
+		gl.glDisable(GL.GL_DEPTH_TEST);
+		startup = false;
+		for(int i = 0; i< buttonList.length; i++){
+			buttonList[i].update(screenWidth,screenHeight);
+		};
+		
 	}
 
 
@@ -148,21 +143,31 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent event) {
+	public void keyPressed(KeyEvent event) {
 		int code = event.getKeyCode();
 		
 		switch(code){
-		case KeyEvent.VK_SPACE:
-			startGame();
+		
+		case KeyEvent.VK_ESCAPE:
 			
 			break;
 		}
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent me) {
+		int xclick = me.getX();
+		int yclick = me.getY();
+		if(buttonBack.clickedOnIt(xclick, yclick)){
+			
+		}
+	}
+
+	///////////////////////////NOT USED////////////////////////////////////
+	
+	@Override
+	public void keyReleased(KeyEvent event) {
+		
 	}
 	
 	@Override
@@ -195,41 +200,5 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent me) {
-		int xclick = me.getX();
-		int yclick = me.getY();
-		if(buttonStartGame.clickedOnIt(xclick, yclick)){
-			startGame();
-		}
-		
-		if(buttonHighScores.clickedOnIt(xclick, yclick)){
-			new StateHighScores(canvas);
-		}
-		
-		if(buttonQuit.clickedOnIt(xclick, yclick)){
-			System.exit(0);
-		}
-		
-	}
-
-	private void startGame() {
-		canvas.removeGLEventListener(this);
-		canvas.removeKeyListener(this);
-		canvas.removeMouseListener(this);
-		
-		//Set mouse position to center of screen
-		try {
-			Robot robot = new Robot();
-			robot.mouseMove(100,100);
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		@SuppressWarnings("unused")
-		MazeRunner mazerunner = new MazeRunner(canvas);
-		
-		System.out.println("Game started");
-	}
 
 }
