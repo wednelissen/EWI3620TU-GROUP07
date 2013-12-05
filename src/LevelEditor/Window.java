@@ -75,6 +75,15 @@ public class Window {
 		{
 		myTexture.disable();
 		}
+		
+//		float windowBorderColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+//		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, windowBorderColor, 0);
+//		gl.glBegin(GL.GL_QUADS);
+//		gl.glVertex2f(x, y);
+//		gl.glVertex2f(x + sizeX, y);
+//		gl.glVertex2f(x + sizeX, y - sizeY);
+//		gl.glVertex2f(x, y - sizeY);
+//		gl.glEnd();
 	}
 	
 	public boolean clickedOnIt(int xclick, int yclick) {

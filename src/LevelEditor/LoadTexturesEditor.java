@@ -32,8 +32,8 @@ public class LoadTexturesEditor {
 	 */
 	public LoadTexturesEditor() {
 		defaultTexture = loadingTexture("default.png");
-		addTextureToList(loadingTexture("wallTexture.png"), "wall");
-		addTextureToList(loadingTexture("floorTexture.png"), "floor");
+		addTextureToList(loadingTexture("wallEditor.png"), "wallEditor");
+		addTextureToList(loadingTexture("floorEditor.png"), "floorEditor");
 		addTextureToList(loadingTexture("doorEditor.png"), "doorEditor");
 		addTextureToList(loadingTexture("guardianStepsBlue.png"), "guardianStepsBlue");
 		addTextureToList(loadingTexture("guardianStepsRed.png"), "guardianStepsRed");
