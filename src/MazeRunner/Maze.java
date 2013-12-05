@@ -142,9 +142,9 @@ public class Maze implements VisibleObject {
 	public void display(GL gl) {
 
 		if (!texLoaded) {
-			wallTexture = loadTexture("wallTexture.png");
-			roofTexture = loadTexture("roofTexture.png");
-			floorTexture = loadTexture("floorTexture.png");
+			wallTexture = loadTexture("wallEditor.png");
+			roofTexture = loadTexture("wallEditor.png");
+			floorTexture = loadTexture("floorEditor.png");
 			texLoaded = true;
 		}
 
