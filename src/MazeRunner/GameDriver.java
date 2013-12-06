@@ -1,15 +1,10 @@
 package MazeRunner;
 
-import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
-
 import java.awt.Toolkit;
 
 

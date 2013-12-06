@@ -218,3 +218,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#JOGL
+jogl.dll
+jogl_awt.dll
+jogl_cg.dll
+gluegen-rt.dll
