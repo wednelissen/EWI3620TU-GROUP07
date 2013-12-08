@@ -17,6 +17,10 @@ public class Camera {
 		setCamera = true;
 	}
 	
+	/**
+	 * returnt true als camera op een positie is geset
+	 * @return
+	 */
 	public boolean hasCamera(){
 		return setCamera;
 	}

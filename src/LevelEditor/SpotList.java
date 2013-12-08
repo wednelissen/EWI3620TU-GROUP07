@@ -32,6 +32,15 @@ public class SpotList {
 		}
 	}
 	
+	public void loadSpots(ArrayList<Point> loadedSpotPoints){
+		
+		for(Point a: loadedSpotPoints){
+			Spot temp = new Spot();
+			temp.setSpot(a);
+			this.addSpot(temp);
+		}
+	}
+	
 	public int size(){
 		return spots.size();
 	}

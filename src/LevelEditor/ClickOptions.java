@@ -1,5 +1,10 @@
 package LevelEditor;
 
+/**
+ * genereerd een enum lijst van opties die aan Mode kunnen worden gegeven.
+ * @author mvanderreek
+ *
+ */
 public enum ClickOptions {
 	doNothing,
 	map,
@@ -11,6 +16,7 @@ public enum ClickOptions {
 	removeSpot,
 	guardian,
 	key,
+	setKeyDoor,
 	setCamera,
 	removeCamera,
 	placedItems,

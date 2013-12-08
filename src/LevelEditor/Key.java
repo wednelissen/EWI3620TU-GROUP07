@@ -6,11 +6,15 @@ public class Key extends Window{
 	
 	private Point keyPosition;
 	private Point doorPosition;
+	private boolean setKey;
+	private boolean setDoor;
 
 	public Key(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 		super(sizes, screenWidthFrame, screenHeightFrame);
 		keyPosition = new Point();
 		doorPosition = new Point();
+		setKey = false;
+		setDoor = false;
 	}
 	
 	//hier wordt de werkelijke positie van een guard geset.
@@ -39,46 +43,46 @@ public class Key extends Window{
 
 	public void setKey(Point a){
 		keyPosition = a;
+		setKey = true;
 	}
 	
 	public void removeKey(){
 		keyPosition = null;
+		setKey = false;
 	}
 	
 	public Point getKey(){
-		return keyPosition;
-	}
-	
-	public boolean hasKey(){
-		if(keyPosition.equals(null)){
-			return false;
+		if(setKey){
+			return keyPosition;
 		}
 		else
-			return true;
+			return null;
+	}
+	
+	public boolean hasPosition(){
+		return setKey;
 	}
 	
 	public void setDoor(Point a){
-		//hier moet nog wel worden gecontrolleerd of punt a een 'door' is.
 		doorPosition = a;
+		setDoor = true;
 	}
 	
 	public void removeDoor(){
 		doorPosition = null;
+		setDoor = false;
 	}
 	
 	public Point getDoor(){
-		return doorPosition;
+		if(setDoor){
+			return doorPosition;
+		}
+		else
+			return null;
 	}
 	
 	public boolean hasDoor(){
-		if(doorPosition.equals(null)){
-			return false;
-		}
-		else
-			return true;
+		return setDoor;
 	}
-	
-
-
 	
 }

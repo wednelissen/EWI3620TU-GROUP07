@@ -22,6 +22,16 @@ public class PlacedItemsMenu extends Window{
 		Keys = new ArrayList<Key>();	
 	}
 	
+	public void loadGardians(ArrayList<Guardian> loadedGuards){
+		Guards = loadedGuards;
+		setGuardAndKeySizes();
+	}
+	
+	public void loadKeys(ArrayList<Key> loadedKeys){
+		Keys = loadedKeys;
+		setGuardAndKeySizes();
+	}
+	
 	public void addGuard(Guardian guard){
 		if(guard.routeSize()>0){ //er mogen geen guard toegevoegd worden zonder route.
 			Guards.add(guard);
@@ -45,13 +55,27 @@ public class PlacedItemsMenu extends Window{
 	
 	
 	public void addKey(Key key){
-		Keys.add(key);
-		//hier worden alle items posities opnieuw geset na het toevoegen van een guard of een key.	
+		if(!Keys.contains(key)){
+			if(key.hasPosition() && key.hasDoor()){ //er wordt gekeken of de key een positie heeft.
+				Keys.add(key);
+				//hier worden alle items posities opnieuw geset na het toevoegen van een guard of een key.	
+				setGuardAndKeySizes();
+			}
+		}
+	}
+	
+	public void removeKey(Key key){
+		Keys.remove(key);
 		setGuardAndKeySizes();
 	}
 	
+	
 	public int keySize(){
 		return Keys.size();
+	}
+	
+	public ArrayList<Key> getAllKeys(){
+		return Keys;
 	}
 	
 	public boolean typeIsKey(int xclick, int yclick){

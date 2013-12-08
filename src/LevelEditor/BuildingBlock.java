@@ -14,12 +14,28 @@ public class BuildingBlock extends Window{
 		positie.setLocation(i, j);
 	}
 	
+	
 	public void drawBlock(GL gl) {
 		gl.glBegin(GL.GL_QUADS);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + sizeX, y);
 		gl.glVertex2f(x + sizeX, y - sizeY);
 		gl.glVertex2f(x, y - sizeY);
+		gl.glEnd();
+	}
+	
+	public void drawKey(GL gl) {
+		gl.glBegin(GL.GL_QUADS);
+		gl.glVertex2f(x + sizeX*2/6, y);
+		gl.glVertex2f(x + sizeX*4/7, y);
+		gl.glVertex2f(x + sizeX*4/7, y - sizeY);
+		gl.glVertex2f(x + sizeX*2/6, y - sizeY);
+		
+		
+		gl.glVertex2f(x, y);
+		gl.glVertex2f(x + sizeX, y);
+		gl.glVertex2f(x + sizeX, y - sizeY*2/8);
+		gl.glVertex2f(x, y - sizeY*2/8);
 		gl.glEnd();
 	}
 	

@@ -1,6 +1,7 @@
 package LevelEditor;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
@@ -9,8 +10,6 @@ public class MapMenu extends Window {
 	private BuildingBlock[][] BuildingBlocks; // = new BuildingBlock[10][10];
 	private int TotalBuildingBlockX, TotalBuildingBlockY;
 	private int width, height;
-	private String printWidth, printHeight;
-	
 	
 
 	public MapMenu(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
@@ -22,54 +21,12 @@ public class MapMenu extends Window {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void setWidth(char key){
-		if(printWidth == null){	
-			printWidth = ""+key;
-		}
-		else{
-			printWidth = printWidth + key;
-		}
-		//de input van type String wordt omgezet naar een integer
-		width = Integer.parseInt(printWidth);
-		
+	public void setWidth(int tempWidth){
+		width = tempWidth;
 	}
 	
-	public void setHeight(char key){
-		if(printHeight == null){	
-			printHeight = ""+key;
-		}
-		else{
-			printHeight = printHeight + key;
-		}
-		
-		//de input van type String wordt omgezet naar een integer
-		height = Integer.parseInt(printHeight);
-	}
-	
-	public void removeWidth(){
-		if(printWidth != null){
-			if(printWidth.length()>1){
-				printWidth = printWidth.substring(0,printWidth.length()-1);
-				width = Integer.parseInt(printWidth);
-			}
-			else{
-				printWidth = null;
-				width = 0;
-			}
-		}		
-	}
-	
-	public void removeHeight(){
-		if(printHeight != null){
-			if(printHeight.length()>1){
-				printHeight = printHeight.substring(0,printHeight.length()-1);
-				height = Integer.parseInt(printHeight);
-			}
-			else{
-				printHeight = null;
-				height = 0;
-			}
-		}		
+	public void setHeight(int tempHeight){
+		height = tempHeight;
 	}
 	
 	public int getWidth(){
@@ -110,6 +67,37 @@ public class MapMenu extends Window {
 		}		
 	}
 	
+	public void loadBuildingBlocks(String[] floorPlan, int LoadedWidth, int LoadedHeight){
+		setWidth(LoadedWidth);
+		setHeight(LoadedHeight);
+		setTotalBuildingBlocks();
+		
+		for(int j = 0; j < height; j++){
+			for(int i = 0; i < width; i++){
+				String temp = floorPlan[j].charAt(i) + "";
+				int block = Integer.parseInt(temp);
+				if(block == 0){
+					BuildingBlocks[i][j].setFloor();
+				}
+				if(block == 1){
+					BuildingBlocks[i][j].setWall();
+				}
+				if(block == 2){
+					BuildingBlocks[i][j].setDoor();
+				}
+			}	
+		}
+		
+	}
+	
+	//alle sleutels worden nagelopen om te controlleren welke deuren een key nodig hebben.
+	public void loadKeysAndDoors(ArrayList<Key> loadedKeys){
+		for(Key k: loadedKeys){
+			getBuildingBlockByPosition(k.getDoor()).setKeyRequired();	
+		}		
+	}
+	
+	
 	public boolean hasHeightAndWidth(){
 		if(TotalBuildingBlockX>0 && TotalBuildingBlockY>0 && TotalBuildingBlockX<101 & TotalBuildingBlockY<101){return true;}
 		else if(TotalBuildingBlockX==0 && TotalBuildingBlockY==0){return false;}
@@ -126,10 +114,14 @@ public class MapMenu extends Window {
 					BuildingBlocks[i][j].draw(gl);
 				}
 				else if(BuildingBlocks[i][j].getDoor()){
-					gl.glColor3f(0.5f, 0.1f, 0f);
-					BuildingBlocks[i][j].drawBlock(gl);
-					gl.glColor3f(0.0f, 0, 0f);
-					
+						if(BuildingBlocks[i][j].getKeyRequired()){
+							gl.glColor3f(0.0f, 1f, 0f);
+						}
+						else{
+							gl.glColor3f(0.5f, 0.1f, 0f);
+						}
+						BuildingBlocks[i][j].drawBlock(gl);
+						gl.glColor3f(0.0f, 0, 0f);
 				}
 				else{
 					BuildingBlocks[i][j].drawBlock(gl);
