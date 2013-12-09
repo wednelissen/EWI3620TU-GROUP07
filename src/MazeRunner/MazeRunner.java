@@ -69,7 +69,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	private boolean startup = true;
 
-	private Guard guard;
+	private LoadTexturesMaze loadedTexturesMaze;
 
 	/*
 	 * **********************************************
@@ -88,7 +88,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		screenWidth = canvas.getWidth();
 
 		initJOGL(); // Initialize JOGL.
-		initObjects(); // Initialize all the objects!
 		gameinitialized = true;
 	}
 
@@ -128,18 +127,29 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// that need to be
 		// displayed by MazeRunner.
 		visibleObjects = new ArrayList<VisibleObject>();
-		createGuards();
-		createCameras();
-		// Add the maze that we will be using.
-		maze = new Maze();
 
+		// Add the maze that we will be using.
+		maze = new Maze(loadedTexturesMaze);
 		visibleObjects.add(maze);
-		for (Guard temp : guards) {
-			visibleObjects.add(temp);
-		}
-		for (GuardCamera temp : cameras) {
-			visibleObjects.add(temp);
-		}
+
+		// // Add the spots that we will be using
+		// for (int i = 0; i < Loadlevel.getSpots.size(); i++) {
+		// Spotlight tempSpot = new Spotlight(maze.SQUARE_SIZE,
+		// loadedTexturesMaze.getTexture("spotlight"),
+		// Loadlevel.getSpotlight.get(i));
+		// visibleObjects.add(tempSpot);
+		// }
+
+		 createGuards();
+		 createCameras();
+		 
+		 for (GuardCamera temp : cameras) {
+		 visibleObjects.add(temp);
+		 }
+		
+		 for (Guard temp : guards) {
+		 visibleObjects.add(temp);
+		 }
 
 		// Initialize the player.
 
@@ -153,10 +163,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
 				player.getLocationZ(), player.getHorAngle(),
 				player.getVerAngle());
+		// guardcamera = new GuardCamera(15, 15, 15, player.locationX,
+		// player.locationZ, previousTime);
 
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
 		player.setControl(input);
+		System.out.println("Klaar met creatie objecten");
 	}
 
 	/*
@@ -175,6 +188,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * all in this method.
 	 */
 	public void init(GLAutoDrawable drawable) {
+		System.out.println("Maze textures init");
+		initTextures();
+		System.out.println("Creatie objects");
+		initObjects(); // Initialize all the objects!
 		System.out.println("Mazerunner init");
 		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
 														// pipeline to Debugging
@@ -210,6 +227,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
 				cursorImg, new Point(0, 0), "blank cursor");
 		canvas.setCursor(blankCursor);
+	}
+
+	public void initTextures() {
+		loadedTexturesMaze = new LoadTexturesMaze();
+		System.out.println("Textures geladen");
 	}
 
 	/**
@@ -260,7 +282,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			gl.glLoadIdentity();
 			// Flush the OpenGL buffer.
 			gl.glFlush();
-
 		}
 	}
 
@@ -498,7 +519,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	public void mouseClicked(MouseEvent me) {
 		Kogel kogel = new Kogel(me.getX(), me.getY(), 0);
 		kogel.updateShoot(player.getHorAngle(), player.getVerAngle(), deltaTime);
-		visibleObjects.add(kogel);
+		// visibleObjects.add(kogel);
 
 	}
 

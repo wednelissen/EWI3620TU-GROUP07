@@ -44,24 +44,11 @@ public class Maze implements VisibleObject {
 	public final double MAZE_SIZE_Z = newMaze.getHeight();
 	public final double SQUARE_SIZE = 5;
 	public final Point startPoint =  newMaze.getStartPosition();
+	private LoadTexturesMaze loadedTexturesMaze;
 	
-	private Texture wallTexture;
-	private Texture floorTexture;
-	private Texture roofTexture;
-	private Texture spotTexture;
-	private boolean texLoaded = false;
-
-	// private int[][] maze =
-	// { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	// { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	// { 1, 0, 0, 0, 0, 0, 1, 1, 1, 1 },
-	// { 1, 0, 1, 0, 0, 0, 1, 0, 0, 1 },
-	// { 1, 0, 1, 0, 1, 0, 1, 0, 0, 1 },
-	// { 1, 0, 1, 0, 1, 0, 1, 0, 0, 1 },
-	// { 1, 0, 0, 0, 1, 0, 1, 0, 0, 1 },
-	// { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1 },
-	// { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	// { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+	public Maze (LoadTexturesMaze temp){
+		loadedTexturesMaze = temp;
+	}
 
 	private int[][] maze = newMaze.outputForMazeRunner();
 
@@ -79,20 +66,6 @@ public class Maze implements VisibleObject {
 	public boolean isWall(int x, int z) {
 		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
 			return maze[x][z] == 1;
-		else
-			return false;
-	}
-
-	public boolean isBars(int x, int z) {
-		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
-			return maze[x][z] == 2;
-		else
-			return false;
-	}
-
-	public boolean isSpot(int x, int z) {
-		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
-			return maze[x][z] == 3;
 		else
 			return false;
 	}
@@ -141,29 +114,16 @@ public class Maze implements VisibleObject {
 
 	public void display(GL gl) {
 
-		if (!texLoaded) {
-			wallTexture = loadTexture("wallEditor.png");
-			roofTexture = loadTexture("wallEditor.png");
-			floorTexture = loadTexture("floorEditor.png");
-			texLoaded = true;
-		}
-
 		for (int i = 0; i < MAZE_SIZE_X; i++) {
 			for (int j = 0; j < MAZE_SIZE_Z; j++) {
 				gl.glPushMatrix();
 				gl.glTranslated(i * SQUARE_SIZE, 0, j * SQUARE_SIZE);
 				if (isWall(i, j)) {
-					drawWall(gl, SQUARE_SIZE, wallTexture);
+					drawWall(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("wallTexture"));
 				}
 				if (!isWall(i, j)) {
-					drawFloor(gl, SQUARE_SIZE, floorTexture);
-					drawRoof(gl, SQUARE_SIZE, roofTexture);
-				}
-				if (isBars(i, j)) {
-					drawBars(gl, SQUARE_SIZE);
-				}
-				if (isSpot(i, j)) {
-					drawSpot(gl, SQUARE_SIZE, spotTexture);
+					drawFloor(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("floorTexture"));
+					drawRoof(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("floorTexture"));
 				}
 				gl.glPopMatrix();
 			}
@@ -322,26 +282,6 @@ public class Maze implements VisibleObject {
 		myTexture.disable();
 	}
 
-	public Texture loadTexture(String fileName) {
-		// Nieuwe texture aanmaken
-		Texture myTexture;
-		try {
-			// Texture ophalen vanuit een image
-			URL textureURL;
-			textureURL = getClass().getClassLoader().getResource(fileName);
-			BufferedImage texture = ImageIO.read(textureURL); // read file into
-			// BufferedImage
-			ImageUtil.flipImageVertically(texture);
-			myTexture = TextureIO.newTexture(texture, true);
-		} catch (IOException e) {
-			// Wanneer de source niet gevonden is
-			e.printStackTrace();
-			System.out.println("De file " + fileName + " is niet gevonden");
-			myTexture = null;
-		}
-		return myTexture;
-	}
-
 	public void drawSpot(GL gl, double size, Texture myTexture) {
 		float spotColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, spotColour, 0);
@@ -350,9 +290,7 @@ public class Maze implements VisibleObject {
 		double lightSize = 0.2;
 
 		// Licht weergeven
-		float lightPosition[] = { (float) (size / 2),
-				(float) (size - lightSize - lightSize), (float) (size / 2),
-				1.0f };
+		float lightPosition[] = { (float) (size/2), (float)(size-lightSize-lightSize), (float) (size/2), 1.0f }; 		
 		float lightColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 		float lightDirection[] = { 0.0f, -1.0f, 0.0f, 0.0f };
 
@@ -369,5 +307,9 @@ public class Maze implements VisibleObject {
 		glut.glutSolidCylinder(lightRadius, lightSize, 20, 20);
 		// glut.glutSolidCube((float)lightSize);
 
+		
+        
+        
+        
 	}
 }
