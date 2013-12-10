@@ -11,6 +11,14 @@ public class Window {
 	protected int screenWidth, screenHeight;
 	protected float[] originalSizes;
 
+	/**
+	 * maakt een object waar op geklikt kan worden. De coordinaten zijn naar verhouding: 
+	 * 800 pixels breed bij 600 pixels hoog.	 * 
+	 * 
+	 * @param sizes, een array van float met 4 coordinaten. linksboven, rechtsboven, breedte, hoogte.
+	 * @param screenWidthFrame, breedte van het hele frame.
+	 * @param screenHeightFrame, hoogte van het hele frame.
+	 */
 	public Window(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 
 		if (sizes.length == 4) {
@@ -34,6 +42,12 @@ public class Window {
 		}
 	}
 
+	/**
+	 * berekend de nieuwe breedte en hoogte van het vlak aan de hand van de nieuwe breedte en hoogte
+	 * van het Frame.
+	 * @param screenWidthFrame
+	 * @param screenHeightFrame
+	 */
 	public void update(int screenWidthFrame, int screenHeightFrame) {
 
 		float x_linksBoven = originalSizes[0];
@@ -51,6 +65,10 @@ public class Window {
 		sizeY = buttonSizeY / 600 * screenHeight;
 	}
 	
+	/**
+	 * tekent een omlijning van het vlak.
+	 * @param gl
+	 */
 	public void draw(GL gl) {
 		gl.glBegin(GL.GL_LINE_LOOP);
 		gl.glVertex2f(x, y);
@@ -60,6 +78,12 @@ public class Window {
 		gl.glEnd();
 	}
 	
+	/**
+	 * 
+	 * @param xclick mouse click
+	 * @param yclick mouse click
+	 * @return true indien er op dit object is geklikt.
+	 */
 	public boolean clickedOnIt(int xclick, int yclick) {
 		if(xclick >= x && xclick < (x + sizeX) && yclick >= (screenHeight - y) && yclick < ((screenHeight - y) + sizeY)){
 			return true;

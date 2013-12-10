@@ -8,7 +8,13 @@ public class BuildingBlock extends Window{
 	private Point positie = new Point();
 	private boolean wall = false, floor = true, door = false, keyRequired = false;
 	
-
+	/**
+	 * @param sizes, een array van float met 4 coordinaten. linksboven, rechtsboven, breedte, hoogte.
+	 * @param screenWidthFrame, breedte van het hele frame.
+	 * @param screenHeightFrame, hoogte van het hele frame.
+	 * @param i, x-positie van het blok ten opzichten van alle andere blokken.
+	 * @param j, y-positie van het blok ten opzichten van alle andere blokken.
+	 */
 	public BuildingBlock(float[] sizes, int screenWidthFrame, int screenHeightFrame, int i, int j) {
 		super(sizes, screenWidthFrame, screenHeightFrame);
 		positie.setLocation(i, j);
@@ -85,11 +91,17 @@ public class BuildingBlock extends Window{
           gl.glEnd();
     }
     
-	
+	/**
+	 * 
+	 * @return Positie van het BuildingBlock
+	 */
 	public Point getPosition(){
 		return positie;
 	}
 	
+	/**
+	 * maakt wall true en de rest false.
+	 */
 	public void setWall(){
 		wall = true;
 		floor = false;
@@ -97,6 +109,9 @@ public class BuildingBlock extends Window{
 		keyRequired = false;
 	}
 	
+	/**
+	 * maakt floor true en de rest false.
+	 */
 	public void setFloor(){
 		wall = false;
 		floor = true;
@@ -104,6 +119,9 @@ public class BuildingBlock extends Window{
 		keyRequired = false;
 	}
 	
+	/**
+	 * maakt Door true en de rest false.
+	 */
 	public void setDoor(){
 		wall = false;
 		floor = false;
@@ -111,26 +129,48 @@ public class BuildingBlock extends Window{
 		keyRequired = false;
 	}
 	
+	/**
+	 * maakt 'keyRequired' true zodat er een sleutel aan dit blok is gekoppeld.
+	 */
 	public void setKeyRequired(){
 		keyRequired = true;
 	}
 	
+	/**
+	 * maakt 'keyRequired' false er is geen sleutel gekoppeld aan dit blok. 
+	 */
 	public void removeKeyRequired(){
 		keyRequired = false;
 	}
 	
+	/**
+	 * 
+	 * @return true als dit blok een muur is.
+	 */
 	public boolean getWall(){
 		return wall;
 	}
-	
+
+	/**
+	 * 
+	 * @return true als dit blok een vloer is.
+	 */
 	public boolean getFloor(){
 		return floor;
 	}
 	
+	/**
+	 * 
+	 * @return true als dit blok een door is.
+	 */
 	public boolean getDoor(){
 		return door;
 	}
 	
+	/**
+	 * 
+	 * @return true als dit blok, een deur, een sleutel nodig heeft.
+	 */
 	public boolean getKeyRequired(){
 		return keyRequired;
 	}

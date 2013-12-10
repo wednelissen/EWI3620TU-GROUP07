@@ -7,13 +7,28 @@ public class Guardian extends Window{
 	private ArrayList<Point> route;
 	private int xPrevious, yPrevious;
 	
+	/**
+	 * hier wordt een guardian gemaakt maar de positie die wordt opgegeven is nog niet belangrijk
+	 * deze wordt geautomatiseerd goed geset doordat de functie updatePositie wordt aangeroepen,
+	 * door de classe PlacedItems.
+	 * @param sizes
+	 * @param screenWidthFrame
+	 * @param screenHeightFrame
+	 */
 	public Guardian(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 		super(sizes, screenWidthFrame, screenHeightFrame); //er wordt een display positie geset maar niet meteen gebruikt.
 		route = new ArrayList<Point>();
 	}
 	
 	
-	//hier wordt de werkelijke positie van een guard geset.
+	
+	/**
+	 * hier wordt de werkelijke positie van een bewaker geset. wanneer hij in het placedItems menu
+	 * is geplaatst.
+	 * @param sizes
+	 * @param screenWidthFrame
+	 * @param screenHeightFrame
+	 */
 	public void updatePosition(float[] sizes, int screenWidthFrame, int screenHeightFrame){
 		if (sizes.length == 4) {
 
@@ -34,12 +49,15 @@ public class Guardian extends Window{
 		} else {
 			System.out.println("geen geldige lengte voor input");
 		}		
-		
 	}
 	
 	
-	//wanneer het punt in de route nog niet bestaat en deze verticaal of horizontaal 
-	//naast het vorige punt ligt wordt deze toegevoegd.
+	
+	/**
+	 * wanneer het punt in de route nog niet bestaat en deze verticaal of horizontaal 
+	 * naast het vorige geplaatste punt ligt wordt deze toegevoegd aan de route.
+	 * @param a
+	 */
 	public void addRoute(Point a){
 		if(route.size()>0){
 			if(!route.contains(a)){
@@ -60,18 +78,34 @@ public class Guardian extends Window{
 		}
 	}
 	
+	/**
+	 * de oude route wordt vervangen door een nieuwe route, ook de laatste x en y coordinaten worden
+	 * vervangen.
+	 * @param newRoute
+	 * @param x
+	 * @param y
+	 */
 	public void setTotalRoute(ArrayList<Point> newRoute, int x, int y){
 		route = newRoute;
 		xPrevious = x;
 		yPrevious = y;
 		
 	}
-	//lengte van het aantal punten dat een bewaker afloopt.
+	
+	/**
+	 * lengte van het aantal punten dat een bewaker afloopt.
+	 * @return
+	 */
 	public int routeSize(){
 		return route.size();
 	}
 	
-	//geeft alle punten die de bewaker afloopt
+	/**
+	 * returnt de kopie van de routelijst van de bewaker.
+	 * het is een kopie zodat wanneer er een nieuwe bewaker aangemaakt wordt deze de route van
+	 * de andere bewaker kan overnemen en vervolgens hiermee zelf verder zijn eigen route kan creeren.
+	 * @return 
+	 */
 	public ArrayList<Point> getCopyRoutes(){
 		ArrayList<Point> newRoute = new ArrayList<Point>();
 		for(Point p: route){
@@ -80,7 +114,11 @@ public class Guardian extends Window{
 		return newRoute;
 	}
 	
-	//geeft 1 specifiek punt die een bewaker afloopt
+	/**
+	 * geeft 1 specifiek punt op plek i die een bewaker afloopt
+	 * @param i
+	 * @return
+	 */
 	public Point getRoute(int i){
 		if (route.size() > 0){
 			return route.get(i);	
@@ -89,15 +127,27 @@ public class Guardian extends Window{
 			return null;
 	}
 	
+	/**
+	 * geeft het laaste x coordinaat waar de bewaker zijn punt uit de route heeft geplaatst
+	 * @return
+	 */
 	public int geXprevious(){
 		return xPrevious;
 	}
 	
+	/**
+	 * geeft het laaste y coordinaat waar de bewaker zijn punt uit de route heeft geplaatst
+	 * @return
+	 */
 	public int geYprevious(){
 		return yPrevious;
 	}
 	
-	//verwijderd laatste punt en update ook de x en y previous.
+	
+	/**
+	 * verwijderd laatste punt uit de route en update ook de x en y previous 
+	 * naar het ener laatste punt.
+	 */
 	public void removeLastPoint(){
 		if(route.size()>0){
 			int i = route.size();

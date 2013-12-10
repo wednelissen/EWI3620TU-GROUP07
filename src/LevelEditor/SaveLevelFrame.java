@@ -11,10 +11,18 @@ public class SaveLevelFrame extends JFrame{
 	private String saveFile;
 	private String pathLastOpened;
 	
+	/**
+	 * maakt een JfileChooser waarmee een bestand kan worden opgeslagen.
+	 * dit frame is niet standaard zichtbaar.
+	 */
 	public SaveLevelFrame(){
 		fileChooser = new JFileChooser();
 	}
 	
+	/**
+	 * zorgt dat het 'save' frame verschijnt. wanneer de file wordt opgeslagen wordt het pad naar 
+	 * deze plek onthouden in de variable 'saveFile'.
+	 */
 	public void runSaveFile(){
 		
 		int returnVal = fileChooser.showSaveDialog(rootPane);
@@ -32,6 +40,10 @@ public class SaveLevelFrame extends JFrame{
 	    }		
 	}
 	
+	/**
+	 * 
+	 * @return de String naar het pad incl naam van het bestand waarin de data moet worden opgeslagen.
+	 */
 	public String getFilePath(){
 		this.runSaveFile();
 		return saveFile;

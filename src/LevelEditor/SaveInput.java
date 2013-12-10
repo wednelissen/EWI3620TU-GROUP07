@@ -30,7 +30,19 @@ public class SaveInput {
 	
 	
 	
-	
+	/**
+	 * alle objecten meegeven waarmee je een level maakt.
+	 * deze worden vertaald naar strings en vervolgens opgeslagen naar een tekstbestand met de naam
+	 * van de ingegeven param 'LevelName'
+	 * 
+	 * 
+	 * @param tempMap
+	 * @param tempPlacedItems
+	 * @param tempStartAndEnd
+	 * @param tempSpotList
+	 * @param tempCameraList
+	 * @param LevelName
+	 */
 	public SaveInput(MapMenu tempMap, PlacedItemsMenu tempPlacedItems, StartAndEndPosition tempStartAndEnd, SpotList tempSpotList, CameraList tempCameraList, String LevelName){
 		map = tempMap;
 		placedItems = tempPlacedItems;
@@ -60,6 +72,10 @@ public class SaveInput {
 			System.out.println("er zijn nog geen begin en eindpunt geset.");
 	}
 	
+	/**
+	 * zorgt dat iedere BuildingBlock wordt nagelopen en zorgt dat een vloer een 0 wordt.
+	 * een muur een 1 wordt en een deur een 2 wordt.
+	 */
 	public void floorPlanMaze(){
 		int TotalBuildingBlockX = map.getWidth();
 		int TotalBuildingBlockY = map.getHeight();
@@ -85,6 +101,9 @@ public class SaveInput {
 		}		
 	}
 	
+	/**
+	 * de Start en Eind Positie worden naar String vertaald als een Punt bv: x,y;
+	 */
 	public void StartAndEndPosition(){
 		Point start =StartAndEnd.getStart();
 		Point end = StartAndEnd.getEnd();
@@ -96,6 +115,10 @@ public class SaveInput {
 		System.out.println("start: "+StartPosition+" eind: " + EndPosition);
 	}
 	
+	/**
+	 * iedere Guardian die is opgeslagen wordt de route vertaald naar String met scheiding van semicolum
+	 * tussen de punten.
+	 */
 	public void GuardsPlan(){
 		ArrayList<Guardian> guards = placedItems.getAllGuards();
 		for(int i=0; i< placedItems.guardSize(); i++){
@@ -118,6 +141,10 @@ public class SaveInput {
 		}
 	}
 	
+	/**
+	 * alle opgeslagen Key worden vertaald naar string. eerst wordt de positie van de sleutel 
+	 * vertaald en daar achter komt de positie van de Deur.
+	 */
 	public void KeysPlan(){
 		ArrayList<Key> keys = placedItems.getAllKeys();
 		for(int i=0; i< placedItems.keySize(); i++){
@@ -145,6 +172,9 @@ public class SaveInput {
 		}
 	}
 	
+	/**
+	 * zet alle spots om naar punten zoals x,y;
+	 */
 	public void SpotsPlan(){
 		int i = 0;
 		for(Spot s: spotList.getSpots()){
@@ -162,6 +192,9 @@ public class SaveInput {
 		
 	}
 	
+	/**
+	 * zet alle camera's om naar punten zoals x,y;
+	 */
 	public void CamerasPlan(){
 		int i = 0;
 		for(Camera s: cameraList.getCameras()){
@@ -179,6 +212,13 @@ public class SaveInput {
 		
 	}
 	
+	/**
+	 * hier worden alle bovenstaande gecreerde Strings weggeschreven naar een bestand met de naam 'name'.
+	 * de eerste regel wordt een ID weggeschreven. bij het laden wordt gecontrolleerd of deze gelijk
+	 * is aan de hier weggeschreven ID zodat het programma weet dat het om een geldig 
+	 * level editor bestand gaat.
+	 * @param name	naam van het bestand dat wordt opgeslagen
+	 */
 	public void write(String name) {
 		try{			
 			// build files

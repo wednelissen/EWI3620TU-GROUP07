@@ -7,12 +7,15 @@ public class CameraList {
 	
 	private ArrayList<Camera> cameras;
 	
+	/**
+	 * Maakt een ArrayList van camera's.
+	 */
 	public CameraList(){
 		cameras = new ArrayList<Camera>();
 	}
 	
 	/**
-	 * voegt een camera aan de arraylist van camera's toe.
+	 * Voegt een camera aan de arraylist van camera's toe.
 	 * een camera die al in de arraylist zit wordt niet toegevoegt.
 	 * @param s
 	 */
@@ -46,7 +49,7 @@ public class CameraList {
 	}
 	
 	/**
-	 * aantal camera's
+	 * aantal camera's in de ArrayList.
 	 * @return
 	 */
 	public int size(){
@@ -55,6 +58,7 @@ public class CameraList {
 	
 	/**
 	 * verwijderd een camera indien deze in de lijst zit.
+	 * anders gebeurd er niets.
 	 * @param s
 	 */
 	public void removeCamera(Camera s){
@@ -67,6 +71,10 @@ public class CameraList {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return een ArrayList van opgeslagen camera's
+	 */
 	public ArrayList<Camera> getCameras(){
 		return cameras;
 	}

@@ -25,8 +25,13 @@ public class LoadLevel {
 	
 	
 	
-	private float[] placedItemsCoords = new float[] { 5, 235, 195, 200 }; //wordt niet gebruikt
-	
+	private float[] placedItemsCoords = new float[] { 5, 235, 195, 200 }; //wordt niet gebruikt alleen ter initalisatie
+	/**
+	 * geeft de name van het uit te lezen bestand op en deze wordt met de scanner is losse strings
+	 * verwerkt. de ID als eerste regel moet overeenkomen met de controllen String anders is het geen
+	 * geldig level editor bestand.
+	 * @param name
+	 */
 	public LoadLevel(String name){
 		fileName = name;
 		try{			
@@ -112,18 +117,34 @@ public class LoadLevel {
 		
 	}
 
+	/**
+	 * geeft breedte van de Maze
+	 * @return
+	 */
 	public int getWidth(){
 		return width;
 	}
 	
+	/**
+	 * geeft hoogte van de Maze
+	 * @return
+	 */
 	public int getHeight(){
 		return height;
 	}
 	
+	/**
+	 * geeft de naam van het uit te lezen bestand
+	 * @return
+	 */
 	public String getFileName(){
 		return fileName;
 	}
 	
+	/**
+	 * 
+	 * @return geeft de startposite als type Point
+	 */
 	public Point getStartPosition(){
 		String[] a = StartPosition.split(";");
 		String[] b = a[0].split(",");
@@ -135,6 +156,10 @@ public class LoadLevel {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @return geeft de eindpositie als type Point
+	 */
 	public Point getEndPosition(){
 		String[] a = EndPosition.split(";");
 		String[] b = a[0].split(",");
@@ -146,7 +171,12 @@ public class LoadLevel {
 		return result;
 	}
 	
-	//geeft een tweedimensionale int array die direct gebruikt kan worden door de mazerunner om te spelen.
+	/**
+	 * 
+	 * @return
+	 * geeft een tweedimensionale int array die direct
+	 * gebruikt kan worden door de mazerunner om te spelen.
+	 */
 	public int[][] outputForMazeRunner(){
 		int[][] maze = new int[width][height];
 		for(int j = 0; j < height; j++){
@@ -174,10 +204,20 @@ public class LoadLevel {
 		return maze;
 	}
 	
+	/**
+	 * 
+	 * @return een string met de plattegrond van de maze.
+	 * een vloer, muur of deur, aangegeven met een 0, 1 of 2.
+	 */
 	public String[] getFloorPlan(){
 		return floorPlan;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * een Arraylist van Punten waar de spotjes zich bevinden
+	 */
 	public ArrayList<Point> getSpots(){
 		ArrayList<Point> result = new ArrayList<Point>();
 		for(int i=0; i<spotSize; i++){
@@ -191,6 +231,11 @@ public class LoadLevel {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @return 
+	 * een Arraylist van Punten waar de camara's zich bevinden
+	 */
 	public ArrayList<Point> getCameras(){
 		ArrayList<Point> result = new ArrayList<Point>();
 		for(int i=0; i<cameraSize; i++){
@@ -205,7 +250,12 @@ public class LoadLevel {
 	}
 	
 	
-	//returnt een lijst met gardians en hun routes.
+
+	/**
+	 * 
+	 * @return
+	 * een ArrayList van Guardians met hun routes.
+	 */
 	public ArrayList<Guardian> getGuardians(){	
 		ArrayList<Guardian> guards = new ArrayList<Guardian>();
 		for(int i = 0; i < guardSize; i++){		
@@ -233,6 +283,11 @@ public class LoadLevel {
 		return guards;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * een Arraylist van Keys met hun positie en daarbijbehorende deur
+	 */
 	public ArrayList<Key> getKeys(){	
 		ArrayList<Key> keyList = new ArrayList<Key>();
 		for(int i = 0; i < keySize; i++){	
@@ -266,6 +321,11 @@ public class LoadLevel {
 		return keyList;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * true wanneer het uitgelezen bestand voldoet aan de controlle ID, geeft anders false.
+	 */
 	public boolean getValid(){
 		return valid;
 	}

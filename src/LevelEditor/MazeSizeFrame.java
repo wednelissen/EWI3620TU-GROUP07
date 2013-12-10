@@ -26,6 +26,10 @@ public class MazeSizeFrame extends JFrame implements ActionListener{
     private int height = 0, width = 0;
     private boolean mapdrawCheck = false; //Wanneer er een goede waarde is ingevuld en opgeslagen zal deze true worden
     
+    /**
+     * creert een Jframe met twee in te vullen tekst vakken voor de breedte en de hoogte.
+     * dit Jframe is standaard niet zichtbaar. 
+     */
     public MazeSizeFrame(){
         setTitle("Maze Sizes");
         setBounds(100,100,400,200);
@@ -51,6 +55,13 @@ public class MazeSizeFrame extends JFrame implements ActionListener{
         setVisible(false);
     }
 
+    /**
+     * Wordt bekeken of je op de 'set' of 'clear' knop hebt gedrukt.
+     * indien op de set knop worden de breedte en hoogte naar integers vertaald en wordt het scherm
+     * ontzichtbaar gemaakt.
+     * indien op de clear knop wordt gedrukt worden alleen de breedte en hoogte vlakken leeg gemaakt
+     * en blijft het scherm zichtbaar.
+     */
     public void actionPerformed(ActionEvent e){
         Object source = e.getSource();
         if (source == setSize){
@@ -79,23 +90,41 @@ public class MazeSizeFrame extends JFrame implements ActionListener{
         }
     }
     
+    /**
+     * zorgt dat het Jframe verschijnt
+     */
     public void appear(){
     	setVisible(true);
     }
     
-    
+    /**
+     * 
+     * @return de breedte als integer.
+     */
     public int getWidthField(){
     	return width;
     }
     
+    /**
+     * 
+     * @return de hoogte als integer
+     */
     public int getHeightField(){
     	return height;
     }
     
+    /**
+     * zorgt dat de boolean 'mapdrawCheck' weer op false wordt geset. deze is standaard false
+     * en wordt op true geset wanneer een goede breedte en hoogte is geset.
+     */
     public void resetMapdrawCheck(){
     	mapdrawCheck= false;
     }
     
+    /**
+     * 
+     * @return true als er een goede breedte en hoogte is ingevuld.
+     */
     public boolean getMapdrawCheck(){
     	return mapdrawCheck;
     }

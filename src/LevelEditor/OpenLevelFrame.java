@@ -11,10 +11,18 @@ public class OpenLevelFrame extends JFrame{
 	private String openFile;
 	private String pathLastOpened;
 	
+	/**
+	 * maakt een JfileChooser waarmee een bestand kan worden geopent.
+	 * dit frame is niet standaard zichtbaar.
+	 */
 	public OpenLevelFrame(){
 		fileChooser = new JFileChooser();
 	}
 	
+	/**
+	 * zorgt dat het 'open' frame verschijnt. wanneer de file wordt geopent wordt het pad naar dit 
+	 * bestand opgeslagen in de variable 'openFile'.
+	 */
 	public void runLoadFile(){
 		int returnVal = fileChooser.showOpenDialog(rootPane);
 		
@@ -33,6 +41,10 @@ public class OpenLevelFrame extends JFrame{
 	    }		
 	}
 	
+	/**
+	 * 
+	 * @return een String met het pad naar het zojuist geopende bestand.
+	 */
 	public String getFilePath(){
 		this.runLoadFile();
 		return openFile;
