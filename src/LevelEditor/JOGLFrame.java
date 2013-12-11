@@ -267,10 +267,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	 * @param gl
 	 */
 	private void drawWindows(GL gl) {
-		// Draw the background boxes
-		gl.glColor3f(0f, 0f, 0f);
-		
-		
 		//als de breedte en lengte zijn ingegeven mogen de buildingBlocks worden getekent in de map.
 		//alle items in de map worden ook getekent indien aan de if is voldaan.
 		if(mapCreated){
@@ -278,14 +274,12 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			
 			//startpunt wordt getekent
 			if(StartEnd.hasStart()){
-				gl.glColor3f(0.5f, 0, 0.6f);
 				Point a = StartEnd.getStart();
 				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("startPos"));
 			}
 			
 			//eindpunt wordt getekent
 			if(StartEnd.hasEnd()){
-				gl.glColor3f(0.5f, 0.5f, 0f);
 				Point a = StartEnd.getEnd();
 				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("endPos"));
 			}
@@ -304,7 +298,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			
 			//alle sleutels die zijn geplaatst worden getekent.
 			if(AllKeysOnOff){
-				gl.glColor3f(0.1f, 0.3f, 0.5f);
+//				gl.glColor3f(0.1f, 0.3f, 0.5f);
 				for(Key k: placedItems.getAllKeys()){
 					Point a = k.getKey();
 					map.getBuildingBlockByPosition(a).drawKey(gl);			
@@ -325,7 +319,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			
 			//tijdelijke sleutel die is geselecteerd wordt getekent
 			if(key.hasPosition() && (Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor) ){
-				gl.glColor3f(0.1f, 0.3f, 0.5f);
+//				gl.glColor3f(0.1f, 0.3f, 0.5f);
 				Point a = key.getKey();
 				map.getBuildingBlockByPosition(a).drawKey(gl);	
 			}

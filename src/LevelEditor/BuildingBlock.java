@@ -22,7 +22,11 @@ public class BuildingBlock extends Window{
 		positie.setLocation(i, j);
 	}
 	
-	
+	/**
+	 * Creert een blok in maze met een texture. Maar alleen wanneer er een texture aanwezig is.
+	 * @param gl
+	 * @param myTexture
+	 */
 	public void drawBlock(GL gl, Texture myTexture) {
 		float blockColor[] = { 1.0f, 1.0f, 1.0f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, blockColor, 0);
@@ -40,7 +44,9 @@ public class BuildingBlock extends Window{
 		gl.glTexCoord2d(0, 0);
 		gl.glVertex2f(x, y - sizeY);
 		gl.glEnd();
+		if (myTexture != null) {
 		myTexture.disable();
+		}
 	}
 	
 	public void drawKey(GL gl) {
