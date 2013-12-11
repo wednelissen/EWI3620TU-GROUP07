@@ -68,6 +68,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private boolean gameinitialized = false, gamepaused = false;
 
 	private boolean startup = true;
+	private boolean initiate = true;
 
 	private LoadTexturesMaze loadedTexturesMaze;
 
@@ -188,10 +189,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * all in this method.
 	 */
 	public void init(GLAutoDrawable drawable) {
+		if (initiate = true){
 		System.out.println("Maze textures init");
 		initTextures();
 		System.out.println("Creatie objects");
 		initObjects(); // Initialize all the objects!
+		initiate = false;
+		}
 		System.out.println("Mazerunner init");
 		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
 														// pipeline to Debugging
