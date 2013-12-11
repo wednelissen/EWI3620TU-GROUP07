@@ -5,7 +5,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import LevelEditor.Button;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -19,11 +21,18 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 	private int screenWidth, screenHeight;
 	
 	//layout van het hoofdmenu
-	private float[] buttonStartGameCoords = new float[] { 150, 100, 300, 100};
+	private float[] buttonStartGameCoords = new float[] { 200, 25, 400, 75};
+	private float[] buttonHighScoresCoords = new float[] { 200, 125, 400, 75};
+	private float[] buttonQuitCoords = new float[] {200, 225, 400, 75};
 	
 	//define buttons
 	private Button buttonStartGame = new Button(buttonStartGameCoords, screenWidth, screenHeight);
+	private Button buttonHighScores = new Button(buttonHighScoresCoords, screenWidth, screenHeight);
+	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
 	
+	private Button[] buttonList = new Button[] {	buttonStartGame,
+													buttonHighScores,
+													buttonQuit };
 	
 	/**
 	 * Constructor
@@ -61,7 +70,10 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 		// Draw the buttons.
 		gl.glColor3f(0, 0.5f, 0f);
-		buttonStartGame.draw(gl); 
+		
+		for(int i = 0; i< buttonList.length; i++){
+			buttonList[i].draw(gl, null);
+		};
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 		
@@ -123,7 +135,9 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		screenHeight = height;
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 		
-		buttonStartGame.update(width, height);
+		for(int i = 0; i< buttonList.length; i++){
+			buttonList[i].update(screenWidth,screenHeight);
+		};
 		
 		// Update the projection to an orthogonal projection using the new
 		// screen size
@@ -144,7 +158,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		int code = event.getKeyCode();
 		
 		switch(code){
-		case KeyEvent.VK_1:
+		case KeyEvent.VK_SPACE:
 			startGame();
 			
 			break;
@@ -189,6 +203,17 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 			startGame();
 		}
 		
+		if(buttonHighScores.clickedOnIt(xclick, yclick)){
+			canvas.removeGLEventListener(this);
+			canvas.removeMouseListener(this);
+			canvas.removeKeyListener(this);
+			new StateHighScores(canvas,this,null);
+		}
+		
+		if(buttonQuit.clickedOnIt(xclick, yclick)){
+			System.exit(0);
+		}
+		
 	}
 
 	private void startGame() {
@@ -204,6 +229,7 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		@SuppressWarnings("unused")
 		MazeRunner mazerunner = new MazeRunner(canvas);
 		
 		System.out.println("Game started");

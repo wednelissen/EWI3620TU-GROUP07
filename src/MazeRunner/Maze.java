@@ -11,6 +11,7 @@ import LevelEditor.Key;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 
+import LevelEditor.LoadLevel;
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.ImageUtil;
 import com.sun.opengl.util.texture.Texture;
@@ -45,6 +46,7 @@ public class Maze implements VisibleObject {
 	public final double MAZE_SIZE_Z = newMaze.getHeight();
 	public final double SQUARE_SIZE = 5;
 	public final Point startPoint =  newMaze.getStartPosition();
+	private LoadTexturesMaze loadedTexturesMaze;
 	
 	private Texture wallTexture;
 	private Texture floorTexture;
@@ -52,6 +54,9 @@ public class Maze implements VisibleObject {
 	private Texture spotTexture;
 	private boolean texLoaded = false;
 
+	public Maze (LoadTexturesMaze temp){
+		loadedTexturesMaze = temp;
+	}
 
 //	private int[][] maze = 
 //	{	{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
@@ -89,20 +94,6 @@ public class Maze implements VisibleObject {
 //		}
 		if( x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z )
 			return maze[x][z] == 1;
-		else
-			return false;
-	}
-
-	public boolean isBars(int x, int z) {
-		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
-			return maze[x][z] == 2;
-		else
-			return false;
-	}
-
-	public boolean isSpot(int x, int z) {
-		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
-			return maze[x][z] == 3;
 		else
 			return false;
 	}
@@ -146,29 +137,16 @@ public class Maze implements VisibleObject {
 	
 	public void display(GL gl) {
 
-		if (!texLoaded) {
-			wallTexture = loadTexture("wallTexture.png");
-			roofTexture = loadTexture("roofTexture.png");
-			floorTexture = loadTexture("floorTexture.png");
-			texLoaded = true;
-		}
-
 		for (int i = 0; i < MAZE_SIZE_X; i++) {
 			for (int j = 0; j < MAZE_SIZE_Z; j++) {
 				gl.glPushMatrix();
 				gl.glTranslated(i * SQUARE_SIZE, 0, j * SQUARE_SIZE);
 				if (isWall(i, j)) {
-					drawWall(gl, SQUARE_SIZE, wallTexture);
+					drawWall(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("wallTexture"));
 				}
 				if (!isWall(i, j)) {
-					drawFloor(gl, SQUARE_SIZE, floorTexture);
-					drawRoof(gl, SQUARE_SIZE, roofTexture);
-				}
-				if (isBars(i, j)) {
-					drawBars(gl, SQUARE_SIZE);
-				}
-				if (isSpot(i, j)) {
-					drawSpot(gl, SQUARE_SIZE, spotTexture);
+					drawFloor(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("floorTexture"));
+					drawRoof(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("floorTexture"));
 				}
 				gl.glPopMatrix();
 			}
@@ -323,52 +301,32 @@ public class Maze implements VisibleObject {
 		gl.glEnd();
 		myTexture.disable();
 	}
-	
-	public Texture loadTexture(String fileName) {
-		// Nieuwe texture aanmaken
-		Texture myTexture;
-		try {
-			// Texture ophalen vanuit een image
-			URL textureURL;
-			textureURL = getClass().getClassLoader().getResource(fileName);
-			BufferedImage texture = ImageIO.read(textureURL); // read file into
-			// BufferedImage
-			ImageUtil.flipImageVertically(texture);
-			myTexture = TextureIO.newTexture(texture, true);
-		} catch (IOException e) {
-			// Wanneer de source niet gevonden is
-			e.printStackTrace();
-			System.out.println("De file " + fileName + " is niet gevonden");
-			myTexture = null;
-		}
-		return myTexture;
-	}
-	
+
 	public void drawSpot(GL gl, double size, Texture myTexture) {
 		float spotColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, spotColour, 0);
 		GLUT glut = new GLUT();
 		double lightRadius = 0.1;
 		double lightSize = 0.2;
-		
+
 		// Licht weergeven
 		float lightPosition[] = { (float) (size/2), (float)(size-lightSize-lightSize), (float) (size/2), 1.0f }; 		
-        float lightColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };				
-        float lightDirection[] = {0.0f, -1.0f, 0.0f, 0.0f};
-		
-		gl.glLightfv( GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0 );	
-        gl.glLightfv( GL.GL_LIGHT0, GL.GL_DIFFUSE, lightColour, 0);
-        //gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_CUTOFF, (float) 30.0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-        gl.glEnable( GL.GL_LIGHTING );
-        gl.glEnable( GL.GL_LIGHT0 );
+		float lightColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+		float lightDirection[] = { 0.0f, -1.0f, 0.0f, 0.0f };
+
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightColour, 0);
+		// gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_CUTOFF, (float) 30.0);
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, lightDirection, 0);
+		gl.glEnable(GL.GL_LIGHTING);
+		gl.glEnable(GL.GL_LIGHT0);
 
 		// Vormgeving
-		gl.glTranslated(size/2, size, size/2);
+		gl.glTranslated(size / 2, size, size / 2);
 		gl.glRotated(90, 0, 1, 0);
 		glut.glutSolidCylinder(lightRadius, lightSize, 20, 20);
-		//glut.glutSolidCube((float)lightSize);
-		
+		// glut.glutSolidCube((float)lightSize);
+
 		
         
         

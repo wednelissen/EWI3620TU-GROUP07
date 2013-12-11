@@ -193,15 +193,15 @@ public class PlacedItemsMenu extends Window{
 	 * zorgt dat alle opgeslagen Guardians en Keys worden getekent in het PlacedItemsMenu.
 	 * @param gl
 	 */
-	public void drawItems(GL gl){
+	public void drawItems(GL gl, LoadTexturesEditor loadedTexturesEditor){
 		int TotalGuards = Guards.size();
 		int TotalKeys= Keys.size();
 		for(int i=0; i<TotalGuards; i++){
-			Guards.get(i).draw(gl);
+			Guards.get(i).draw(gl, loadedTexturesEditor.getTexture("guardEditor"));
 		}	
 		
 		for(int i=0; i<TotalKeys; i++){
-			Keys.get(i).draw(gl);
+			Keys.get(i).draw(gl, loadedTexturesEditor.getTexture("keyEditor"));
 		}
 	}
 	

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
+import com.sun.opengl.util.texture.Texture;
+
 public class MapMenu extends Window {
 	
 	private BuildingBlock[][] BuildingBlocks; 
@@ -167,11 +169,11 @@ public class MapMenu extends Window {
 	 * zal als deur worden getekent.
 	 * @param gl
 	 */
-	public void drawBlocks(GL gl) {
+	public void drawBlocks(GL gl, LoadTexturesEditor loadedTexturesEditor) {
 		for(int j=0; j < TotalBuildingBlockY; j++){
 			for(int i=0; i < TotalBuildingBlockX; i++){
 				if(BuildingBlocks[i][j].getFloor()){
-					BuildingBlocks[i][j].draw(gl);
+					BuildingBlocks[i][j].draw(gl, loadedTexturesEditor.getTexture("floorEditor"));
 				}
 				else if(BuildingBlocks[i][j].getDoor()){
 						if(BuildingBlocks[i][j].getKeyRequired()){
@@ -180,11 +182,15 @@ public class MapMenu extends Window {
 						else{
 							gl.glColor3f(0.5f, 0.1f, 0f);
 						}
-						BuildingBlocks[i][j].drawBlock(gl);
+						BuildingBlocks[i][j].drawBlock(gl, null);
 						gl.glColor3f(0.0f, 0, 0f);
+//					gl.glColor3f(0.5f, 0.1f, 0f);
+					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("doorEditor"));
+//					gl.glColor3f(0.0f, 0, 0f);
+					
 				}
 				else{
-					BuildingBlocks[i][j].drawBlock(gl);
+					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("wallEditor"));
 				}
 			}
 		}

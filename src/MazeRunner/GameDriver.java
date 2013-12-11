@@ -1,15 +1,10 @@
 package MazeRunner;
 
-import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
-
 import java.awt.Toolkit;
 
 
@@ -19,6 +14,7 @@ public class GameDriver implements KeyListener{
 	private MazeRunner mazerunner;
 	private static GLCanvas canvas;
 	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
+	public static LoadTexturesMaze loadedTexturesMaze;
 	
 	public GameDriver(){
 	}
@@ -53,7 +49,7 @@ public class GameDriver implements KeyListener{
 		window.add(canvas);
 		canvas.requestFocus();
 	}
-
+	
 	@Override
 	public void keyPressed(KeyEvent event) {
 		//not used

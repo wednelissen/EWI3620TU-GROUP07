@@ -4,6 +4,8 @@ import java.awt.Point;
 
 import javax.media.opengl.GL;
 
+import com.sun.opengl.util.texture.Texture;
+
 public class BuildingBlock extends Window{
 	private Point positie = new Point();
 	private boolean wall = false, floor = true, door = false, keyRequired = false;
@@ -21,13 +23,24 @@ public class BuildingBlock extends Window{
 	}
 	
 	
-	public void drawBlock(GL gl) {
+	public void drawBlock(GL gl, Texture myTexture) {
+		float blockColor[] = { 1.0f, 1.0f, 1.0f, 0f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, blockColor, 0);
+		if (myTexture != null){
+			myTexture.enable();
+			myTexture.bind();
+		}
 		gl.glBegin(GL.GL_QUADS);
+		gl.glTexCoord2d(0, 1);
 		gl.glVertex2f(x, y);
+		gl.glTexCoord2d(1, 1);
 		gl.glVertex2f(x + sizeX, y);
+		gl.glTexCoord2d(1, 0);
 		gl.glVertex2f(x + sizeX, y - sizeY);
+		gl.glTexCoord2d(0, 0);
 		gl.glVertex2f(x, y - sizeY);
 		gl.glEnd();
+		myTexture.disable();
 	}
 	
 	public void drawKey(GL gl) {
@@ -46,28 +59,69 @@ public class BuildingBlock extends Window{
 	}
 	
 	//tekent een kruisje in het vlak wanneer een bewaker langs deze route loopt.
-	public void drawGuardianPath(GL gl) {
-		gl.glBegin(GL.GL_LINES);
+	public void drawGuardianPath(GL gl, Texture myTexture) {
+		float guardianPathColor[] = { 1.0f, 1.0f, 1.0f, 0f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, guardianPathColor, 0);
+		if (myTexture != null){
+			myTexture.enable();
+			myTexture.bind();
+		}
+		gl.glBegin(GL.GL_QUADS);
+		gl.glTexCoord2d(0, 1);
 		gl.glVertex2f(x, y);
-		gl.glVertex2f(x + sizeX, y - sizeY);
+		gl.glTexCoord2d(1, 1);
 		gl.glVertex2f(x + sizeX, y);
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex2f(x + sizeX, y - sizeY);
+		gl.glTexCoord2d(0, 0);
 		gl.glVertex2f(x, y - sizeY);
 		gl.glEnd();
+		myTexture.disable();
 	}	
 	
-	public void drawCameras(GL gl) {
-		gl.glBegin(GL.GL_TRIANGLES);
-		gl.glVertex2f(x + sizeX/2, y); // midden boven		
-		gl.glVertex2f(x + sizeX, y - sizeY); //rechts onder		
-		gl.glVertex2f(x, y - sizeY); // links onder
+	public void drawCameras(GL gl, Texture myTexture) {
+		float CameraColor[] = { 1.0f, 1.0f, 1.0f, 0f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, CameraColor, 0);		
+		if (myTexture != null){
+			myTexture.enable();
+			myTexture.bind();
+		}
+		gl.glBegin(GL.GL_QUADS);
+		gl.glTexCoord2d(0, 1);
+		gl.glVertex2f(x, y);
+		gl.glTexCoord2d(1, 1);
+		gl.glVertex2f(x + sizeX, y);
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex2f(x + sizeX, y - sizeY);
+		gl.glTexCoord2d(0, 0);
+		gl.glVertex2f(x, y - sizeY);
 		gl.glEnd();
+		myTexture.disable();
 	}	
 	
 	
 	//aangepaste methode van http://www.java-gaming.org/index.php/topic,4140. van user: overnhet
  
-	public void drawSpot(GL gl)
+	public void drawSpot(GL gl, Texture myTexture)
     {
+//		float spotColor[] = { 1.0f, 1.0f, 1.0f, 0f };
+//		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, spotColor, 0);
+//		if (myTexture != null){
+//			myTexture.enable();
+//			myTexture.bind();
+//		}
+//		gl.glBegin(GL.GL_QUADS);
+//		gl.glTexCoord2d(0, 1);
+//		gl.glVertex2f(x, y);
+//		gl.glTexCoord2d(1, 1);
+//		gl.glVertex2f(x + sizeX, y);
+//		gl.glTexCoord2d(1, 0);
+//		gl.glVertex2f(x + sizeX, y - sizeY);
+//		gl.glTexCoord2d(0, 0);
+//		gl.glVertex2f(x, y - sizeY);
+//		gl.glEnd();
+//		myTexture.disable();
+		
     	float radius = sizeX/4;
     	float slices = 20;
           float incr = (float) (2 * Math.PI / slices);

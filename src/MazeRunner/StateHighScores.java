@@ -9,47 +9,41 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 
-public class StatePauseMenu implements GLEventListener, KeyListener, MouseListener{
+public class StateHighScores implements GLEventListener, KeyListener, MouseListener{
 	
 	private static GLCanvas canvas;
 	private boolean startup = false;
 	private MazeRunner mazerunner;
 	private int screenWidth, screenHeight;
-	
+	private StateMainMenu mainmenu;
+	private StatePauseMenu pausemenu;
 	//layout van het hoofdmenu
-	private float[] buttonResumeGameCoords = new float[] { 200, 25, 400, 75};
-	private float[] buttonMainMenuCoords = new float[] {200, 125, 400, 75};
-	private float[] buttonHighScoresCoords = new float[] { 200, 225, 400, 75};
-	private float[] buttonQuitCoords = new float[] {200, 325, 400, 75};
+	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50};
+	
 	//define buttons
-	private Button buttonResumeGame = new Button(buttonResumeGameCoords, screenWidth, screenHeight);
-	private Button buttonMainMenu = new Button(buttonMainMenuCoords, screenWidth, screenHeight);
-	private Button buttonHighScores = new Button(buttonHighScoresCoords, screenWidth, screenHeight);
-	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
-	private Button[] buttonList = new Button[] {	buttonResumeGame,
-													buttonMainMenu,
-													buttonHighScores,
-													buttonQuit };
+	private Button buttonBack = new Button(buttonBackCoords, screenWidth, screenHeight);
+
+	private Button[] buttonList = new Button[] {	buttonBack
+													 };
 
 	/**
-	 * Loads the Pause Menu on the given Canvas. Switches to the default cursor
-	 * and adds the Pause Menu as KeyListener etc.
+	 * Loads the High Score state on the given Canvas. Switches to the default cursor
+	 * and adds the High Score Menu as KeyListener etc.
 	 * 	 
-	 * @param canvas : The Canvas on which the Pause Menu will be drawn
+	 * @param canvas : The Canvas on which the High Score Menu will be drawn
 	 * @param mazerunner : The game which will be resumed when button resume is clicked
 	 */
-	public StatePauseMenu(GLCanvas canvas, MazeRunner mazerunner){
-		StatePauseMenu.canvas = canvas;
+	public StateHighScores(GLCanvas canvas, StateMainMenu mainmenu, StatePauseMenu pausemenu){
+		StateHighScores.canvas = canvas;
 		canvas.setCursor(null);
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
 		canvas.addKeyListener(this);
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
-		System.out.println("Pause menu loaded");
-		
+		System.out.println("Highscores loaded");
 		startup = true;
-		this.mazerunner = mazerunner;
+		
 	}
 	
 	@Override
@@ -88,7 +82,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("Pause menu init");
+		System.out.println("Highscore menu init");
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -122,6 +116,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].update(screenWidth,screenHeight);
 		};
+		
 	}
 
 
@@ -155,12 +150,13 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		switch(code){
 		
 		case KeyEvent.VK_ESCAPE:
-			resumeGame();
-			
-			break;
-		
-		case KeyEvent.VK_Q:
-			System.exit(0);
+			System.out.println("HIGHSCORES/ESCAPE");
+			if(this.mainmenu == null){
+				returnToPauseMenu();
+			}
+			else if(this.pausemenu.equals(null)){
+				returnToMainMenu();
+			}
 			break;
 		}
 	}
@@ -169,28 +165,23 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	public void mouseReleased(MouseEvent me) {
 		int xclick = me.getX();
 		int yclick = me.getY();
-		if(buttonResumeGame.clickedOnIt(xclick, yclick)){
-			resumeGame();
-		}
-		if(buttonMainMenu.clickedOnIt(xclick, yclick)){
+		if(buttonBack.clickedOnIt(xclick, yclick)){
 			
-		}
-		if(buttonHighScores.clickedOnIt(xclick, yclick)){
-			
-		}
-		if(buttonQuit.clickedOnIt(xclick,yclick)){
-			System.exit(0);
 		}
 	}
 
-	private void resumeGame() {
-		System.out.println("Return to game");
+	private void returnToMainMenu(){
+		System.out.println("Return to main menu");
 		canvas.removeGLEventListener(this);
-		canvas.removeMouseListener(this);
 		canvas.removeKeyListener(this);
-		mazerunner.pauseSwitch();
+		canvas.removeMouseListener(this);
+		canvas.addGLEventListener(this.mainmenu);
 	}
-
+	
+	private void returnToPauseMenu(){
+		
+	}
+	
 	///////////////////////////NOT USED////////////////////////////////////
 	
 	@Override
