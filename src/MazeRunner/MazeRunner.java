@@ -21,6 +21,7 @@ import javax.media.opengl.glu.GLU;
 
 import LevelEditor.Guardian;
 import LevelEditor.LoadLevel;
+import LevelEditor.Spot;
 
 import com.sun.opengl.util.Animator;
 
@@ -44,6 +45,7 @@ import com.sun.opengl.util.Animator;
 public class MazeRunner implements GLEventListener, MouseListener {
 	static final long serialVersionUID = 7526471155622776147L;
 	public static boolean GOD_MODE = false;
+	private static final double SQUARE_SIZE = 5;
 
 	/*
 	 * **********************************************
@@ -63,6 +65,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private ArrayList<Guard> guards = new ArrayList<Guard>();
 	private ArrayList<Point> tempCamera = newMaze.getCameras();
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
+	private ArrayList<Spot> spots = new ArrayList<Spot>();
+	private ArrayList<Point> tempSpot = newMaze.getSpots();
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
@@ -145,7 +149,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE
 				+ maze.SQUARE_SIZE / 2, // x-position
-				maze.SQUARE_SIZE / 2, // y-position
+				maze.SQUARE_SIZE * 8, // y-position
 				maze.startPoint.getY() * maze.SQUARE_SIZE + maze.SQUARE_SIZE
 						/ 2, // z-position
 				90, 0); // horizontal and vertical angle
@@ -314,17 +318,21 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// update locations
 		player.update(deltaTime);
 		playerWallChecker(2);
+
 		for (Guard temp : guards) {
-			temp.update(deltaTime);
+			if (!temp.isAttack()) {
+				temp.update(deltaTime);
+			}
 			temp.playerDetectie(player.locationX, player.locationZ);
 			temp.aanvallen(player.locationX, player.locationZ, deltaTime);
+			guardWallChecker(2, temp);
+
 		}
 		for (GuardCamera temp : cameras) {
 			temp.updatePositie(player.locationX, player.locationZ);
 			temp.alarm();
 		}
-		RouteAlgoritme route = new RouteAlgoritme();
-		route.update();
+
 	}
 
 	public static Player getPlayer() {
@@ -416,6 +424,79 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 	}
 
+	private void guardWallChecker(int checkdistance, Guard res) {
+
+		if (!GOD_MODE) {
+			if (maze.isWall(
+					res.getLocationX() + checkdistance
+							* -Math.sin(Math.PI * res.getHorAngle() / 180),
+					res.getLocationZ() + checkdistance
+							* -Math.cos(Math.PI * res.getHorAngle() / 180))) {
+				res.setCanMoveForward(false);
+			}
+			// Check backward direction for obstacles
+			if (maze.isWall(
+					res.getLocationX() - checkdistance
+							* -Math.sin(Math.PI * res.getHorAngle() / 180),
+					res.getLocationZ() - checkdistance
+							* -Math.cos(Math.PI * res.getHorAngle() / 180))) {
+				res.setCanMoveBack(false);
+			}
+			// Check left direction for obstacles
+			if (maze.isWall(
+					res.getLocationX()
+							+ checkdistance
+							* -Math.sin(Math.PI * (res.getHorAngle() + 90)
+									/ 180),
+					res.getLocationZ()
+							+ checkdistance
+							* -Math.cos(Math.PI * (res.getHorAngle() + 90)
+									/ 180))) {
+				res.setCanMoveLeft(false);
+			}
+			// check right direction for obstacles
+			if (maze.isWall(
+					res.getLocationX()
+							- checkdistance
+							* -Math.sin(Math.PI * (res.getHorAngle() + 90)
+									/ 180),
+					res.getLocationZ()
+							- checkdistance
+							* -Math.cos(Math.PI * (res.getHorAngle() + 90)
+									/ 180))) {
+				res.setCanMoveRight(false);
+			}
+
+			// Check left-forward direction for obstacles
+			if (maze.isWall(
+					res.getLocationX()
+							+ checkdistance// Math.sqrt(2)
+							* -Math.sin(Math.PI * (res.getHorAngle() + 45)
+									/ 180),
+					res.getLocationZ()
+							+ checkdistance
+							/ Math.sqrt(2)
+							* -Math.cos(Math.PI * (res.getHorAngle() + 45)
+									/ 180))) {
+				res.setLeftForwardWall(true);
+			}
+
+			// Check right-forward direction for obstacles
+			if (maze.isWall(
+					res.getLocationX()
+							- checkdistance// Math.sqrt(2)
+							* -Math.sin(Math.PI * (res.getHorAngle() + 135)
+									/ 180),
+					res.getLocationZ()
+							- checkdistance
+							/ Math.sqrt(2)
+							* -Math.cos(Math.PI * (res.getHorAngle() + 135)
+									/ 180))) {
+				res.setRightForwardWall(true);
+			}
+		}
+	}
+
 	/**
 	 * updateCamera() updates the camera position and orientation.
 	 * <p>
@@ -473,6 +554,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (Point temp : tempCamera) {
 			GuardCamera res = new GuardCamera(temp.getX(), 6, temp.getY());
 			cameras.add(res);
+		}
+	}
+
+	public void createSpots() {
+		for (Point temp : tempSpot) {
+			Spot res = new Spot();
+			spots.add(res);
 		}
 	}
 
