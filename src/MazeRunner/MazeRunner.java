@@ -59,10 +59,15 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private Maze maze;
 	private long previousTime = Calendar.getInstance().getTimeInMillis();
 	private int deltaTime;
+
 	private ArrayList<Guardian> tempGuard = newMaze.getGuardians();
 	private ArrayList<Guard> guards = new ArrayList<Guard>();
+
 	private ArrayList<Point> tempCamera = newMaze.getCameras();
+	private ArrayList<Point> tempSpots = newMaze.getSpots();
+
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
+	private ArrayList<Spotlight> spotlights = new ArrayList<Spotlight>();
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
@@ -133,24 +138,21 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		maze = new Maze(loadedTexturesMaze);
 		visibleObjects.add(maze);
 
-		// // Add the spots that we will be using
-		// for (int i = 0; i < Loadlevel.getSpots.size(); i++) {
-		// Spotlight tempSpot = new Spotlight(maze.SQUARE_SIZE,
-		// loadedTexturesMaze.getTexture("spotlight"),
-		// Loadlevel.getSpotlight.get(i));
-		// visibleObjects.add(tempSpot);
-		// }
+		createGuards();
+		createCameras();
+		createSpots();
 
-		 createGuards();
-		 createCameras();
-		 
-		 for (GuardCamera temp : cameras) {
-		 visibleObjects.add(temp);
-		 }
-		
-		 for (Guard temp : guards) {
-		 visibleObjects.add(temp);
-		 }
+		for (GuardCamera temp : cameras) {
+			visibleObjects.add(temp);
+		}
+
+		for (Guard temp : guards) {
+			visibleObjects.add(temp);
+		}
+
+		for (Spotlight temp : spotlights) {
+			visibleObjects.add(temp);
+		}
 
 		// Initialize the player.
 
@@ -190,11 +192,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 	public void init(GLAutoDrawable drawable) {
 		if (initialize) {
-		System.out.println("Maze textures init");
-		initTextures();
-		System.out.println("Creatie objects");
-		initObjects(); // Initialize all the objects!
-		initialize = false;
+			System.out.println("Maze textures init");
+			initTextures();
+			System.out.println("Creatie objects");
+			initObjects(); // Initialize all the objects!
+			initialize = false;
 		}
 		System.out.println("Mazerunner init");
 		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
@@ -500,6 +502,24 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			cameras.add(res);
 		}
 	}
+
+	public void createSpots() {
+		// Hoogte van de spot, moet nog veranderen
+		double spotHeight = maze.SQUARE_SIZE;
+		for (Point temp : tempSpots) {
+			Spotlight res = new Spotlight(maze.SQUARE_SIZE, loadedTexturesMaze.getTexture("spotlight"), temp.getX(), spotHeight, temp.getY());
+			spotlights.add(res);
+		}
+	}
+	
+
+	// // Add the spots that we will be using
+	// for (int i = 0; i < Loadlevel.getSpots.size(); i++) {
+	// Spotlight tempSpot = new Spotlight(maze.SQUARE_SIZE,
+	// loadedTexturesMaze.getTexture("spotlight"),
+	// Loadlevel.getSpotlight.get(i));
+	// visibleObjects.add(tempSpot);
+	// }
 
 	public void setWalkingSpeed(double speed) {
 		player.setSpeed(speed);

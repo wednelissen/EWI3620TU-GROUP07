@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
-import com.sun.opengl.util.texture.Texture;
-
 public class MapMenu extends Window {
 
 	private BuildingBlock[][] BuildingBlocks;
@@ -204,14 +202,14 @@ public class MapMenu extends Window {
 							loadedTexturesEditor.getTexture("floorEditor"));
 				} else if (BuildingBlocks[i][j].getDoor()) {
 					if (BuildingBlocks[i][j].getKeyRequired()) {
-						BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("editorDoorKeyRequired"));;
+						BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor
+								.getTexture("editorDoorKeyRequired"));
 					} else {
-						BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("editorDoorKeyNotRequired"));;
+						BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor
+								.getTexture("editorDoorKeyNotRequired"));
 					}
-					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("editorDoor"));
-//					BuildingBlocks[i][j].drawBlock(gl,
-//							loadedTexturesEditor.getTexture("doorEditor"));
-
+					BuildingBlocks[i][j].drawBlock(gl,
+							loadedTexturesEditor.getTexture("editorDoor"));
 				} else {
 					BuildingBlocks[i][j].drawBlock(gl,
 							loadedTexturesEditor.getTexture("wallEditor"));

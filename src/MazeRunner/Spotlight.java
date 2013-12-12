@@ -1,35 +1,31 @@
 package MazeRunner;
 
-import java.awt.Point;
-
 import javax.media.opengl.GL;
-
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
 
-public class Spotlight implements VisibleObject{
+public class Spotlight extends GameObject implements VisibleObject{
 	
-	private double size;
 	private Texture spotTexture;
-	private Point coord;
 
-	public Spotlight(double squareSize, Texture myTexture, Point coordinates)  {
-		size = squareSize;
+	public Spotlight(double size, Texture myTexture, double xCoord, double yCoord, double zCoord) {
+		super((xCoord * size) + (size / 2), yCoord, (zCoord * size)
+				+ (size / 2));
 		spotTexture = myTexture;
-		coord = coordinates;
 	}
 
 	@Override
 	public void display(GL gl) {
+		GLUT glut = new GLUT();
+		
 		float spotColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, spotColour, 0);
 
-		GLUT glut = new GLUT();
-		double lightRadius = 0.1;
-		double lightSize = 0.2;
+		double lightBulbRadius = 0.1;
+		double lightBulbSize = 0.2;
 
-		float lightPosition[] = { (float) (size / 2),
-				(float) (size - lightSize - lightSize), (float) (size / 2),
+		float lightPosition[] = { (float) locationX,
+				(float) (locationY - lightBulbSize - lightBulbSize), (float) locationZ,
 				1.0f };
 		float lightColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 		float lightDirection[] = { 0.0f, -1.0f, 0.0f, 0.0f };
@@ -43,10 +39,9 @@ public class Spotlight implements VisibleObject{
 
 		// Vormgeving
 		gl.glPushMatrix();
-		gl.glTranslated(size / 2, size, size / 2);
+		gl.glTranslated(locationX, locationY, locationZ);
 		gl.glRotated(90, 0, 1, 0);
-		glut.glutSolidCylinder(lightRadius, lightSize, 20, 20);
-		// glut.glutSolidCube((float)lightSize);
+		glut.glutSolidCylinder(lightBulbRadius, lightBulbSize, 20, 20);
 		gl.glPopMatrix();
 	}
 }

@@ -48,28 +48,10 @@ public class Maze implements VisibleObject {
 	public final Point startPoint =  newMaze.getStartPosition();
 	private LoadTexturesMaze loadedTexturesMaze;
 	
-	private Texture wallTexture;
-	private Texture floorTexture;
-	private Texture roofTexture;
-	private Texture spotTexture;
-	private boolean texLoaded = false;
-
 	public Maze (LoadTexturesMaze temp){
 		loadedTexturesMaze = temp;
 	}
 
-//	private int[][] maze = 
-//	{	{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-//		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-//		{  1,  0,  0,  0,  0,  0,  1,  1,  1,  1 },
-//		{  1,  0,  1,  0,  0,  0,  1,  0,  0,  1 },
-//		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-//		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-//		{  1,  0,  0,  0,  1,  0,  1,  0,  0,  1 },
-//		{  1,  0,  0,  0,  1,  1,  1,  0,  0,  1 },
-//		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-//		{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 }	};
-	
 	private int[][] maze = newMaze.outputForMazeRunner();
 	private boolean test = true;
 	
@@ -270,13 +252,6 @@ public class Maze implements VisibleObject {
 		myTexture.disable();
 	}
 
-	private void drawBars(GL gl, double size) {
-		GLUT glut = new GLUT();
-		float barColour[] = { 0.5f, 0.5f, 0.5f, 0.5f };
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, barColour, 0);
-		glut.glutSolidCylinder(1, 1, 1, 1);
-	}
-
 	private void drawRoof(GL gl, double size, Texture myTexture) {
 		// Setting the floor color and material.
 		float roofColour[] = { 1.0f, 1.0f, 1.0f, 0.0f }; // The floor is blue.
@@ -300,36 +275,5 @@ public class Maze implements VisibleObject {
 		gl.glVertex3d(0, size, size);
 		gl.glEnd();
 		myTexture.disable();
-	}
-
-	public void drawSpot(GL gl, double size, Texture myTexture) {
-		float spotColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, spotColour, 0);
-		GLUT glut = new GLUT();
-		double lightRadius = 0.1;
-		double lightSize = 0.2;
-
-		// Licht weergeven
-		float lightPosition[] = { (float) (size/2), (float)(size-lightSize-lightSize), (float) (size/2), 1.0f }; 		
-		float lightColour[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-		float lightDirection[] = { 0.0f, -1.0f, 0.0f, 0.0f };
-
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightColour, 0);
-		// gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_CUTOFF, (float) 30.0);
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-		gl.glEnable(GL.GL_LIGHTING);
-		gl.glEnable(GL.GL_LIGHT0);
-
-		// Vormgeving
-		gl.glTranslated(size / 2, size, size / 2);
-		gl.glRotated(90, 0, 1, 0);
-		glut.glutSolidCylinder(lightRadius, lightSize, 20, 20);
-		// glut.glutSolidCube((float)lightSize);
-
-		
-        
-        
-        
 	}
 }
