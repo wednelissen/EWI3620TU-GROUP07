@@ -1,4 +1,4 @@
-package LevelEditor;
+package MazeRunner;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import com.sun.opengl.util.texture.TextureIO;
  * @author Huib
  * 
  */
-public class LoadTexturesEditor {
+public class LoadTexturesMaze {
 
 	private Texture defaultTexture;
 
@@ -30,32 +30,10 @@ public class LoadTexturesEditor {
 	 * texturenaamlijst. Hiermee kunnen we de goede texture bij de goede naam
 	 * halen in de getter
 	 */
-	public LoadTexturesEditor() {
+	public LoadTexturesMaze() {
 		defaultTexture = loadingTexture("default.png");
-		addTextureToList(loadingTexture("wallEditor.png"), "wallEditor");
-		addTextureToList(loadingTexture("floorEditor.png"), "floorEditor");
-		addTextureToList(loadingTexture("doorEditor.png"), "doorEditor");
-		addTextureToList(loadingTexture("guardianStepsBlue.png"),
-				"guardianStepsBlue");
-		addTextureToList(loadingTexture("guardianStepsRed.png"),
-				"guardianStepsRed");
-		addTextureToList(loadingTexture("cameraEditor.png"), "cameraEditor");
-		addTextureToList(loadingTexture("spotEditor.png"), "spotEditor");
-		addTextureToList(loadingTexture("startPos.png"), "startPos");
-		addTextureToList(loadingTexture("endPos.png"), "endPos");
-		addTextureToList(loadingTexture("addButton.png"), "addButton");
-		addTextureToList(loadingTexture("removeButton.png"), "removeButton");
-		addTextureToList(loadingTexture("removeLastPointGuardButton.png"),
-				"removeLastPointGuardButton");
-		addTextureToList(loadingTexture("showAllGuardsButton.png"),
-				"showAllGuardsButton");
-		addTextureToList(loadingTexture("setStartButton.png"), "setStartButton");
-		addTextureToList(loadingTexture("setEndButton.png"), "setEndButton");
-		addTextureToList(loadingTexture("setWidthButton.png"), "setWidthButton");
-		addTextureToList(loadingTexture("saveButton.png"), "saveButton");
-		addTextureToList(loadingTexture("loadButton.png"), "loadButton");
-		addTextureToList(loadingTexture("guardianEditor.png"), "guardianEditor");
-		addTextureToList(loadingTexture("keyEditor.png"), "keyEditor");
+		addTextureToList(loadingTexture("wallTexture.png"), "wallTexture");
+		addTextureToList(loadingTexture("floorTexture.png"), "floorTexture");
 	}
 
 	/**

@@ -30,8 +30,20 @@ public class SaveInput {
 	
 	
 	
-	
-	public SaveInput(MapMenu tempMap, PlacedItemsMenu tempPlacedItems, StartAndEndPosition tempStartAndEnd, SpotList tempSpotList, CameraList tempCameraList){
+	/**
+	 * alle objecten meegeven waarmee je een level maakt.
+	 * deze worden vertaald naar strings en vervolgens opgeslagen naar een tekstbestand met de naam
+	 * van de ingegeven param 'LevelName'
+	 * 
+	 * 
+	 * @param tempMap
+	 * @param tempPlacedItems
+	 * @param tempStartAndEnd
+	 * @param tempSpotList
+	 * @param tempCameraList
+	 * @param LevelName
+	 */
+	public SaveInput(MapMenu tempMap, PlacedItemsMenu tempPlacedItems, StartAndEndPosition tempStartAndEnd, SpotList tempSpotList, CameraList tempCameraList, String LevelName){
 		map = tempMap;
 		placedItems = tempPlacedItems;
 		StartAndEnd = tempStartAndEnd;
@@ -45,8 +57,25 @@ public class SaveInput {
 		EndPosition = new String();
 		spots = new String[spotList.size()];
 		cameras = new String[cameraList.size()];
+		
+		
+		this.floorPlanMaze();	//de map wordt vertaald naar enen en nullen
+		this.GuardsPlan();		//de bewakers worden weggeschreven
+		this.KeysPlan();		//de keys worden weggeschreven
+		this.StartAndEndPosition();	//begin en eindpositie worden naar string vertaald.
+		this.SpotsPlan();			//spotjes worden naar string vertaald
+		this.CamerasPlan();			//camera's worden naar string vertaald
+		if(StartAndEnd.hasStart() && StartAndEnd.hasEnd()){
+			this.write(LevelName); // de map wordt weggeschereven naar een bestand.
+		}
+		else
+			System.out.println("er zijn nog geen begin en eindpunt geset.");
 	}
 	
+	/**
+	 * zorgt dat iedere BuildingBlock wordt nagelopen en zorgt dat een vloer een 0 wordt.
+	 * een muur een 1 wordt en een deur een 2 wordt.
+	 */
 	public void floorPlanMaze(){
 		int TotalBuildingBlockX = map.getWidth();
 		int TotalBuildingBlockY = map.getHeight();
@@ -61,14 +90,20 @@ public class SaveInput {
 				else if(BuildingBlocks[i][j].getWall()){
 					floorPlan[j] = floorPlan[j] + "1";
 					}
+				else if(BuildingBlocks[i][j].getDoor()){
+					floorPlan[j] = floorPlan[j] + "2";
+					}
 				else
-					System.out.println("Er is geen wall en geen floor geset??? niet mogelijk");
+					System.out.println("Er is geen wall,floor of door geset??? niet mogelijk");
 				
 				
 			}
 		}		
 	}
 	
+	/**
+	 * de Start en Eind Positie worden naar String vertaald als een Punt bv: x,y;
+	 */
 	public void StartAndEndPosition(){
 		Point start =StartAndEnd.getStart();
 		Point end = StartAndEnd.getEnd();
@@ -80,6 +115,10 @@ public class SaveInput {
 		System.out.println("start: "+StartPosition+" eind: " + EndPosition);
 	}
 	
+	/**
+	 * iedere Guardian die is opgeslagen wordt de route vertaald naar String met scheiding van semicolum
+	 * tussen de punten.
+	 */
 	public void GuardsPlan(){
 		ArrayList<Guardian> guards = placedItems.getAllGuards();
 		for(int i=0; i< placedItems.guardSize(); i++){
@@ -96,11 +135,46 @@ public class SaveInput {
 		}
 		
 		//hier wordt de output getest.
+		System.out.println("Guards routes");
 		for(int i=0; i<guardsPlan.length; i++){
 			System.out.println(guardsPlan[i]);
 		}
 	}
 	
+	/**
+	 * alle opgeslagen Key worden vertaald naar string. eerst wordt de positie van de sleutel 
+	 * vertaald en daar achter komt de positie van de Deur.
+	 */
+	public void KeysPlan(){
+		ArrayList<Key> keys = placedItems.getAllKeys();
+		for(int i=0; i< placedItems.keySize(); i++){
+			Key k = keys.get(i);
+			String temp = "";
+			//punt waar de sleutel ligt
+			Point p = k.getKey();
+			int a = (int)p.getX();
+			int b = (int)p.getY();
+			temp = temp+a + "," +b+";"; 
+			
+			//punt waar de door zich bevind
+			Point q = k.getDoor();
+			int c = (int)q.getX();
+			int d = (int)q.getY();
+			temp = temp+c + "," +d+";"; 
+			
+			keysPlan[i] = temp;	
+		}
+		
+		//hier wordt de output getest.
+		System.out.println("Keys met deuren");
+		for(int i=0; i<keysPlan.length; i++){
+			System.out.println(keysPlan[i]);
+		}
+	}
+	
+	/**
+	 * zet alle spots om naar punten zoals x,y;
+	 */
 	public void SpotsPlan(){
 		int i = 0;
 		for(Spot s: spotList.getSpots()){
@@ -118,6 +192,9 @@ public class SaveInput {
 		
 	}
 	
+	/**
+	 * zet alle camera's om naar punten zoals x,y;
+	 */
 	public void CamerasPlan(){
 		int i = 0;
 		for(Camera s: cameraList.getCameras()){
@@ -135,6 +212,13 @@ public class SaveInput {
 		
 	}
 	
+	/**
+	 * hier worden alle bovenstaande gecreerde Strings weggeschreven naar een bestand met de naam 'name'.
+	 * de eerste regel wordt een ID weggeschreven. bij het laden wordt gecontrolleerd of deze gelijk
+	 * is aan de hier weggeschreven ID zodat het programma weet dat het om een geldig 
+	 * level editor bestand gaat.
+	 * @param name	naam van het bestand dat wordt opgeslagen
+	 */
 	public void write(String name) {
 		try{			
 			// build files
@@ -149,8 +233,10 @@ public class SaveInput {
 			PrintWriter pw = new PrintWriter(fw);
 			
 			//build solution
-			//aantal regels om uit te lezen
-			pw.println(map.getHeight()+placedItems.guardSize()+4); //geeft aantal te schrijven regels aan.
+			//geeft een ID om ter controllen dat het een bestand is dat kan ingeladen worden.
+			pw.println("a5ir783n!f78gds3b?54sdfg>sdfg549fd#sh"); 
+			
+			//de Maze hoogte en breedte wordt weggescheven
 			pw.println(map.getWidth());
 			pw.println(map.getHeight());
 			//de maze word weggeschreven
@@ -178,6 +264,12 @@ public class SaveInput {
 			pw.println(guardsPlan.length);
 			for(int i=0; i<guardsPlan.length; i++){
 				pw.println(guardsPlan[i]);
+			}
+			
+			pw.println("Keys:");
+			pw.println(keysPlan.length);
+			for(int i=0; i<keysPlan.length; i++){
+				pw.println(keysPlan[i]);
 			}
 		
 			

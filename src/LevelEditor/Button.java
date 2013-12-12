@@ -6,6 +6,16 @@ import com.sun.opengl.util.texture.Texture;
 
 public class Button extends Window {
 
+	/**
+	 * maakt een knop waar op gedrukt kan worden. deze extends Window met het oog op extra mogelijk
+	 * heden bij de button, maar deze zijn uiteindelijk niet geimplementeerd, want dit bleek niet nodig.
+	 * deze classe is niet verwijderd omdat hij in de MazeRunner 3d game ook al werd gebruikt en er anders
+	 * onnodig werk zou ontstaan.
+	 * 
+	 * @param sizes
+	 * @param screenWidthFrame
+	 * @param screenHeightFrame
+	 */
 	public Button(float[] sizes, int screenWidthFrame, int screenHeightFrame) {
 		super(sizes, screenWidthFrame, screenHeightFrame);
 		// TODO Auto-generated constructor stub

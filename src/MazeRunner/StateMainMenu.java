@@ -204,7 +204,10 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		}
 		
 		if(buttonHighScores.clickedOnIt(xclick, yclick)){
-			new StateHighScores(canvas);
+			canvas.removeGLEventListener(this);
+			canvas.removeMouseListener(this);
+			canvas.removeKeyListener(this);
+			new StateHighScores(canvas,this,null);
 		}
 		
 		if(buttonQuit.clickedOnIt(xclick, yclick)){

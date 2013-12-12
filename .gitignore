@@ -218,3 +218,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+lib/lib/gluegen-rt.jar
+lib/lib/jogl.jar
+level1
+#JOGL
+jogl.dll
+jogl_awt.dll
+jogl_cg.dll
+gluegen-rt.dll
+how_ya_doin_x.wav
+src/Sound/how_ya_doin_x.wav

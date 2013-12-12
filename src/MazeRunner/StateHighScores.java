@@ -15,9 +15,10 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 	private boolean startup = false;
 	private MazeRunner mazerunner;
 	private int screenWidth, screenHeight;
-	
+	private StateMainMenu mainmenu;
+	private StatePauseMenu pausemenu;
 	//layout van het hoofdmenu
-	private float[] buttonBackCoords = new float[] { 0, 0, 25, 25};
+	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50};
 	
 	//define buttons
 	private Button buttonBack = new Button(buttonBackCoords, screenWidth, screenHeight);
@@ -26,13 +27,13 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 													 };
 
 	/**
-	 * Loads the HighSore state on the given Canvas. Switches to the default cursor
-	 * and adds the Pause Menu as KeyListener etc.
+	 * Loads the High Score state on the given Canvas. Switches to the default cursor
+	 * and adds the High Score Menu as KeyListener etc.
 	 * 	 
-	 * @param canvas : The Canvas on which the Pause Menu will be drawn
+	 * @param canvas : The Canvas on which the High Score Menu will be drawn
 	 * @param mazerunner : The game which will be resumed when button resume is clicked
 	 */
-	public StateHighScores(GLCanvas canvas){
+	public StateHighScores(GLCanvas canvas, StateMainMenu mainmenu, StatePauseMenu pausemenu){
 		StateHighScores.canvas = canvas;
 		canvas.setCursor(null);
 		screenHeight = canvas.getHeight();
@@ -41,8 +42,8 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
 		System.out.println("Highscores loaded");
-		
 		startup = true;
+		
 	}
 	
 	@Override
@@ -81,7 +82,7 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("Pause menu init");
+		System.out.println("Highscore menu init");
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -149,7 +150,13 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		switch(code){
 		
 		case KeyEvent.VK_ESCAPE:
-			
+			System.out.println("HIGHSCORES/ESCAPE");
+			if(this.mainmenu == null){
+				returnToPauseMenu();
+			}
+			else if(this.pausemenu.equals(null)){
+				returnToMainMenu();
+			}
 			break;
 		}
 	}
@@ -163,6 +170,18 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		}
 	}
 
+	private void returnToMainMenu(){
+		System.out.println("Return to main menu");
+		canvas.removeGLEventListener(this);
+		canvas.removeKeyListener(this);
+		canvas.removeMouseListener(this);
+		canvas.addGLEventListener(this.mainmenu);
+	}
+	
+	private void returnToPauseMenu(){
+		
+	}
+	
 	///////////////////////////NOT USED////////////////////////////////////
 	
 	@Override

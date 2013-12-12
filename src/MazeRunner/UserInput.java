@@ -2,11 +2,7 @@ package MazeRunner;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
 import javax.media.opengl.GLCanvas;
 
@@ -46,8 +42,7 @@ public class UserInput extends Control implements MouseListener,
 	 * To make the new UserInput instance able to receive input, listeners need
 	 * to be added to a GLCanvas.
 	 * 
-	 * @param canvas
-	 *            The GLCanvas to which to add the listeners.
+	 * @param canvas The GLCanvas to which to add the listeners.
 	 */
 	public UserInput(GLCanvas canvas) {
 		canvas.addMouseListener(this);
@@ -58,7 +53,8 @@ public class UserInput extends Control implements MouseListener,
 
 	/*
 	 * **********************************************
-	 * * Updating * **********************************************
+	 * *				Updating					*
+	 * **********************************************
 	 */
 
 	@Override
@@ -73,7 +69,8 @@ public class UserInput extends Control implements MouseListener,
 
 	/*
 	 * **********************************************
-	 * * Input event handlers * **********************************************
+	 * *		Input event handlers				*
+	 * **********************************************
 	 */
 
 	@Override
@@ -185,32 +182,38 @@ public class UserInput extends Control implements MouseListener,
 
 	/*
 	 * **********************************************
-	 * * Unused event handlers 
+	 * *		Unused event handlers				*
 	 * **********************************************
 	 */
 	
 	@Override
-	public void keyTyped(KeyEvent event) {
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent event) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent event) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent event) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent event) {
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent event) {
+	public void mouseDragged(MouseEvent event){
 		
 	}
+
+	@Override
+	public void keyTyped(KeyEvent event)
+	{
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent event)
+	{
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent event)
+	{
+	}
+
+	@Override
+	public void mouseExited(MouseEvent event)
+	{
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent event)
+	{
+	}
+
 }

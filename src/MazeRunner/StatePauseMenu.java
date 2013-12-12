@@ -122,7 +122,6 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].update(screenWidth,screenHeight);
 		};
-		
 	}
 
 

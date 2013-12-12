@@ -31,39 +31,26 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- *TO DO:
- *
- *PROBLEMEN:
- *omdat key nog niet is geimplementeerd is er een probleem. je kan hem wel toevoegen maar nog niet verwijderen.
- *
- *
- *
- *KEYS:
- *key moet nog helemaal worden geimplementeerd, dit lijkt erg sterk op spots maar dan met een verwijzing naar een deur.
- *
- *DOORS:
- *er moeten deuren kunnen worden geplaatst in het level waar 1 of meerdere sleutels aan is gekoppeld.
- *
- *een Deur maak je in buildingBlock wanneer er later een sleutel is aangemaakt kan deze aan een deur worden gekoppeld door
- *te kijken of de building block een door is. de key bevat dan de coordinaten van een door. wanneer er een wall of floor wordt 
- *geset wordt gecontrolleerd of er een key nodig was voor deze deur. zo ja dan wordt in de arraylist van keys, deze bevind zich in
- *PlacedItemsMenu gezocht naar de bij behorende deur en wordt de sleutel verwijderd.
- *bij het saven zal een deur worden gesaved als een 2. met behulp van de arraylist keys kan je vinden voor welke deur een sleutel
- *nodig was.
- *
- *je kunt altijd nog implementeren dan je niet kunt saven voordat iedere deur een keyrequired = true heeft.
- *
- *
- *LEVEL:
- *een popup window voor de hoogte
- *een popup window voor sava om een naam in te geven en op te slaan
- *een lijst met levels die je kunt spelen.
- *het inladen van een saved level om verder te bewerken in de editor.
- *je kunt niet saven voordat iedere deur een sleutel heeft en andersom.
+ * HEEL ALGEMEEN VERHAAL OVER DE OPZET VAN DE LEVEL EDITOR:
  * 
- **/
-
-public class JOGLFrame extends Frame implements GLEventListener, MouseListener, MouseMotionListener, KeyListener {
+ * om te beginnen is verder gewerkt aan de in assignment 1 gekregen opdracht.
+ * hier wordt een JOGL frame geopent waarin kleine rechthoeken worden getekent waarop kan worden geklikt.
+ * deze kleine rechthoeken zijn allemaal al van te voren gedefinieerd in het formaat van 800 bij 600. het scherm zal
+ * automatisch in deze verhouding worden geschaald. omdat alle rechthoeken vast liggen is er een lange lijst met vooraf gedefinieerde
+ * coordinaten. Deze worden aangegeven door middel van 'Coords' aan het einde van de naam. de classe Window en button zorgen voor
+ * het maken van de klikbare rechthoeken. De classe 'mapMenu' is de classe die zorgt dat er kleine vierkantjes(BuildingBlocks) in
+ * het middden van het scherm worden getekent waar een eigenschap aan kan worden toegekent zoals een muur of een deur.
+ * de Classe 'PlacedItemsMenu' is het linker middelste grote rechthoek waarin geplaatste items verschijnen zoals een bewaker of
+ * een sleutel. wanneer op een sleutel of bewaker wordt geklikt zal deze in de map zichtbaar worden. de mogelijkheid bestaat om
+ * alle bewakers en/of sleutels zichbaar te maken door in de rechthoek links onder aan te klikken op show all.
+ * het onderste rechthoek verschijnt alleen wanneer een item extra opties heeft zoals bij sleutel het geval is indien hier een deur
+ * aan moet worden gekopppelt. een deur die geplaatst is zal rood van kleur zijn. wanneer hier een sleutel aan is gekoppeld zal de
+ * deur groen kleuren.
+ * 
+ * @author mvanderreek
+ *
+ */
+public class JOGLFrame extends Frame implements GLEventListener, MouseListener, MouseMotionListener {
 	static final long serialVersionUID = 7526471155622776147L;
 
 	// Screen size.
@@ -72,13 +59,19 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	// happens on this component.
 	private GLCanvas canvas;
 	
+	//Classes met een Jframe die wel aangemaakt worden maar nog niet zichtbaar zijn.
+	private MazeSizeFrame sizes = new MazeSizeFrame();
+	private OpenLevelFrame loadFile = new OpenLevelFrame();
+	private SaveLevelFrame saveFile = new SaveLevelFrame();
+	
 	private boolean mapCreated = false;
 	private boolean AllGuardsOnOff = false;
+	private boolean AllKeysOnOff = false;
 	private boolean texLoaded = false;
 
 	ClickOptions Mode = ClickOptions.doNothing; 
 
-	//layout van de level editor
+	//layout coordinaten van de level editor
 	private float[] mapCoords = new float[] { 205, 5, 590, 550 };
 	
 	private float[] itemCoords = new float[] { 5, 5, 195, 200 };
@@ -95,14 +88,13 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private float[] placedItemsPropertiesCoords = new float[] { 5, 440, 195, 155 };
 	private float[] addGuardKeySpotCameraCoords = new float[] { 5, 440, 97.5f, 77.5f };
 	private float[] removeGuardKeySpotCameraCoords = new float[] { 102.5f, 440, 97.5f, 77.5f };
-	private float[] removeLastPointGuardCoords = new float[] { 5, 517.5f, 97.5f, 77.5f };
-	private float[] showAllGuardsCoords = new float[] { 102.5f, 517.5f, 97.5f, 77.5f };
+	private float[] removeLastPointGuardOrSetDoorKeyCoords = new float[] { 5, 517.5f, 97.5f, 77.5f };
+	private float[] showAllGuardsKeysCoords = new float[] { 102.5f, 517.5f, 97.5f, 77.5f };
 
 	
 	private float[] setStartCoords = new float[] { 5, 210, 75, 20 };
 	private float[] setEndCoords = new float[] { 125, 210, 75, 20 };
-	private float[] setHeightCoords = new float[] { 205, 565, 75, 20 };
-	private float[] setWidthCoords = new float[] { 290, 565, 75, 20 };
+	private float[] setSizesCoords = new float[] { 205, 565, 75, 20 };
 	private float[] saveCoords = new float[] { 640, 565, 75, 20 };
 	private float[] loadCoords = new float[] { 720, 565, 75, 20 };
 	
@@ -115,8 +107,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	//define the buttons
 	private Button setStart = new Button(setStartCoords, screenWidth, screenHeight);
 	private Button setEnd = new Button(setEndCoords, screenWidth, screenHeight);
-	private Button setHeight = new Button(setHeightCoords, screenWidth, screenHeight);
-	private Button setWidth = new Button(setWidthCoords, screenWidth, screenHeight);
+	private Button setSizes = new Button(setSizesCoords, screenWidth, screenHeight);
 	private Button save = new Button(saveCoords, screenWidth, screenHeight);
 	private Button load = new Button(loadCoords, screenWidth, screenHeight);
 	
@@ -130,22 +121,21 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	
 	private Button addGuardKeySpotCamera = new Button(addGuardKeySpotCameraCoords, screenWidth, screenHeight);
 	private Button removeGuardKeySpotCamera = new Button(removeGuardKeySpotCameraCoords, screenWidth, screenHeight);
-	private Button removeLastPointGuard = new Button(removeLastPointGuardCoords, screenWidth, screenHeight);
-	private Button showAllGuards = new Button(showAllGuardsCoords, screenWidth, screenHeight);
+	private Button removeLastPointGuardOrSetDoorKey = new Button(removeLastPointGuardOrSetDoorKeyCoords, screenWidth, screenHeight);
+	private Button showAllGuardsKeys = new Button(showAllGuardsKeysCoords, screenWidth, screenHeight);
 	
-	
+	//tijdelijke objecten die later in een arraylist worden geplaatst.
 	private SaveInput StoreMaze;
-	//private GuardianList allGuards = new GuardianList(placedItemsCoords, screenWidth, screenHeight);
 	private Guardian guard = new Guardian(itemCoords, screenWidth, screenHeight);
 	private Key key = new Key(itemCoords, screenWidth, screenHeight);
 	private Spot spot = new Spot();
-	private SpotList spotList = new SpotList();
-	
 	private Camera camera = new Camera();
+	
+	//Arraylists, de Key en Guard worden in placedItems opgeslagen, op deze wijze kun je ze nog selecteren en veranderen.
+	private SpotList spotList = new SpotList();
 	private CameraList cameraList = new CameraList();
 	
 	private StartAndEndPosition StartEnd = new StartAndEndPosition();
-		
 	private LoadTexturesEditor loadedTexturesEditor;
 
 	/**
@@ -187,8 +177,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// to mouse events that happen inside the GLCanvas.
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
-		//key listener
-		canvas.addKeyListener(this);
 		// An Animator is a JOGL help class that can be used to make sure our
 		// GLCanvas is continuously being re-rendered. The animator is run on a
 		// separate thread from the main thread.
@@ -235,12 +223,14 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// We have a simple 2D application, so we do not need to check for depth
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
+		
 	}
 
 	@Override
 	/**
-	 * A function defined in GLEventListener. This function is called many times per second and should 
-	 * contain the rendering code.
+	 * Een functie gedefineerd in GLEventListener. deze functie wordt meerdere malen per seconden aangeroepen en zorgt dat de 
+	 * knoppen worden getekend. ook wordt er iedere keer gecheckt of de inhoud van de map ookwel de BuildingBlocks kunnen worden
+	 * getekend, dit mag alleen wanneer er een lengte en breedte voor het aantal blokken is ingegeven.
 	 */
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
@@ -260,27 +250,39 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		// Draw the buttons.
 		drawWindows(gl);
-
-		// Draw a figure based on the current draw mode and user input
 		
 		// check if map can be drawn
-		mapCreated = map.hasHeightAndWidth();
+		mapDrawCheck();
+		
 
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 	}
 
 	/**
-	 * A method that draws the layout on the screen.
-	 * 
+	 * in deze methode worden alle teken functies aangeroepen om de layout te tekenen.
+	 * afhankelijk van de ingedrukte button zal er meer of minder schermen zichtbaar zijn in de layout.
+	 * zo verschijnt er links onderaan een extra menu met opties wanneer er op Guard is gedrukt.
+	 *  
 	 * @param gl
 	 */
 	private void drawWindows(GL gl) {
-		// Draw the background boxes
-//		gl.glColor3f(0f, 0f, 0f);
 		//als de breedte en lengte zijn ingegeven mogen de buildingBlocks worden getekent in de map.
+		//alle items in de map worden ook getekent indien aan de if is voldaan.
 		if(mapCreated){
 			map.drawBlocks(gl, loadedTexturesEditor);
+			
+			//startpunt wordt getekent
+			if(StartEnd.hasStart()){
+				Point a = StartEnd.getStart();
+				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("startPos"));
+			}
+			
+			//eindpunt wordt getekent
+			if(StartEnd.hasEnd()){
+				Point a = StartEnd.getEnd();
+				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("endPos"));
+			}
 			
 			//alle guards zullen worden getekent met blauwe blokjes. 
 			//indien je 1 specifieke guard hebt geselecteerd word deze met rode blokjes getekent
@@ -294,6 +296,16 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				}
 			}
 			
+			//alle sleutels die zijn geplaatst worden getekent.
+			if(AllKeysOnOff){
+//				gl.glColor3f(0.1f, 0.3f, 0.5f);
+				for(Key k: placedItems.getAllKeys()){
+					Point a = k.getKey();
+					map.getBuildingBlockByPosition(a).drawKey(gl);			
+				}
+			}
+		
+			
 			//er worden rode kruisjes getekend in de blokjes waar de guard loopt. 
 			//dit geld alleen voor deze ene geselecteerde guard.
 			if(guard.routeSize()>0 && Mode == ClickOptions.guardian){
@@ -305,36 +317,30 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				
 			}
 			
+			//tijdelijke sleutel die is geselecteerd wordt getekent
+			if(key.hasPosition() && (Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor) ){
+//				gl.glColor3f(0.1f, 0.3f, 0.5f);
+				Point a = key.getKey();
+				map.getBuildingBlockByPosition(a).drawKey(gl);	
+			}
+			
+			//alle geplaatste camara's worden getekent
 			if(cameraList.getCameras().size()>0){
 //				gl.glColor3f(0.2f, 1f, 0.6f);
 				for(Camera s: cameraList.getCameras()){
 					Point a = s.getPosition();
-					//map.getBuildingBlockByPosition(a).drawSpot(gl);
 					map.getBuildingBlockByPosition(a).drawCameras(gl, loadedTexturesEditor.getTexture("cameraEditor"));
 				}
 			}
 			
+			//alle geplaatste spots, maximaal 8, worden getekent
 			if(spotList.getSpots().size()>0){
 //				gl.glColor3f(1f, 1f, 0f);
 				for(Spot s: spotList.getSpots()){
 					Point a = s.getPosition();
-					//map.getBuildingBlockByPosition(a).drawSpot(gl);
 					map.getBuildingBlockByPosition(a).drawSpot(gl, loadedTexturesEditor.getTexture("spotEditor"));
 				}
 			}
-			
-			if(StartEnd.hasStart()){
-//				gl.glColor3f(0.5f, 0, 0.6f);
-				Point a = StartEnd.getStart();
-				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("startPos"));
-			}
-			
-			if(StartEnd.hasEnd()){
-//				gl.glColor3f(0.5f, 0.5f, 0f);
-				Point a = StartEnd.getEnd();
-				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("endPos"));
-			}
-
 			
 //			gl.glColor3f(0f, 0f, 0f);
 		}
@@ -351,17 +357,26 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		itemGuardian.draw(gl, loadedTexturesEditor.getTexture("guardianEditor"));
 		itemKey.draw(gl, loadedTexturesEditor.getTexture("keyEditor"));
 		itemCamera.draw(gl, loadedTexturesEditor.getTexture("cameraEditor"));
-		
-
+		//de items met speciale eigenschappen zoals Key en Guard worden hier getekent.
+		//dit zijn de items die al met een positie in de map zijn geplaatst.
 		placedItems.draw(gl, null);
 		placedItems.drawItems(gl, loadedTexturesEditor);
 		
+		//de extra menu's indien op een  speciale item is gedrukt
 		if(Mode == ClickOptions.guardian){
 			placedItemsProperties.draw(gl, null);
 			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
 			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
-			removeLastPointGuard.draw(gl, loadedTexturesEditor.getTexture("removeLastPointGuardButton")); 
-			showAllGuards.draw(gl, loadedTexturesEditor.getTexture("showAllGuardsButton")); 
+			removeLastPointGuardOrSetDoorKey.draw(gl, loadedTexturesEditor.getTexture("deleteLastPoint")); 
+			showAllGuardsKeys.draw(gl, loadedTexturesEditor.getTexture("showAll")); 
+		}
+		
+		if(Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor){
+			placedItemsProperties.draw(gl, null);
+			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
+			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
+			removeLastPointGuardOrSetDoorKey.draw(gl, loadedTexturesEditor.getTexture("deleteDoor")); 
+			showAllGuardsKeys.draw(gl, loadedTexturesEditor.getTexture("showAll")); 
 		}
 		
 		if(Mode == ClickOptions.key){
@@ -384,10 +399,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		
 		//draw the clickable boxes
+		setSizes.draw(gl, loadedTexturesEditor.getTexture("sizeButton"));
 		setStart.draw(gl, loadedTexturesEditor.getTexture("setStartButton"));
 		setEnd.draw(gl, loadedTexturesEditor.getTexture("setEndButton"));
-		setHeight.draw(gl, loadedTexturesEditor.getTexture("setHeightButton"));
-		setWidth.draw(gl, loadedTexturesEditor.getTexture("setWidthButton"));
 		save.draw(gl, loadedTexturesEditor.getTexture("saveButton"));
 		load.draw(gl, loadedTexturesEditor.getTexture("loadButton"));
 	}
@@ -406,6 +420,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	/**
 	 * A function defined in GLEventListener. This function is called when the GLCanvas is resized or moved. 
 	 * Since the canvas fills the frame, this event also triggers whenever the frame is resized or moved.
+	 * 
+	 * alle vensters die getekent zijn krijgen de nieuwe screenWidth en screenHeight mee, zodat ze naar de goede verhouding
+	 * worden weergegeven.
 	 */
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
@@ -425,8 +442,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		placedItemsProperties.update(screenWidth, screenHeight);
 		setStart.update(screenWidth, screenHeight);
 		setEnd.update(screenWidth, screenHeight);
-		setHeight.update(screenWidth, screenHeight);
-		setWidth.update(screenWidth, screenHeight);
+		setSizes.update(screenWidth, screenHeight);
 		save.update(screenWidth, screenHeight);
 		load.update(screenWidth, screenHeight);
 		itemFloor.update(screenWidth, screenHeight);
@@ -438,11 +454,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		itemCamera.update(screenWidth, screenHeight);		
 		addGuardKeySpotCamera.update(screenWidth, screenHeight);
 		removeGuardKeySpotCamera.update(screenWidth, screenHeight); 
-		removeLastPointGuard.update(screenWidth, screenHeight);
-		showAllGuards.update(screenWidth, screenHeight);
-		
-		//debugging
-		
+		removeLastPointGuardOrSetDoorKey.update(screenWidth, screenHeight);
+		showAllGuardsKeys.update(screenWidth, screenHeight);
+				
 
 		// Update the projection to an orthogonal projection using the new
 		// screen size
@@ -455,43 +469,44 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	@Override
 	/**
 	 * A function defined in MouseListener. Is called when the pointer is in the GLCanvas, and a mouse button is released.
+	 * 
+	 * Er wordt gecontrolleerd of op 1 van de windows of buttons is gedrukt. indien op deze button gedrukt zal er een actie 
+	 * plaats vinden. dit kan het setten van bijvoorbeeld een wall of het aanpassen van de Mode. Mode is een ennum die de 
+	 * waardes aan kan nemen van het window of button waar op is gedrukt. als er dus op wall is gedrukt zal de mode 'wall' worden.
+	 * wanneer vervolgens op de map op een buildingblock wordt gedrukt zal wordden gekeken naar de mode en zal er een wall worden 
+	 * geset in de geklikte BuildingBlock.
+	 * 
 	 */
 	public void mouseReleased(MouseEvent me) {
-	
-
-		// check of op 1 van de buttons is gedrukt.
-		
-		if(map.clickedOnIt(me.getX(), me.getY())){
-			mapClickHandler(me);			
 			
-		}else if(itemFloor.clickedOnIt(me.getX(), me.getY())){
+		if(map.clickedOnIt(me.getX(), me.getY())){							//Map
+			mapClickHandler(me);				
+		}else if(itemFloor.clickedOnIt(me.getX(), me.getY())){				//Floor
 			System.out.println("floor");
 			Mode = ClickOptions.floor;
-		}else if(itemWall.clickedOnIt(me.getX(), me.getY())){
-			System.out.println("wall");
+		}else if(itemWall.clickedOnIt(me.getX(), me.getY())){ 				//Wall
+			System.out.println("wall");	
 			Mode = ClickOptions.wall;
-		}else if(itemDoor.clickedOnIt(me.getX(), me.getY())){
+		}else if(itemDoor.clickedOnIt(me.getX(), me.getY())){				//Door
 			System.out.println("door");
 			Mode = ClickOptions.door;
-		}else if(itemSpot.clickedOnIt(me.getX(), me.getY())){
+		}else if(itemSpot.clickedOnIt(me.getX(), me.getY())){				//Spot
 			Mode = ClickOptions.setSpot;
 			spot = new Spot();
 			System.out.println("spot");
-		}else if(itemGuardian.clickedOnIt(me.getX(), me.getY())){
+		}else if(itemGuardian.clickedOnIt(me.getX(), me.getY())){			//Guard
 			System.out.println("guardian");
 			Mode = ClickOptions.guardian;
-			guard = new Guardian(itemCoords, screenWidth, screenHeight);
-			
-		}else if(itemKey.clickedOnIt(me.getX(), me.getY())){
+			guard = new Guardian(itemCoords, screenWidth, screenHeight);	
+		}else if(itemKey.clickedOnIt(me.getX(), me.getY())){				//Key		
 			System.out.println("key");
 			Mode = ClickOptions.key;
 			key = new Key(itemCoords, screenWidth, screenHeight);
-		}else if(itemCamera.clickedOnIt(me.getX(), me.getY())){
+		}else if(itemCamera.clickedOnIt(me.getX(), me.getY())){				//Camera
 			System.out.println("camera");
 			camera = new Camera();
-			Mode = ClickOptions.setCamera;
-			
-		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){
+			Mode = ClickOptions.setCamera;	
+		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){			//placed Items (kunnen Guard of Keys zijn)
 			Mode = ClickOptions.placedItems;
 			if(placedItems.typeIsGuardian(me.getX(), me.getY())){
 				guard = placedItems.getClickedGuardian(me.getX(), me.getY());
@@ -500,65 +515,82 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			if(placedItems.typeIsKey(me.getX(), me.getY())){
 				key = placedItems.getClickedKey(me.getX(), me.getY());
 				Mode = ClickOptions.key;
-			}
-			
-		}else if(placedItemsProperties.clickedOnIt(me.getX(), me.getY())){
+			}	
+		}else if(placedItemsProperties.clickedOnIt(me.getX(), me.getY())){		//extra opties menu
 			PlacedItemsPropertiesClickHandler(me);
-			
-		}else if(setStart.clickedOnIt(me.getX(), me.getY())){
+		}else if(setStart.clickedOnIt(me.getX(), me.getY())){				//Start punt
 			Mode = ClickOptions.setStart;
-		}else if(setEnd.clickedOnIt(me.getX(), me.getY())){
+		}else if(setEnd.clickedOnIt(me.getX(), me.getY())){					//Eind punt
 			Mode = ClickOptions.setEnd;
-		}else if(setHeight.clickedOnIt(me.getX(), me.getY())){
-			Mode = ClickOptions.setHeight;
-		}else if(setWidth.clickedOnIt(me.getX(), me.getY())){
-			Mode = ClickOptions.setWidth;
-		}else if(save.clickedOnIt(me.getX(), me.getY())){
-			//Mode = saveClick;
-			StoreMaze = new SaveInput(map, placedItems, StartEnd, spotList, cameraList); //de gegenereerde map wordt opgeslagen
-			StoreMaze.floorPlanMaze();	//de map wordt vertaald naar enen en nullen
-			StoreMaze.GuardsPlan();		//de bewakers worden weggeschreven
-			StoreMaze.StartAndEndPosition();	//begin en eindpositie worden naar string vertaald.
-			StoreMaze.SpotsPlan();			//spotjes worden naar string vertaald
-			StoreMaze.CamerasPlan();			//camera's worden naar string vertaald
-			if(StartEnd.hasStart() && StartEnd.hasEnd()){
-				StoreMaze.write("level1"); // de map wordt weggeschereven naar een bestand.
-			}
-			else
-				System.out.println("er zijn nog geen begin en eindpunt geset.");
-		}else if(load.clickedOnIt(me.getX(), me.getY())){
+		}else if(setSizes.clickedOnIt(me.getX(), me.getY())){				//set nieuwe size van Maze
+			sizes.appear();						
+		}else if(save.clickedOnIt(me.getX(), me.getY())){					//Save window
+			//popup window waar de naam en plek 
+			//van de weg te schrijven file kan worden ingegeven.
+			String SaveLevel = saveFile.getFilePath();
+			System.out.println(SaveLevel);
+			if(SaveLevel != null){
+				//de gegenereerde map wordt opgeslagen
+				StoreMaze = new SaveInput(map, placedItems, StartEnd, spotList, cameraList, SaveLevel); 
+			}	
+		}else if(load.clickedOnIt(me.getX(), me.getY())){					//Load Window
 			//het level moet ingeladen worden en nog gedisplayd
-			Mode = ClickOptions.load;
-			LoadLevel newlevel = new LoadLevel("level1");
-		}else{
-			Mode = ClickOptions.doNothing;
-			int a = map.getWidth();
-			int b = map.getHeight();
-			System.out.println("Breedte: "+a+" Hoogte: "+b);
+			String LoadedLevel = loadFile.getFilePath();
+			if(LoadedLevel != null){
+				LoadLevel newlevel = new LoadLevel(LoadedLevel);
+				if(newlevel.getValid()){
+					initialiseObjects(newlevel);
+				}
+			}
 		}
-
-
 	}
 
+	/**
+	 * wanneer het nieuwe level wordt ingeladen zal alles tot nu toe worden gereset en daarna worden
+	 * alle objecten uit newlevel ingeladen, zodat er verder bewerkt kan worden
+	 *  
+	 * @param newlevel
+	 */
+	private void initialiseObjects(LoadLevel newlevel) {
+		this.resetObjects();
+		map.loadBuildingBlocks(newlevel.getFloorPlan(), newlevel.getWidth(), newlevel.getHeight());
+		map.loadKeysAndDoors(newlevel.getKeys());
+		placedItems.loadGardians(newlevel.getGuardians());
+		placedItems.loadKeys(newlevel.getKeys());
+		StartEnd.setStart(newlevel.getStartPosition());
+		StartEnd.setEnd(newlevel.getEndPosition());
+		cameraList.loadCameras(newlevel.getCameras());
+		spotList.loadSpots(newlevel.getSpots());
+	}
+
+	/**
+	 * wanneer op de map is geklikt zal worden gekeken welke Mode is geset en zal dit afgehandeld worden
+	 * @param me
+	 */
 	private void mapClickHandler(MouseEvent me) {
 		if(map.BuildingBlocksExists()){
-			if(Mode == ClickOptions.wall){
-				//de wall wordt geset, wanneer er geen bewaker/begin punt/eind punt op deze plek staat.
+			if(Mode == ClickOptions.wall){														//Wall
+				//de wall wordt geset, wanneer er 
+				//geen bewaker/begin punt/eind punt 
+				//op deze plek staat.
 				boolean setWall = posibleToPlaceWallOrDoor(me);
 				if(setWall){
+					removeKeyAndDoor(me);	//als op deze plek een deur stond word de deur met bijbehorende sleutel verwijderd
 					map.getClickedBuildingBlock(me.getX(), me.getY()).setWall();
 				}
 				else
 					System.out.println("er staat een bewaker/begin punt/eind punt op deze plek");
 			}
-			if(Mode == ClickOptions.floor){
-				//de wall wordt geset.
+			if(Mode == ClickOptions.floor){														//Floor
+				//de floor wordt geset.
+				removeKeyAndDoor(me);
 				map.getClickedBuildingBlock(me.getX(), me.getY()).setFloor();
 			}
-			if(Mode == ClickOptions.door){
+			if(Mode == ClickOptions.door){														//Door
 				//de door wordt geset, wanneer er geen bewaker/begin punt/eind punt op deze plek staat.
 				boolean setDoor = posibleToPlaceWallOrDoor(me);
 				if(setDoor){
+					removeKeyAndDoor(me);
 					map.getClickedBuildingBlock(me.getX(), me.getY()).setDoor();
 				}
 				else
@@ -566,7 +598,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}
 			
 			// er kunnen maximaal 8 spotjes geplaatst worden
-			if(Mode == ClickOptions.setSpot){
+			if(Mode == ClickOptions.setSpot){													//place Spot
 				System.out.println("addSpot");
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 				if(!temp.getWall() && !temp.getDoor()){
@@ -576,7 +608,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 					spot = new Spot();
 				}
 			}
-			if(Mode == ClickOptions.removeSpot){
+			if(Mode == ClickOptions.removeSpot){												//Remove Spot
 				System.out.println("removeSpot");
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 				Point tempPositie = temp.getPosition();
@@ -586,7 +618,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}
 			
 			//Cameras
-			if(Mode == ClickOptions.setCamera){
+			if(Mode == ClickOptions.setCamera){													//place Camera
 				System.out.println("addCamera");
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 				if(!temp.getWall() && !temp.getDoor()){
@@ -596,7 +628,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 					camera = new Camera();
 				}
 			}
-			if(Mode == ClickOptions.removeCamera){
+			if(Mode == ClickOptions.removeCamera){												//Remove Camera
 				System.out.println("removeCamera");
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 				Point tempPositie = temp.getPosition();
@@ -605,23 +637,51 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				camera = new Camera();
 			}	
 			
-			if(Mode == ClickOptions.guardian){
-				/**
+			if(Mode == ClickOptions.guardian){													//Guard
+				/*
 				kijkt of het geklikte vlakje een floor bevat en voegt dit punt toe aan de 
 				route lijst van de bewaker. Dit punt moet wel horizontaal of verticaal grenzen
 				aan het vorig aangeklikte punt waar de bewaker loopt. de bewaker mag niet schuin
 				 lopen
-				**/
+				*/
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 				if(temp.getFloor()){
 					Point tempPositie = temp.getPosition();
 					guard.addRoute(tempPositie);
 				}
 				else
-					System.out.println("hier staat een muur er kan geen bewaker worden geplaatst");
+					System.out.println("dit is geen open plek, dus er kan geen bewaker worden geplaatst");
 			}
 			
-			if(Mode == ClickOptions.setStart){
+			if(Mode == ClickOptions.key){														//Key
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				if(temp.getFloor()){
+					Point tempPositie = temp.getPosition();
+					key.setKey(tempPositie);
+				}
+				else
+					System.out.println("dit is geen open plek, dus er kan geen key worden geplaatst");
+			}
+			if(Mode == ClickOptions.setKeyDoor){												//Connect Key to Door
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				if(temp.getDoor() && !temp.getKeyRequired()){
+					//eerst wordt de oude deur opgevraagd indien deze
+					//er is wordt hij verwijderd en word de keyRequired uit gezet.
+					if(key.hasDoor()){
+						Point a = key.getDoor();
+						map.getBuildingBlockByPosition(a).removeKeyRequired();
+					}
+					
+					//nu wordt bij de nieuwe deur de key geset.
+					Point tempPositie = temp.getPosition();
+					key.setDoor(tempPositie);
+					temp.setKeyRequired();
+				}
+				else
+					System.out.println("geen deur of deur heeft al een sleutel");
+			}
+			
+			if(Mode == ClickOptions.setStart){													//Set Start
 				//mag alleen geset worden op een vloer
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 				if(temp.getFloor()){
@@ -632,7 +692,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 					System.out.println("de start positie kan alleen op een open vlak");
 			}
 			
-			if(Mode == ClickOptions.setEnd){
+			if(Mode == ClickOptions.setEnd){													//Set End
 				//mag alleen geset worden op een vloer
 				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
 				if(temp.getFloor()){
@@ -643,21 +703,39 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 					System.out.println("de eind positie kan alleen op een open vlak");
 				
 			}
-			
-			
-			//DEBUG
-			//hier word de posite van de opgevragen buildingBlock getoont.
-//			BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
-//			Point tempPositie = temp.getPosition();
-//			System.out.println(tempPositie.getX()+", "+tempPositie.getY());
-//			System.out.println(tempPositie);
-//			System.out.println("wall = "+temp.getWall() + " floor = "+ temp.getFloor());
 		}
 		else System.out.println("Vul een lengte en breedte in.");
 	}
 
+	/**
+	 * wanneer dit BuildingBlock een deur is die een sleutel nodig heeft, zal de deur met de bijbehorende sleutel worden
+	 * verwijderd. als er geen sleutel bij de deur hoort gebeurt er niets. 
+	 * @param me
+	 */
+	private void removeKeyAndDoor(MouseEvent me) {
+		BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+		if(temp.getKeyRequired()){
+			Point a = temp.getPosition();
+			for(Key k: placedItems.getAllKeys()){
+				if(k.getDoor().equals(a)){
+					placedItems.removeKey(k);
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * kijkt of het mogelijk is om een muur of deur te plaatsen. dit is niet mogelijk wanneer er een spot staat,
+	 * of een camera, of een sleutel, of een bewaker route of een begin of eindpunt. indien het wel mogelijk is returnt
+	 * de funtie true. 
+	 * @param me
+	 * @return
+	 */
 	private boolean posibleToPlaceWallOrDoor(MouseEvent me) {
 		boolean possible = true;
+		
+		//mag niet wanneer er een Guardian path loopt.
 		Point a = map.getClickedBuildingBlock(me.getX(), me.getY()).getPosition();
 		for(Guardian g: placedItems.getAllGuards()){
 			for(Point p: g.getCopyRoutes()){
@@ -685,6 +763,13 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		}
 		
 		//mag ook niet wanneer er een sleutel staat.
+		for(Key k: placedItems.getAllKeys()){
+			Point p = k.getKey();
+			if(p.equals(a)){
+				possible = false;
+				break;
+			}	
+		}
 		
 		
 		//de wall wordt geset, wanneer er geen start of begin punt is
@@ -694,12 +779,32 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		return possible;
 	}
 
+	/**
+	 * wanneer het extra menu zichtbaar is en er is op geklikt zal hier het bijbehoordende event worden afgehandeld.
+	 * voor een Guard geld:
+	 * - het toevoegen van een guard
+	 * - het verwijderen van de guard
+	 * - een route punt 1 stap terug nemen
+	 * - alle geplaatste guards zichtbaar maken
+	 * 
+	 * voor Key:
+	 * - het toevoegen van een key
+	 * - het verwijderen van een key
+	 * - deur aan een key koppelen
+	 * - alle keys zichtbaar maken
+	 * 
+	 * voor Spot:
+	 * - toevoegen van een Spot
+	 * - verwijderen van een Spot
+	 * 
+	 * voor Camera:
+	 * - toevoegen van een Camera
+	 * - verwijderen van een Camera 
+	 * 
+	 * @param me
+	 */
 	private void PlacedItemsPropertiesClickHandler(MouseEvent me) {
-		//Mode = ClickOptions.placedItemsProperties;
-		//Guard --> add guard, remove guard, remove last point, show all guards
-		//Key --> add key, remove key, (change door)
-		
-		if(Mode == ClickOptions.guardian){
+		if(Mode == ClickOptions.guardian){															//Guard
 			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){		
 				//de Guardian wordt opgeslagen in de Guardian List.
 				Guardian copyGuard = new Guardian(itemCoords, screenWidth, screenHeight);	
@@ -713,10 +818,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				//er wordt een lege Guardian aangemaakt.
 				guard = new Guardian(itemCoords, screenWidth, screenHeight);
 			}
-			if(removeLastPointGuard.clickedOnIt(me.getX(), me.getY())){
+			if(removeLastPointGuardOrSetDoorKey.clickedOnIt(me.getX(), me.getY())){
 				guard.removeLastPoint();
 			}
-			if(showAllGuards.clickedOnIt(me.getX(), me.getY())){
+			if(showAllGuardsKeys.clickedOnIt(me.getX(), me.getY())){
 				if(!AllGuardsOnOff){
 					AllGuardsOnOff = true;
 				}else{
@@ -725,19 +830,39 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}
 			 
 		} 
-		else if(Mode == ClickOptions.key){
+		else if(Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor){ 						//Key
 			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
 				placedItems.addKey(key);
-				key = new Key(itemCoords, screenWidth, screenHeight);
+				System.out.println("Key is toegevoegd");
 			}
 			if(removeGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
-				System.out.println("Key wordt verwijderd");
-			}			 
+				if(key.hasDoor()){
+					Point a = key.getDoor();
+					map.getBuildingBlockByPosition(a).removeKeyRequired();
+					System.out.println(map.getBuildingBlockByPosition(a).getKeyRequired());
+				}
+				
+				placedItems.removeKey(key);
+				//er wordt een lege key aangemaakt.
+				key = new Key(itemCoords, screenWidth, screenHeight);
+				System.out.println("Key is verwijderd");
+			}		
+			if(removeLastPointGuardOrSetDoorKey.clickedOnIt(me.getX(), me.getY())){
+				System.out.println("Door wordt geset");
+				Mode = ClickOptions.setKeyDoor;
+			}
+			if(showAllGuardsKeys.clickedOnIt(me.getX(), me.getY())){
+				if(!AllKeysOnOff){
+					AllKeysOnOff = true;
+				}else{
+					AllKeysOnOff = false;
+					}
+			}
 		}
 		
-		//zorgt dat de mode wordt geset om een spot te deleten of toe te voegen wanneer op een plek op de map
-		// wordt gedrukt.
-		else if(Mode == ClickOptions.setSpot || Mode == ClickOptions.removeSpot){
+		// zorgt dat de mode wordt geset om een spot te deleten
+		// of toe te voegen wanneer op een plek op de map wordt gedrukt.
+		else if(Mode == ClickOptions.setSpot || Mode == ClickOptions.removeSpot){				//Spot
 			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
 				Mode = ClickOptions.setSpot;
 			}
@@ -746,8 +871,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}	
 		}
 		
-		else if(Mode == ClickOptions.setCamera || Mode == ClickOptions.removeCamera){
-			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
+		else if(Mode == ClickOptions.setCamera || Mode == ClickOptions.removeCamera){			//Camera
+			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){	
 				Mode = ClickOptions.setCamera;
 			}
 			if(removeGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
@@ -788,81 +913,46 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		
 	}
-	@Override
-	public void keyPressed(KeyEvent event){  
 
-		// Not needed.
+	/**
+	 * alleen wanneer een goede waarde is opgeslagen zal de if statement 1 maal worden uitgevoerd
+	 * totdat opnieuw een nieuwe geldige waarde is ingevuld in het SizeWindows.
+	 */
+	public void mapDrawCheck(){
+		mapCreated = map.hasHeightAndWidth();
 		
-	}
+		if(sizes.getMapdrawCheck()){ 
+			resetObjects();
+			
+			map.setHeight(sizes.getHeightField());
+			map.setWidth(sizes.getWidthField());
 
-	@Override
-	public void keyReleased(KeyEvent event)
-	{
-		
-		int keycode = event.getKeyCode();
-		char key = event.getKeyChar();
-		//System.out.println(key+" = "+keycode);
-		switch (Mode) {
-			case doNothing:
-				break;
-			case map:
-				break;
-			case items:	
-				break;
-			case placedItems:
-				break;
-			case placedItemsProperties:
-				break;
-			case setStart:
-				break;
-			case setEnd:
-				break;
-				
-			case setHeight:
-				if((keycode > 95 && keycode < 106) || (keycode > 47 && keycode < 58)){
-					map.setHeight(key);	
-				}else if(keycode == 10){ //er is op 'enter' gedrukt
-					Mode = ClickOptions.doNothing;
-					int a = map.getWidth();
-					int b = map.getHeight();
-					System.out.println("Breedte: "+a+" Hoogte: "+b);
-					map.setTotalBuildingBlocks();
-				}else if(keycode == 8){ //er is op 'backspace' gedrukt
-					map.removeHeight();
-					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
-				}
-				break;
-				
-			case setWidth:
-				if((keycode > 95 && keycode < 106) || (keycode > 47 && keycode < 58)){
-					map.setWidth(key);	
-				}else if(keycode == 10){ //er is op 'enter' gedrukt
-					Mode = ClickOptions.doNothing;
-					int a = map.getWidth();
-					int b = map.getHeight();
-					System.out.println("Breedte: "+a+" Hoogte: "+b);
-					map.setTotalBuildingBlocks();
-				}else if(keycode == 8){ //er is op 'backspace' gedrukt
-					map.removeWidth();
-					//nu moet ook de hele maze gereset worden!!!!!! dit moet nog gemaakt worden
-				}
-				break;
-					
-			case save:
-				break;
-			case load:
-				break;
-		
+			int a = map.getWidth();
+			int b = map.getHeight();
+			System.out.println("Breedte: "+a+" Hoogte: "+b);
+			
+			map.setTotalBuildingBlocks();
+
+			sizes.resetMapdrawCheck();			
 		}
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent event) {
-		// Not needed.
 		
 	}
 
+	/**
+	 * zorgt dat alle objecten die in de map zijn geplaatst worden gereset.
+	 */
+	private void resetObjects() {
+		guard = new Guardian(itemCoords, screenWidth, screenHeight);
+		key = new Key(itemCoords, screenWidth, screenHeight);
+		spot = new Spot();
+		spotList = new SpotList();
+		camera = new Camera();
+		cameraList = new CameraList();
+		StartEnd = new StartAndEndPosition();
+		
+		placedItems = new PlacedItemsMenu(placedItemsCoords, screenWidth, screenHeight);
+		map = new MapMenu(mapCoords, screenWidth, screenHeight);
+	}
 
 }
 
