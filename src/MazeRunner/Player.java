@@ -18,7 +18,7 @@ package MazeRunner;
  *
  */
 public class Player extends GameObject {	
-	private double horAngle, verAngle;
+	protected double horAngle, verAngle;
 	private boolean canMoveForward,canMoveBack,canMoveLeft,canMoveRight;
 	private boolean leftForwardWall, rightForwardWall;
 	private double speed;

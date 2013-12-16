@@ -20,6 +20,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
 import LevelEditor.Guardian;
+import LevelEditor.Key;
 import LevelEditor.LoadLevel;
 import LevelEditor.Spot;
 
@@ -67,6 +68,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
 	private ArrayList<Spot> spots = new ArrayList<Spot>();
 	private ArrayList<Point> tempSpot = newMaze.getSpots();
+
+	private int checkdistance = 2;
+
+	private ArrayList<Key> tempKey = newMaze.getKeys();
+	private ArrayList<Keys> keys = new ArrayList<Keys>();
+	private Inventory inventory = new Inventory();
+	private Gun gun;
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
@@ -145,22 +153,31 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// visibleObjects.add(tempSpot);
 		// }
 
-		 createGuards();
-		 createCameras();
-		 
-		 for (GuardCamera temp : cameras) {
-		 visibleObjects.add(temp);
-		 }
-		
-		 for (Guard temp : guards) {
-		 visibleObjects.add(temp);
-		 }
+		createKeys();
+		maze.setKeys(keys);
+		for (Keys temp : keys) {
+			visibleObjects.add(temp);
+		}
+
+		gun = new Gun(2, 0, 1, 5);
+		visibleObjects.add(gun);
+
+		createGuards();
+		createCameras();
+
+		for (GuardCamera temp : cameras) {
+			visibleObjects.add(temp);
+		}
+
+		for (Guard temp : guards) {
+			visibleObjects.add(temp);
+		}
 
 		// Initialize the player.
 
 		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE
 				+ maze.SQUARE_SIZE / 2, // x-position
-				maze.SQUARE_SIZE * 8, // y-position
+				maze.SQUARE_SIZE /2, // y-position
 				maze.startPoint.getY() * maze.SQUARE_SIZE + maze.SQUARE_SIZE
 						/ 2, // z-position
 				90, 0); // horizontal and vertical angle
@@ -194,11 +211,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 	public void init(GLAutoDrawable drawable) {
 		if (initialize) {
-		System.out.println("Maze textures init");
-		initTextures();
-		System.out.println("Creatie objects");
-		initObjects(); // Initialize all the objects!
-		initialize = false;
+			System.out.println("Maze textures init");
+			initTextures();
+			System.out.println("Creatie objects");
+			initObjects(); // Initialize all the objects!
+			initialize = false;
 		}
 		System.out.println("Mazerunner init");
 		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
@@ -342,8 +359,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 		// update locations
 		player.update(deltaTime);
-		playerWallChecker(2);
-
+		playerWallChecker(checkdistance);
+		playerItemCheck();
+		
 		for (Guard temp : guards) {
 			if (!temp.isAttack()) {
 				temp.update(deltaTime);
@@ -586,6 +604,56 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (Point temp : tempSpot) {
 			Spot res = new Spot();
 			spots.add(res);
+		}
+	}
+	
+	public void createKeys() {
+		for (Key temp : tempKey) {
+			Point a = temp.getKey();
+			Point b = temp.getDoor();
+			Keys res = new Keys(a.getX(), 0, a.getY(), b.getX(), b.getY(), maze.SQUARE_SIZE);
+			keys.add(res);
+		}
+	}
+	
+	private void playerItemCheck(){
+		int gebied = 1; 
+		//KEYS
+		for(Keys k: keys){
+			if(Math.abs(player.locationX - k.locationX) < gebied  && Math.abs(player.locationZ - k.locationZ) < gebied){
+				inventory.addKey(k);
+				visibleObjects.remove(k);
+				
+				//DEBUG CHECK INVENTORY
+				System.out.println("aantal Keys: "+inventory.getKeys().size());
+			}
+		}
+		
+		//GUN
+		if(Math.abs(player.locationX - gun.locationX) < gebied  && Math.abs(player.locationZ - gun.locationZ) < gebied){
+			//visibleObjects.remove(gun);
+			gun.pickedUp();
+			gun.horAngle = player.horAngle;
+			gun.verAngle = player.verAngle;
+			gun.locationX = player.locationX;
+			gun.locationY = player.locationY;
+			gun.locationZ = player.locationZ;
+		}
+		
+	}
+	
+	public void openDoor(){
+		for(Keys k: inventory.getKeys()){
+			Point door = k.getDoor();
+			double xdoor = (k.getDoor().getX()+0.5)*maze.SQUARE_SIZE;
+			double zdoor = (k.getDoor().getY()+0.5)*maze.SQUARE_SIZE;
+			double gebied = 0.5*maze.SQUARE_SIZE + checkdistance;
+			
+			if((Math.abs(player.locationX-xdoor) < gebied) && (Math.abs(player.locationZ-zdoor) < gebied)){
+				maze.openDoor(door);
+				inventory.removeKey(k);
+				break;
+			}
 		}
 	}
 

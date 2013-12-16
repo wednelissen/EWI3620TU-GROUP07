@@ -34,6 +34,8 @@ public class LoadTexturesMaze {
 		defaultTexture = loadingTexture("default.png");
 		addTextureToList(loadingTexture("wallTexture.png"), "wallTexture");
 		addTextureToList(loadingTexture("floorTexture.png"), "floorTexture");
+		addTextureToList(loadingTexture("doorMazerunner.png"), "doorTexture");
+		addTextureToList(loadingTexture("doorMazerunBottom.png"), "doorBottomTexture");
 	}
 
 	/**
