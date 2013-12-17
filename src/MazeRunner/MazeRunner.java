@@ -47,7 +47,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	/*
 	 * **********************************************
-	 * * Local variables **********************************************
+	 * * Local variables 
+	 * **********************************************
 	 */
 	private GLCanvas canvas;
 	private LoadLevel newMaze = new LoadLevel("level1");
@@ -71,10 +72,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private boolean initialize = true;
 
 	private LoadTexturesMaze loadedTexturesMaze;
+	@SuppressWarnings("unused")
+	private StatePauseMenu pausemenu;
 
 	/*
 	 * **********************************************
-	 * * Initialization methods **********************************************
+	 * * Initialization methods 
+	 * **********************************************
 	 */
 	/**
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
@@ -175,7 +179,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	/*
 	 * **********************************************
-	 * * OpenGL event handlers **********************************************
+	 * * OpenGL event handlers 
+	 * **********************************************
 	 */
 
 	/**
@@ -207,12 +212,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// Now we set up our viewpoint.
 		gl.glMatrixMode(GL.GL_PROJECTION); // We'll use orthogonal projection.
 		gl.glLoadIdentity(); // Reset the current matrix.
-		glu.gluPerspective(60, screenWidth / screenHeight, .1, 200); // Set up
-																		// the
-																		// parameters
-																		// for
-																		// perspective
-																		// viewing.
+		glu.gluPerspective(60, screenWidth / screenHeight, .1, 200); // Set up the parameters for perspective viewing.
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		// Enable back-face culling.
@@ -356,6 +356,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		return player;
 	}
 
+	/**
+	 * 
+	 * @param checkdistance
+	 */
 	private void playerWallChecker(int checkdistance) {
 
 		if (!GOD_MODE) {
@@ -456,15 +460,22 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		camera.calculateVRP();
 	}
 
-	public boolean pauseSwitch() {
+	/**
+	 * 
+	 * @return
+	 */
+	public void pauseSwitch() {
 		if (!gamepaused && gameinitialized) {
 			canvas.removeMouseListener(input);
 			canvas.removeMouseMotionListener(input);
 			canvas.removeKeyListener(input);
-
 			gamepaused = true;
 			canvas.removeGLEventListener(this);
-			return true;
+//			canvas.setCursor(null);
+//			canvas.addKeyListener(pausemenu);
+//			canvas.addGLEventListener(pausemenu);
+//			canvas.addMouseListener(pausemenu);
+			pausemenu = new StatePauseMenu(canvas, this);
 		} else if (gamepaused && gameinitialized) {
 			System.out.println("Mazerunner resume called");
 			canvas.addMouseListener(input);
@@ -473,9 +484,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			gamepaused = false;
 			canvas.addGLEventListener(this);
 			startup = true;
-			return true;
+			pausemenu = null;
 		}
-		return false;
 	}
 
 	/**
@@ -503,6 +513,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	public void setWalkingSpeed(double speed) {
 		player.setSpeed(speed);
+	}
+	
+	public double getWalkingSpeed(){
+		return player.getSpeed();
 	}
 
 	// /////////////////////////////////////NOT
