@@ -662,6 +662,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			if((Math.abs(player.locationX-xdoor) < gebied) && (Math.abs(player.locationZ-zdoor) < gebied)){
 				maze.openDoor(door);
 				inventory.removeKey(k);
+				Sound.SoundEffect.DOORSLIDE.play();
 				break;
 			}
 		}

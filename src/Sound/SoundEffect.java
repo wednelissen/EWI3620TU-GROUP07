@@ -20,11 +20,12 @@ import javax.sound.sampled.*;
 public enum SoundEffect {
    CLICK("sounds/Speech On.wav"),  
    BACK("sounds/Speech Off.wav"),
-   WALK("sounds/footsteps.wav"),
+   WALK("sounds/footsteps(1).wav"),
    DOOR("sounds/door.wav"),
    INGAME("sounds/ingame.wav"),
    SHOT("sounds/ns37(1).wav"),
-   MURPHYLAUGH("sounds/murphy_laugh.wav");
+   MURPHYLAUGH("sounds/murphy_laugh.wav"),
+   DOORSLIDE("sounds/door-slide.wav");
    public static boolean playDead = false;
    
    /**
