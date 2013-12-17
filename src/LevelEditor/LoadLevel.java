@@ -183,10 +183,6 @@ public class LoadLevel {
 			for(int i = 0; i < width; i++){
 				String temp = floorPlan[j].charAt(i) + "";
 				int temp2 = Integer.parseInt(temp);
-				//voor nu nog even de deuren
-				if(temp2 == 2){
-					temp2 = 1;
-				}
 				maze[i][j] = temp2;	
 			}
 		}

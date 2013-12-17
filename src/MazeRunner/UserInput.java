@@ -95,6 +95,10 @@ public class UserInput extends Control implements MouseListener,
 			Control.right = true;
 		}
 		
+		if (key == KeyEvent.VK_E) {
+			mazerunner.openDoor();
+		}
+
 		//Sprinting
 		if (key == KeyEvent.VK_SHIFT){
 			mazerunner.setWalkingSpeed(0.02);

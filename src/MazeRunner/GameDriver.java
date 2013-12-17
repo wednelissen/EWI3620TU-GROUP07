@@ -37,8 +37,8 @@ public class GameDriver implements KeyListener{
 	private static void initWindow(){
 		//Automatically detect screen resolution
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		screenWidth = (int) screenSize.getWidth();
-		screenHeight = (int) screenSize.getHeight();
+		//screenWidth = (int) screenSize.getWidth();
+		//screenHeight = (int) screenSize.getHeight();
 		
 		//Initializes a window with the specified dimensions
 		GameWindow window = new GameWindow(screenWidth,screenHeight);
