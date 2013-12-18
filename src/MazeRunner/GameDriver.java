@@ -3,8 +3,12 @@ package MazeRunner;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
+
+import com.sun.opengl.util.Animator;
+
 import java.awt.Toolkit;
 
 /**
@@ -15,19 +19,21 @@ import java.awt.Toolkit;
  *
  */
 public class GameDriver implements KeyListener{
-	
+	public static StateMainMenu mainMenu;
 	private static GLCanvas canvas;
 	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
 	public static LoadTexturesMaze loadedTexturesMaze;
-		
+	private static Animator anim;		
 	public static void main(String[] args){
-		
+
 		//Initialize Window
 		initWindow();
 		//Initialize Sounds
 		Sound.SoundEffect.init();
 		//Show Main Menu
-		new StateMainMenu(canvas, true);
+		mainMenu = new StateMainMenu(canvas, true);
+		anim = new Animator(canvas);
+		anim.start();
 	}
 	
 	/**
@@ -36,7 +42,7 @@ public class GameDriver implements KeyListener{
 	 */
 	private static void initWindow(){
 		//Automatically detect screen resolution
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		//screenWidth = (int) screenSize.getWidth();
 		//screenHeight = (int) screenSize.getHeight();
 		
@@ -79,12 +85,5 @@ public class GameDriver implements KeyListener{
 		
 	}
 	
-	/**
-	 * Returns the canvas on which the game is displayed.
-	 * @return
-	 */
-	public static GLCanvas getCanvas(){
-		return GameDriver.canvas;
-	}
 	
 }

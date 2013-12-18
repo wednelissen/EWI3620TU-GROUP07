@@ -1,9 +1,7 @@
 package MazeRunner;
 
-import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -24,8 +22,6 @@ import LevelEditor.Key;
 import LevelEditor.LoadLevel;
 import LevelEditor.Spot;
 
-import com.sun.opengl.util.Animator;
-
 /**
  * MazeRunner is the base class of the game, functioning as the view controller
  * and game logic manager.
@@ -42,11 +38,10 @@ import com.sun.opengl.util.Animator;
  * @author Bruno Scheele, revised by Mattijs Driel
  * 
  */
-
 public class MazeRunner implements GLEventListener, MouseListener {
 	static final long serialVersionUID = 7526471155622776147L;
 	public static boolean GOD_MODE = false;
-	private static final double SQUARE_SIZE = 5;
+//	private static final double SQUARE_SIZE = 5;
 
 	/*
 	 * **********************************************
@@ -77,7 +72,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private Inventory inventory = new Inventory();
 	private Gun gun;
 
-	private Animator anim;
+//	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
 
 	private boolean startup = true;
@@ -100,27 +95,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 		GOD_MODE = false;
 		this.canvas = canvas;
-
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
-
-		initJOGL(); // Initialize JOGL.
-		gameinitialized = true;
-	}
-
-	/**
-	 * initJOGL() sets up JOGL to work properly.
-	 * <p>
-	 * It sets the capabilities we want for MazeRunner, and uses these to create
-	 * the GLCanvas upon which MazeRunner will actually display our screen. To
-	 * indicate to OpenGL that is has to enter a continuous loop, it uses an
-	 * Animator, which is part of the JOGL api.
-	 */
-	private void initJOGL() {
-
 		canvas.addGLEventListener(this);
-		anim = new Animator(canvas);
-		anim.start();
+		gameinitialized = true;
 	}
 
 	/**
@@ -141,8 +119,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 	private void initObjects() {
 		// We define an ArrayList of VisibleObjects to store all the objects
-		// that need to be
-		// displayed by MazeRunner.
+		// that need to be displayed by MazeRunner.
 		visibleObjects = new ArrayList<VisibleObject>();
 
 		// Add the maze that we will be using.
@@ -223,13 +200,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			initialize = false;
 		}
 		System.out.println("Mazerunner init");
-		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
-														// pipeline to Debugging
-														// mode.
+		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL pipeline to Debugging mode.
 		GL gl = drawable.getGL();
 		GLU glu = new GLU();
 
-		gl.glClearColor(0, 0, 0, 0); // Set the background color.
+//		gl.glClearColor(0, 0, 0, 0); // Set the background color.
 		// Now we set up our viewpoint.
 		gl.glMatrixMode(GL.GL_PROJECTION); // We'll use orthogonal projection.
 		gl.glLoadIdentity(); // Reset the current matrix.
@@ -279,19 +254,19 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			GLU glu = new GLU();
 
 			// ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
-			gl.glColor3f(1, 1, 1);
+//			gl.glColor3f(1, 1, 1);
 
 			// Calculating time since last frame.
 			Calendar now = Calendar.getInstance();
 			long currentTime = now.getTimeInMillis();
 			int deltaTime = (int) (currentTime - previousTime);
 			previousTime = currentTime;
-
 			// Update any movement since last frame.
 			updateMovement(deltaTime);
 			updateCamera();
 
-			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 			gl.glLoadIdentity();
 			glu.gluLookAt(camera.getLocationX(), camera.getLocationY(),
 					camera.getLocationZ(), camera.getVrpX(), camera.getVrpY(),
@@ -335,20 +310,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		glu.gluPerspective(60, screenWidth / screenHeight, .1, 200);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
-		try {
-			Robot robot = new Robot();
-
-			robot.mouseMove(screenWidth / 2, screenHeight / 2);
-
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
 		canvas.requestFocus();
 	}
 
 	/*
 	 * **********************************************
-	 * * Methods **********************************************
+	 * * Methods 
+	 * **********************************************
 	 */
 
 	/**
@@ -560,8 +528,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Either pauses the game and shows the pause menu, or unpauses the game
+	 * and redraws it on the canvas. In case of unpausing, previousTime is set
+	 * to the current instant, to prevent all visibleObjects from updating.
 	 */
 	public void pauseSwitch() {
 		if (!gamepaused && gameinitialized) {
@@ -570,20 +539,23 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			canvas.removeKeyListener(input);
 			gamepaused = true;
 			canvas.removeGLEventListener(this);
-//			canvas.setCursor(null);
-//			canvas.addKeyListener(pausemenu);
-//			canvas.addGLEventListener(pausemenu);
-//			canvas.addMouseListener(pausemenu);
-			pausemenu = new StatePauseMenu(canvas, this);
+			
+			if(pausemenu == null){
+				pausemenu = new StatePauseMenu(canvas, this);
+			}
+			else{
+				pausemenu.resume();
+			}
 		} else if (gamepaused && gameinitialized) {
 			System.out.println("Mazerunner resume called");
+			input.resetMousePosition();
 			canvas.addMouseListener(input);
 			canvas.addMouseMotionListener(input);
 			canvas.addKeyListener(input);
 			gamepaused = false;
 			canvas.addGLEventListener(this);
 			startup = true;
-			pausemenu = null;
+			previousTime = Calendar.getInstance().getTimeInMillis();
 		}
 	}
 

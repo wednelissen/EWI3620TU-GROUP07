@@ -1,4 +1,5 @@
 package MazeRunner;
+
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
@@ -13,35 +14,42 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 
-public class StateMainMenu implements GLEventListener, KeyListener, MouseListener{
-	
+public class StateMainMenu implements GLEventListener, KeyListener,
+		MouseListener {
+
+	LoadTexturesMaze loadedTexturesMaze;
 	private static GLCanvas canvas;
 	private boolean startup = false;
-	
+
 	private int screenWidth, screenHeight;
-	
-	//layout van het hoofdmenu
-	private float[] buttonStartGameCoords = new float[] { 200, 25, 400, 75};
-	private float[] buttonHighScoresCoords = new float[] { 200, 125, 400, 75};
-	private float[] buttonQuitCoords = new float[] {200, 225, 400, 75};
-	
-	//define buttons
-	private Button buttonStartGame = new Button(buttonStartGameCoords, screenWidth, screenHeight);
-	private Button buttonHighScores = new Button(buttonHighScoresCoords, screenWidth, screenHeight);
-	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
-	
-	private Button[] buttonList = new Button[] {	buttonStartGame,
-													buttonHighScores,
-													buttonQuit };
-	
+
+	// layout van het hoofdmenu
+	private float[] buttonStartGameCoords = new float[] { 200, 25, 400, 75 };
+	private float[] buttonHighScoresCoords = new float[] { 200, 125, 400, 75 };
+	private float[] buttonQuitCoords = new float[] { 200, 225, 400, 75 };
+
+	// define buttons
+	private Button buttonStartGame = new Button(buttonStartGameCoords,
+			screenWidth, screenHeight);
+	private Button buttonHighScores = new Button(buttonHighScoresCoords,
+			screenWidth, screenHeight);
+	private Button buttonQuit = new Button(buttonQuitCoords, screenWidth,
+			screenHeight);
+
+	private Button[] buttonList = new Button[] { buttonStartGame,
+			buttonHighScores, buttonQuit };
+	private boolean texturesLoaded = false;
+
 	/**
-	 * Constructor
-	 * Also calls init(), initializing the main menu on the given canvas (when first = false).
+	 * Constructor Also calls init(), initializing the main menu on the given
+	 * canvas (when first = false).
+	 * 
 	 * @param canvas
-	 * @param first: only set true if StateMainMenu is the first state to be called,
-	 *  directly after the canvas is created
+	 * @param first
+	 *            : only set true if StateMainMenu is the first state to be
+	 *            called, directly after the canvas is created
 	 */
-	public StateMainMenu(GLCanvas canvas, boolean first){
+	public StateMainMenu(GLCanvas canvas, boolean first) {
 		StateMainMenu.canvas = canvas;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
@@ -50,48 +58,50 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
 		System.out.println("Main menu loaded");
-		if(!first){
-		startup = true;
+		if (!first) {
+			startup = true;
 		}
+
 	}
-	
+
 	@Override
 	public void display(GLAutoDrawable drawable) {
-        if(startup){
-        	init(drawable);
-        	startup = false;
-        }
-		
+		if (startup) {
+			init(drawable);
+			startup = false;
+		}
+
 		GL gl = drawable.getGL();
 
 		// Set the clear color and clear the screen.
-		gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+//		gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
+//		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
-		gl.glColor3f(0, 0.5f, 0f);
-		
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].draw(gl, null);
-		};
+//		gl.glColor3f(0, 0.5f, 0f);
+
+		for (int i = 0; i < buttonList.length; i++) {
+			buttonList[i].draw(gl, loadedTexturesMaze.getTexture("knop"));
+		}
+		;
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
-		
+
 	}
-
-
 
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
-		// TODO Auto-generated method stub
-		
+		// NOT USED
+
 	}
-
-
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		System.out.println("Main menu init");
+		if(!texturesLoaded ){
+		loadedTexturesMaze = new LoadTexturesMaze();
+		texturesLoaded = true;
+		}
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -120,10 +130,12 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 
 		// We have a simple 2D application, so we do not need to check for depth
 		// when rendering.
-		gl.glDisable(GL.GL_DEPTH_TEST);		
+		gl.glDisable(GL.GL_DEPTH_TEST);
+
+		for (int i = 0; i < buttonList.length; i++) {
+			buttonList[i].update(screenWidth, screenHeight);
+		}
 	}
-
-
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
@@ -134,11 +146,12 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 		screenWidth = width;
 		screenHeight = height;
 		gl.glViewport(0, 0, screenWidth, screenHeight);
+
+		for (int i = 0; i < buttonList.length; i++) {
+			buttonList[i].update(screenWidth, screenHeight);
+		}
 		
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].update(screenWidth,screenHeight);
-		};
-		
+
 		// Update the projection to an orthogonal projection using the new
 		// screen size
 		gl.glMatrixMode(GL.GL_PROJECTION);
@@ -150,17 +163,16 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
 		int code = event.getKeyCode();
-		
-		switch(code){
+
+		switch (code) {
 		case KeyEvent.VK_SPACE:
 			startGame();
-			
 			break;
 		}
 	}
@@ -169,69 +181,75 @@ public class StateMainMenu implements GLEventListener, KeyListener, MouseListene
 	public void mouseReleased(MouseEvent me) {
 		int xclick = me.getX();
 		int yclick = me.getY();
-		if(buttonStartGame.clickedOnIt(xclick, yclick)){
+		if (buttonStartGame.clickedOnIt(xclick, yclick)) {
 			startGame();
 		}
-		
-		if(buttonHighScores.clickedOnIt(xclick, yclick)){
+
+		if (buttonHighScores.clickedOnIt(xclick, yclick)) {
 			canvas.removeGLEventListener(this);
 			canvas.removeMouseListener(this);
 			canvas.removeKeyListener(this);
-			new StateHighScores(canvas,this,null);
+			new StateHighScores(canvas, this);
 		}
-		
-		if(buttonQuit.clickedOnIt(xclick, yclick)){
+
+		if (buttonQuit.clickedOnIt(xclick, yclick)) {
 			System.exit(0);
 		}
-		
+
 	}
 
 	private void startGame() {
 		canvas.removeGLEventListener(this);
 		canvas.removeKeyListener(this);
 		canvas.removeMouseListener(this);
-		
-		//Set mouse position to center of screen
+
+		// Set mouse position to center of screen
 		try {
 			Robot robot = new Robot();
-			robot.mouseMove(100,100);
+			robot.mouseMove(100, 100);
 		} catch (AWTException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		@SuppressWarnings("unused")
 		MazeRunner mazerunner = new MazeRunner(canvas);
-		
+
 		System.out.println("Game started");
+	}
+
+	public void returnTo() {
+		canvas.addKeyListener(this);
+		canvas.addGLEventListener(this);
+		canvas.addMouseListener(this);
+		startup = true;
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

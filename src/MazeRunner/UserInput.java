@@ -148,26 +148,39 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void mouseMoved(MouseEvent event) {
 
-		boolean roboMouse = false;
-		// System.out.println(Xbegin + "," + Ybegin);
+		Xdragged = event.getX();
+		Ydragged = event.getY();
+
+		dx = Xbegin - Xdragged;
+		dy = Ybegin - Ydragged;
+
+		resetMousePosition();
+
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent event){
 
 		Xdragged = event.getX();
 		Ydragged = event.getY();
-		if (!roboMouse) {
-			dx = Xbegin - Xdragged;
-			dy = Ybegin - Ydragged;
 
-		}
+		dx = Xbegin - Xdragged;
+		dy = Ybegin - Ydragged;
+
+		resetMousePosition();
+
+	}
+
+	public void resetMousePosition() {
 		try {
 			Robot robot = new Robot();
-			roboMouse = true;
+
 			robot.mouseMove(Xbegin, Ybegin);
-			roboMouse = false;
+
 		} catch (AWTException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	public void setMazeRunner(MazeRunner mazerunner) {
@@ -175,31 +188,6 @@ public class UserInput extends Control implements MouseListener,
 
 	}
 
-	
-	@Override
-	public void mouseDragged(MouseEvent event){
-		boolean roboMouse = false;
-		// System.out.println(Xbegin + "," + Ybegin);
-
-		Xdragged = event.getX();
-		Ydragged = event.getY();
-		if (!roboMouse) {
-			dx = Xbegin - Xdragged;
-			dy = Ybegin - Ydragged;
-
-		}
-		try {
-			Robot robot = new Robot();
-			roboMouse = true;
-			robot.mouseMove(Xbegin, Ybegin);
-			roboMouse = false;
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-	
 	/*
 	 * **********************************************
 	 * *		Unused event handlers				*

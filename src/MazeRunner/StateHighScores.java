@@ -16,7 +16,6 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 	private MazeRunner mazerunner;
 	private int screenWidth, screenHeight;
 	private StateMainMenu mainmenu;
-	private StatePauseMenu pausemenu;
 	//layout van het hoofdmenu
 	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50};
 	
@@ -33,8 +32,9 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 	 * @param canvas : The Canvas on which the High Score Menu will be drawn
 	 * @param mazerunner : The game which will be resumed when button resume is clicked
 	 */
-	public StateHighScores(GLCanvas canvas, StateMainMenu mainmenu, StatePauseMenu pausemenu){
+	public StateHighScores(GLCanvas canvas, StateMainMenu mainmenu){
 		StateHighScores.canvas = canvas;
+		this.mainmenu = mainmenu;
 		canvas.setCursor(null);
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
@@ -43,12 +43,11 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		canvas.addMouseListener(this);
 		System.out.println("Highscores loaded");
 		startup = true;
-		
 	}
 	
 	@Override
 	public void display(GLAutoDrawable drawable) {
-        if(startup){
+		if(startup){
         	init(drawable);
         	startup = false;
         }
@@ -151,13 +150,7 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		
 		case KeyEvent.VK_ESCAPE:
 			System.out.println("HIGHSCORES/ESCAPE");
-			if(this.mainmenu == null){
-				returnToPauseMenu();
-			}
-			else if(this.pausemenu.equals(null)){
 				returnToMainMenu();
-			}
-			break;
 		}
 	}
 	
@@ -166,7 +159,7 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		int xclick = me.getX();
 		int yclick = me.getY();
 		if(buttonBack.clickedOnIt(xclick, yclick)){
-			
+			returnToMainMenu();
 		}
 	}
 
@@ -176,12 +169,10 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		canvas.removeKeyListener(this);
 		canvas.removeMouseListener(this);
 		canvas.addGLEventListener(this.mainmenu);
+		canvas.addKeyListener(mainmenu);
+		canvas.addMouseListener(mainmenu);
 	}
-	
-	private void returnToPauseMenu(){
 		
-	}
-	
 	///////////////////////////NOT USED////////////////////////////////////
 	
 	@Override

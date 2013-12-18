@@ -11,7 +11,7 @@ import javax.media.opengl.GLEventListener;
 
 public class StatePauseMenu implements GLEventListener, KeyListener, MouseListener{
 	
-	private static GLCanvas canvas;
+	private GLCanvas canvas;
 	private boolean startup = false;
 	private MazeRunner mazerunner;
 	private int screenWidth, screenHeight;
@@ -19,16 +19,13 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	//layout van het hoofdmenu
 	private float[] buttonResumeGameCoords = new float[] { 200, 25, 400, 75};
 	private float[] buttonMainMenuCoords = new float[] {200, 125, 400, 75};
-	private float[] buttonHighScoresCoords = new float[] { 200, 225, 400, 75};
-	private float[] buttonQuitCoords = new float[] {200, 325, 400, 75};
+	private float[] buttonQuitCoords = new float[] {200, 225, 400, 75};
 	//define buttons
 	private Button buttonResumeGame = new Button(buttonResumeGameCoords, screenWidth, screenHeight);
 	private Button buttonMainMenu = new Button(buttonMainMenuCoords, screenWidth, screenHeight);
-	private Button buttonHighScores = new Button(buttonHighScoresCoords, screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
 	private Button[] buttonList = new Button[] {	buttonResumeGame,
 													buttonMainMenu,
-													buttonHighScores,
 													buttonQuit };
 
 	/**
@@ -39,18 +36,23 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 	 * @param mazerunner : The game which will be resumed when button resume is clicked
 	 */
 	public StatePauseMenu(GLCanvas canvas, MazeRunner mazerunner){
-		StatePauseMenu.canvas = canvas;
-		
+		this.canvas = canvas;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
-		canvas.setCursor(null);
-		canvas.addKeyListener(this);
-		canvas.addGLEventListener(this);
-		canvas.addMouseListener(this);
-		System.out.println("Pause menu loaded");
+		this.mazerunner = mazerunner;
 		
 		startup = true;
-		this.mazerunner = mazerunner;
+		this.resume();
+	}
+
+	public void resume() {
+		if(canvas != null){
+		this.canvas.setCursor(null);
+		this.canvas.addKeyListener(this);
+		this.canvas.addGLEventListener(this);
+		this.canvas.addMouseListener(this);
+		System.out.println("Pause menu loaded");
+		}
 	}
 	
 	@Override
@@ -63,11 +65,11 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		GL gl = drawable.getGL();
 
 		// Set the clear color and clear the screen.
-		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+//		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
+//		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
-		gl.glColor3f(0, 0.5f, 0f);
+//		gl.glColor3f(0, 0.5f, 0f);
 		
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].draw(gl, null);
@@ -157,15 +159,17 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		
 		case KeyEvent.VK_ESCAPE:
 			resumeGame();
-			
 			break;
 		
 		case KeyEvent.VK_Q:
 			System.exit(0);
 			break;
+		case KeyEvent.VK_2:
+			returnToMainMenu();
+			break;
 		}
 	}
-	
+
 	@Override
 	public void mouseReleased(MouseEvent me) {
 		int xclick = me.getX();
@@ -174,9 +178,6 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 			resumeGame();
 		}
 		if(buttonMainMenu.clickedOnIt(xclick, yclick)){
-			
-		}
-		if(buttonHighScores.clickedOnIt(xclick, yclick)){
 			
 		}
 		if(buttonQuit.clickedOnIt(xclick,yclick)){
@@ -190,6 +191,14 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		canvas.removeMouseListener(this);
 		canvas.removeKeyListener(this);
 		mazerunner.pauseSwitch();
+	}
+	
+	private void returnToMainMenu() {
+		System.out.println("Return to main menu");
+		canvas.removeGLEventListener(this);
+		canvas.removeMouseListener(this);
+		canvas.removeKeyListener(this);
+		GameDriver.mainMenu.returnTo();
 	}
 
 	///////////////////////////NOT USED////////////////////////////////////
