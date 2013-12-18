@@ -14,8 +14,11 @@ public class Keys extends GameObject implements VisibleObject{
 	private double openingCounter;
 	private float rotate;
 	private double SQUARE_SIZE_MAZE;
-	private long previousTime = Calendar.getInstance().getTimeInMillis();
+	private int deltaTime;
 	private float rotateSpeed = 0.1f;
+	private float doorSpeed = 0.0015f;
+	private float r, g, b;
+	
 	
 	public Keys(double xKey, double yKey, double zKey, double xDoor, double yDoor, double SQUARE_SIZE){
 		super(xKey * SQUARE_SIZE+(0.5*SQUARE_SIZE), yKey, zKey * SQUARE_SIZE+(0.5*SQUARE_SIZE));
@@ -24,6 +27,10 @@ public class Keys extends GameObject implements VisibleObject{
 		SQUARE_SIZE_MAZE = SQUARE_SIZE;
 		openingCounter = 0;
 		rotate = 0;
+		deltaTime = 0;
+		r = (float)Math.random();
+		g = (float)Math.random();
+		b = (float)Math.random();
 	}
 	
 	public boolean hasPickedUp(){
@@ -39,18 +46,20 @@ public class Keys extends GameObject implements VisibleObject{
 	}
 
 	public double openingDoor(){
-		openingCounter+= 0.1;
+		openingCounter+= doorSpeed*deltaTime;
 		return openingCounter;
 	}
 	
+	public void updateDeltaTime(int time){
+		deltaTime = time;
+	}
+	
+	public float[] getKeyColor(){
+		float[] rgb  = {r,g,b};
+		return rgb;
+	}
+	
 	public void display(GL gl) {
-		
-		// Calculating time since last frame.
-		Calendar now = Calendar.getInstance();
-		long currentTime = now.getTimeInMillis();
-		int	deltaTime = (int) (currentTime - previousTime);
-		previousTime = currentTime;
-		
 		
 		float keyColour[] = { 0.0f, 0.0f, 1.0f, 1f };
 		gl.glEnable(GL.GL_COLOR_MATERIAL);
@@ -58,7 +67,7 @@ public class Keys extends GameObject implements VisibleObject{
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, keyColour,0);
 
 		//DIT MOET WEG
-		gl.glColor3f(0, 0, 1);
+		gl.glColor3f(r, g, b);
 		
 		gl.glPushMatrix();
 		gl.glTranslated(locationX, 0, locationZ);
@@ -91,6 +100,7 @@ public class Keys extends GameObject implements VisibleObject{
 		}
 		//DIT MOET WEG
 		gl.glColor3f(1, 1, 1);
+		
 		gl.glEnable(GL.GL_CULL_FACE);
 		
 	}

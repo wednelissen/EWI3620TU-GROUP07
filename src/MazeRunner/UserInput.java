@@ -190,7 +190,7 @@ public class UserInput extends Control implements MouseListener,
 	
 	@Override
 	public void mouseDragged(MouseEvent event){
-		
+		mouseMoved(event);
 	}
 
 	@Override
@@ -201,6 +201,7 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void mouseClicked(MouseEvent event)
 	{
+
 	}
 
 	@Override
@@ -216,6 +217,7 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void mouseReleased(MouseEvent event)
 	{
+		mazerunner.shoot(event.getX(), event.getY());
 	}
 
 }

@@ -50,12 +50,12 @@ public class Maze implements VisibleObject {
 	private ArrayList<Keys> doorKeys;
 	
 	private LoadTexturesMaze loadedTexturesMaze;
-	private Texture wallTexture;
-	private Texture floorTexture;
-	private Texture roofTexture;
-	private Texture spotTexture;
-	private Texture doorTexture, doorBottomTexture;
-	private boolean texLoaded = false;
+//	private Texture wallTexture;
+//	private Texture floorTexture;
+//	private Texture roofTexture;
+//	private Texture spotTexture;
+//	private Texture doorTexture, doorBottomTexture;
+//	private boolean texLoaded = false;
 
 	public Maze (LoadTexturesMaze temp){
 		loadedTexturesMaze = temp;
@@ -187,7 +187,12 @@ public class Maze implements VisibleObject {
 					drawRoof(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("floorTexture"));
 				}
 				if (isClosedDoor(i, j)) {
-					drawClosedDoor(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("doorTexture"), loadedTexturesMaze.getTexture("doorBottomTexture"));
+					for(Keys k: doorKeys){
+						if(k.getDoor().equals(new Point(i,j))){
+							drawClosedDoor(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("doorTexture"), 
+							loadedTexturesMaze.getTexture("doorBottomTexture"),k.getKeyColor());
+						}
+					}
 				}
 				if (isOpeningDoor(i, j)) {
 					for(Keys k: doorKeys){
@@ -197,7 +202,7 @@ public class Maze implements VisibleObject {
 								removeDoor(new Point(i,j));
 								doorKeys.remove(k);
 							}
-							drawOpeningDoor(gl, SQUARE_SIZE, translateValue);
+							drawOpeningDoor(gl, SQUARE_SIZE, translateValue,k.getKeyColor());
 							break;
 						}
 					}
@@ -346,12 +351,13 @@ public class Maze implements VisibleObject {
 		myTexture.disable();
 	}
 
-	private void drawClosedDoor(GL gl, double size, Texture myTexture, Texture myTexture2) {
+	private void drawClosedDoor(GL gl, double size, Texture myTexture, Texture myTexture2, float[] keyCardHoleColor) {
 		// set the colour for the wall
 		float DoorColor[] = { 1.0f, 0.0f, 0.0f, 0f };
 		// sets the material and lighting for the wall
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, DoorColor, 0);
 
+	
 		// Wanneer er geen texture gevonden is, teken toch maar een vierkant
 		if (myTexture != null) {
 			// Eerst de texture aanzetten
@@ -405,6 +411,47 @@ public class Maze implements VisibleObject {
 		myTexture.disable();
 		
 		
+		//Sleutel gat
+		
+		//DIT MOET WEG
+		gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1], keyCardHoleColor[2]);
+				
+		gl.glBegin(GL.GL_QUADS);
+
+		//HIER KUNNEN DE MATEN WORDEN OPGEGEVEN. GEDEELD DOOR WORDT NIET ONDERSTEUND 
+		//JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven aan is 0,0
+		//double x_links = 239/298, x_rechts = 267/298, y_laag = 211/424, y_hoog = 240/424;
+		double x_links = 0.8, x_rechts = 0.895, y_laag = 0.428, y_hoog = 0.497;//0.566;
+
+		
+		gl.glVertex3d((1-x_links)*size, y_hoog*size, -0.01); //rechtsboven
+		gl.glVertex3d((1-x_links)*size, y_laag*size, -0.01); // links onder
+		gl.glVertex3d((1-x_rechts)*size, y_laag*size, -0.01);	// rechts onder
+		gl.glVertex3d((1-x_rechts)*size, y_hoog*size, -0.01); //linksboven
+
+		// Achterzijde muur
+		gl.glVertex3d(x_links*size, y_hoog*size, size+0.01);	//linksboven
+		gl.glVertex3d(x_links*size, y_laag*size, size+0.01);		//linksonder
+		gl.glVertex3d(x_rechts*size, y_laag*size, size+0.01);	//rechtsonder
+		gl.glVertex3d(x_rechts*size, y_hoog*size, size+0.01); //rechtsboven
+			
+		// Bovenzijde muur, y,x
+		gl.glVertex3d(size+0.01, y_laag*size, (1-x_links)*size); //linksonder
+		gl.glVertex3d(size+0.01, y_laag*size, (1-x_rechts)*size); // rechtonder
+		gl.glVertex3d(size+0.01, y_hoog*size, (1-x_rechts)*size); //rechtsboven
+		gl.glVertex3d(size+0.01, y_hoog*size, (1-x_links)*size); //linksboven
+
+		// Onderzijde muur y,x
+		gl.glVertex3d(0-0.01, y_laag*size, x_links*size); //linksonder
+		gl.glVertex3d(0-0.01, y_laag*size, x_rechts*size);
+		gl.glVertex3d(0-0.01, y_hoog*size, x_rechts*size);
+		gl.glVertex3d(0-0.01, y_hoog*size, x_links*size); //linksboven
+
+		gl.glEnd();
+		
+		//DIT MOET WEG
+		gl.glColor3f(1, 1, 1);
+			
 		if (myTexture2 != null) {
 			// Eerst de texture aanzetten
 			myTexture2.enable();
@@ -424,12 +471,14 @@ public class Maze implements VisibleObject {
 
 		gl.glEnd();
 		myTexture2.disable();
+
 	}
 	
 	
-	private void drawOpeningDoor(GL gl, double size, double opening) {
+	private void drawOpeningDoor(GL gl, double size, double opening, float[] keyCardHoleColor) {
 		gl.glTranslated(0, opening, 0);
-		drawClosedDoor(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("doorTexture"), loadedTexturesMaze.getTexture("doorBottomTexture"));
+		drawClosedDoor(gl, SQUARE_SIZE, loadedTexturesMaze.getTexture("doorTexture"),
+				loadedTexturesMaze.getTexture("doorBottomTexture"), keyCardHoleColor);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////
