@@ -62,7 +62,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private UserInput input;
 	private Maze maze;
 	private long previousTime = Calendar.getInstance().getTimeInMillis();
-	private int deltaTime;
+	private int deltaTime = 0;
 	private ArrayList<Guardian> tempGuard = newMaze.getGuardians();
 	private ArrayList<Guard> guards = new ArrayList<Guard>();
 	private ArrayList<Point> tempCamera = newMaze.getCameras();
@@ -140,6 +140,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * so it will be displayed automatically.
 	 */
 	private void initObjects() {
+		
+		
+		
 		// We define an ArrayList of VisibleObjects to store all the objects
 		// that need to be
 		// displayed by MazeRunner.
@@ -284,12 +287,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			// Calculating time since last frame.
 			Calendar now = Calendar.getInstance();
 			long currentTime = now.getTimeInMillis();
-			int deltaTime = (int) (currentTime - previousTime);
+			deltaTime = (int) (currentTime - previousTime);
 			previousTime = currentTime;
 
 			// Update any movement since last frame.
 			updateMovement(deltaTime);
 			updateCamera();
+			updateKeys(deltaTime);
 
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 			gl.glLoadIdentity();
@@ -366,9 +370,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			if (!temp.isAttack()) {
 				temp.update(deltaTime);
 			}
-			temp.playerDetectie(player.locationX, player.locationZ);
-			temp.aanvallen(player.locationX, player.locationZ, deltaTime);
-			guardWallChecker(2, temp);
+			//MENNO
+//			temp.playerDetectie(player.locationX, player.locationZ);
+//			temp.aanvallen(player.locationX, player.locationZ, deltaTime);
+//			guardWallChecker(2, temp);
+			
+//			System.out.println("x: "+player.locationX + " z: "+player.locationZ+" EDITOR--- x: "
+//			+(int)Math.floor( player.locationX / SQUARE_SIZE )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
 
 		}
 		for (GuardCamera temp : cameras) {
@@ -558,6 +566,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		camera.setVerAngle(player.getVerAngle());
 		camera.calculateVRP();
 	}
+	
+	private void updateKeys(int deltaTime) {
+		for(Keys k: keys){
+			k.updateDeltaTime(deltaTime);
+		}
+	}
+	
 
 	/**
 	 * 
@@ -640,6 +655,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 		
 		//GUN
+		
 		if(Math.abs(player.locationX - gun.locationX) < gebied  && Math.abs(player.locationZ - gun.locationZ) < gebied){
 			//visibleObjects.remove(gun);
 			gun.pickedUp();
@@ -649,6 +665,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			gun.locationY = player.locationY;
 			gun.locationZ = player.locationZ;
 		}
+		
 		
 	}
 	
@@ -667,6 +684,23 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			}
 		}
 	}
+	
+	/**
+	 * MENNO BEGIN
+	 * dit werkt niet goed, moet helemaal veranderd worden. de kogels worden wel aangemaakt maar dan hoog in de lucht.
+	 */
+	public void shoot(int xMouse, int yMouse){
+		Kogel kogel = new Kogel(xMouse, yMouse, 0);
+		kogel.updateShoot(player.getHorAngle(), player.getVerAngle(), deltaTime);
+		visibleObjects.add(kogel);
+		System.out.println("kom je hier wel");
+		// visibleObjects.add(kogel);
+	}
+	
+	/**
+	 * 
+	 * MENNO EIND
+	 */
 
 	public void setWalkingSpeed(double speed) {
 		player.setSpeed(speed);
@@ -692,9 +726,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-		Kogel kogel = new Kogel(me.getX(), me.getY(), 0);
-		kogel.updateShoot(player.getHorAngle(), player.getVerAngle(), deltaTime);
-		// visibleObjects.add(kogel);
+
 
 	}
 

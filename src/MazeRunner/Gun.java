@@ -20,6 +20,7 @@ public class Gun extends GameObject implements VisibleObject{
 	}
 	@Override
 	public void display(GL gl) {
+		
 		GLUT glut = new GLUT();
 		
 		//gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE);
@@ -69,6 +70,7 @@ public class Gun extends GameObject implements VisibleObject{
 		
 		//DIT MOET WEG
 		gl.glColor3f(1, 1, 1);
+		
 		
 	}
 	
