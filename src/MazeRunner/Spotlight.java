@@ -9,7 +9,6 @@ public class Spotlight extends GameObject implements VisibleObject {
 
 	private Texture spotTexture;
 	private int spotNumber;
-	
 
 	public Spotlight(GL gl, double size, Texture myTexture, double xCoord,
 			double yCoord, double zCoord, int number) {
@@ -19,17 +18,47 @@ public class Spotlight extends GameObject implements VisibleObject {
 		spotNumber = number;
 		initLights(gl);
 	}
-	
+
 	@Override
 	public void display(GL gl) {
 		// Updating location of the lights
-		float updatedLightPosition[] = { (float) this.locationX , (float) this.locationY, (float) this.locationZ , 1.0f};
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, updatedLightPosition, 0);
+		float updatedLightPosition[] = { (float) this.locationX,
+				(float) this.locationY, (float) this.locationZ, 1.0f };
 		float updatedLightDirection[] = { 0.0f, -1.0f, 0.0f, 0.0f };
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, updatedLightDirection, 0);
+		if (spotNumber == 0) {
+			gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		} else if (spotNumber == 1) {
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		}else if (spotNumber == 2) {
+			gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT2, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		}else if (spotNumber == 3) {
+			gl.glLightfv(GL.GL_LIGHT3, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT3, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		}else if (spotNumber == 4) {
+			gl.glLightfv(GL.GL_LIGHT4, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT4, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		}else if (spotNumber == 5) {
+			gl.glLightfv(GL.GL_LIGHT5, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT5, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		}else if (spotNumber == 6) {
+			gl.glLightfv(GL.GL_LIGHT6, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT6, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		}else if (spotNumber == 7) {
+			gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, updatedLightPosition, 0);
+			gl.glLightfv(GL.GL_LIGHT7, GL.GL_SPOT_DIRECTION,
+					updatedLightDirection, 0);
+		}
 
-		System.out.println(locationX + ", " + locationY + ", " + locationZ);
-				
 		GLUT glut = new GLUT();
 
 		double lightBulbRadius = 0.1;
@@ -46,7 +75,7 @@ public class Spotlight extends GameObject implements VisibleObject {
 	}
 
 	public void initLights(GL gl) {
-		
+
 		float lightPosition[] = { (float) locationX, (float) (locationY),
 				(float) locationZ, 1.0f };
 		float lightColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
