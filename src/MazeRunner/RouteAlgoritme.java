@@ -8,7 +8,7 @@ public class RouteAlgoritme {
 
 	public void update() {
 
-		System.out.println(MazeRunner.getPlayer().getHorAngle());
+		//System.out.println(MazeRunner.getPlayer().getHorAngle());
 	}
 
 }

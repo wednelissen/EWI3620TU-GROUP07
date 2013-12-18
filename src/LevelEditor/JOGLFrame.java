@@ -148,7 +148,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// Set the desired size and background color of the frame
 		setSize(screenWidth, screenHeight);
 		// setBackground(Color.white);
-		setBackground(new Color(0.95f, 0.95f, 0.95f));
+//		setBackground(new Color(0.95f, 0.95f, 0.95f));
 
 		// When the "X" close button is called, the application should exit.
 		this.addWindowListener(new WindowAdapter() {

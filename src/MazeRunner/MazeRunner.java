@@ -128,7 +128,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * be added to the visualObjects list of MazeRunner through the add method,
 	 * so it will be displayed automatically.
 	 */
-	private void initObjects() {
+	private void initObjects(GL gl) {
 		// We define an ArrayList of VisibleObjects to store all the objects
 		// that need to be
 		// displayed by MazeRunner.
@@ -140,7 +140,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 		createGuards();
 		createCameras();
-		createSpots();
+		createSpots(gl);
 
 		for (GuardCamera temp : cameras) {
 			visibleObjects.add(temp);
@@ -191,19 +191,18 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * all in this method.
 	 */
 	public void init(GLAutoDrawable drawable) {
-		if (initialize) {
-			System.out.println("Maze textures init");
-			initTextures();
-			System.out.println("Creatie objects");
-			initObjects(); // Initialize all the objects!
-			initialize = false;
-		}
+
 		System.out.println("Mazerunner init");
 		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
 														// pipeline to Debugging
 														// mode.
 		GL gl = drawable.getGL();
 		GLU glu = new GLU();
+
+		System.out.println("Maze textures init");
+		initTextures();
+		System.out.println("Creatie objects");
+		initObjects(gl); // Initialize all the objects!
 
 		gl.glClearColor(0, 0, 0, 0); // Set the background color.
 		// Now we set up our viewpoint.
@@ -503,15 +502,18 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 	}
 
-	public void createSpots() {
+	public void createSpots(GL gl) {
 		// Hoogte van de spot, moet nog veranderen
 		double spotHeight = maze.SQUARE_SIZE;
+		int i = 0;
 		for (Point temp : tempSpots) {
-			Spotlight res = new Spotlight(maze.SQUARE_SIZE, loadedTexturesMaze.getTexture("spotlight"), temp.getX(), spotHeight, temp.getY());
+			Spotlight res = new Spotlight(gl, maze.SQUARE_SIZE,
+					loadedTexturesMaze.getTexture("spotlight"), temp.getX(),
+					spotHeight, temp.getY(), i);
 			spotlights.add(res);
+			i++;
 		}
 	}
-	
 
 	// // Add the spots that we will be using
 	// for (int i = 0; i < Loadlevel.getSpots.size(); i++) {

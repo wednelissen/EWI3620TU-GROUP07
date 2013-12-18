@@ -143,17 +143,16 @@ public class Maze implements VisibleObject {
 	 */
 	private void drawFloor(GL gl, double size, Texture myTexture) {
 		// Setting the floor color and material.
-		float floorColour[] = { 1.0f, 1.0f, 1.0f, 0f };
-		// Set the materials used by the floor.
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, floorColour, 0);
-		// gl.glEnable(GL.GL_TEXTURE_2D);
+		float floorColor[] = { 1.0f, 1.0f, 1.0f, 0f };
 		// Sets the current normal vector
-		gl.glNormal3d(0, 1, 0);
 		if (myTexture != null) {
 			myTexture.enable();
 			myTexture.bind();
 		}
+		// Set the materials used by the floor.
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, floorColor, 0);
 		gl.glBegin(GL.GL_QUADS);
+		gl.glNormal3d(0, 1, 0);
 		gl.glTexCoord2d(0, 0);
 		gl.glVertex3d(0, 0, 0);
 		gl.glTexCoord2d(1, 0);
@@ -164,17 +163,13 @@ public class Maze implements VisibleObject {
 		gl.glVertex3d(size, 0, 0);
 		gl.glEnd();
 		myTexture.disable();
-
+		gl.glDisable(GL.GL_COLOR_MATERIAL);
 	}
 
-	/*
-	 * ******************EXTRA****************************************
-	 */
 	private void drawWall(GL gl, double size, Texture myTexture) {
-		// set the colour for the wall
-		float wallColour[] = { 1.0f, 1.0f, 1.0f, 0f };
+		// set the color for the wall
+		float wallColor[] = { 1.0f, 1.0f, 1.0f, 0f };
 		// sets the material and lighting for the wall
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, wallColour, 0);
 
 		// Wanneer er geen texture gevonden is, teken toch maar een vierkant
 		if (myTexture != null) {
@@ -183,8 +178,10 @@ public class Maze implements VisibleObject {
 			// Dan de texture binden aan het volgende object
 			myTexture.bind();
 		}
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, wallColor, 0);
 		gl.glBegin(GL.GL_QUADS);
-		// Voorzijde muur
+		// Voorzijde muur ERROR
+		gl.glNormal3d(0, 0, -1);
 		// Eerste texture coordinaat
 		gl.glTexCoord2d(1, 0);
 		gl.glVertex3d(0, 0, 0);
@@ -198,17 +195,8 @@ public class Maze implements VisibleObject {
 		gl.glTexCoord2d(0, 0);
 		gl.glVertex3d(size, 0, 0);
 
-		// Rechterzijde muur (bovenkant, hoeft niet per se)
-		// gl.glTexCoord2d(0, 0);
-		// gl.glVertex3d(0, size, 0);
-		// gl.glTexCoord2d(1, 0);
-		// gl.glVertex3d(0, size, size);
-		// gl.glTexCoord2d(1, 1);
-		// gl.glVertex3d(size, size, size);
-		// gl.glTexCoord2d(0, 1);
-		// gl.glVertex3d(size, size, 0);
-
 		// Achterzijde muur
+		gl.glNormal3d(0, 0, 1);
 		gl.glTexCoord2d(0, 1);
 		gl.glVertex3d(0, size, size);
 		gl.glTexCoord2d(0, 0);
@@ -218,17 +206,8 @@ public class Maze implements VisibleObject {
 		gl.glTexCoord2d(1, 1);
 		gl.glVertex3d(size, size, size);
 
-		// Linkerzijde muur (onderzijde, hoeft niet per se)
-		// gl.glTexCoord2d(0, 0);
-		// gl.glVertex3d(0, 0, size);
-		// gl.glTexCoord2d(1, 0);
-		// gl.glVertex3d(0, 0, 0);
-		// gl.glTexCoord2d(1, 1);
-		// gl.glVertex3d(size, 0, 0);
-		// gl.glTexCoord2d(0, 1);
-		// gl.glVertex3d(size, 0, size);
-
-		// Bovenzijde muur
+		// Bovenzijde muur ERROR
+		gl.glNormal3d(1, 0, 0);
 		gl.glTexCoord2d(0, 0);
 		gl.glVertex3d(size, 0, size);
 		gl.glTexCoord2d(1, 0);
@@ -239,6 +218,7 @@ public class Maze implements VisibleObject {
 		gl.glVertex3d(size, size, size);
 
 		// Onderzijde muur
+		gl.glNormal3d(-1, 0, 0);
 		gl.glTexCoord2d(0, 0);
 		gl.glVertex3d(0, 0, 0);
 		gl.glTexCoord2d(1, 0);
@@ -250,14 +230,15 @@ public class Maze implements VisibleObject {
 
 		gl.glEnd();
 		myTexture.disable();
+		gl.glDisable(GL.GL_COLOR_MATERIAL);
 	}
 
 	private void drawRoof(GL gl, double size, Texture myTexture) {
 		// Setting the floor color and material.
-		float roofColour[] = { 1.0f, 1.0f, 1.0f, 0.0f }; // The floor is blue.
+		float roofColor[] = { 1.0f, 1.0f, 1.0f, 0.0f }; // The floor is blue.
 		// Set the materials used by the floor.
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, roofColour, 0);
-
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, roofColor, 0);
+		
 		// Sets the current normal vector
 		gl.glNormal3d(0, 1, 0);
 		if (myTexture != null) {
@@ -265,6 +246,7 @@ public class Maze implements VisibleObject {
 			myTexture.bind();
 		}
 		gl.glBegin(GL.GL_QUADS);
+		gl.glNormal3d(0, -1, 0);
 		gl.glTexCoord2d(0, 0);
 		gl.glVertex3d(0, size, 0);
 		gl.glTexCoord2d(1, 0);
@@ -275,5 +257,6 @@ public class Maze implements VisibleObject {
 		gl.glVertex3d(0, size, size);
 		gl.glEnd();
 		myTexture.disable();
+		gl.glDisable(GL.GL_COLOR_MATERIAL);
 	}
 }
