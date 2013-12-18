@@ -49,6 +49,12 @@ public class UserInput extends Control implements MouseListener,
 		canvas.addKeyListener(this);
 		this.canvas = canvas;
 	}
+	
+	
+	public void setMazeRunner(MazeRunner mazerunner) {
+		this.mazerunner = mazerunner;
+
+	}
 
 	/*
 	 * **********************************************
@@ -170,34 +176,12 @@ public class UserInput extends Control implements MouseListener,
 
 	}
 	
-	public void setMazeRunner(MazeRunner mazerunner) {
-		this.mazerunner = mazerunner;
 
-	}
 
 	
 	@Override
 	public void mouseDragged(MouseEvent event){
-		boolean roboMouse = false;
-		// System.out.println(Xbegin + "," + Ybegin);
-
-		Xdragged = event.getX();
-		Ydragged = event.getY();
-		if (!roboMouse) {
-			dx = Xbegin - Xdragged;
-			dy = Ybegin - Ydragged;
-
-		}
-		try {
-			Robot robot = new Robot();
-			roboMouse = true;
-			robot.mouseMove(Xbegin, Ybegin);
-			roboMouse = false;
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		mouseMoved(event);
 	}
 	
 	/*
