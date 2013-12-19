@@ -23,7 +23,7 @@ import javax.media.opengl.GLEventListener;
 
 import MazeRunner.Control;
 import MazeRunner.MazeRunner;
-
+import MazeRunner.GameDriver;
 import com.sun.opengl.util.Animator;
 
 import java.awt.*;
@@ -154,7 +154,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.exit(0);
+				dispose();
+				GameDriver.main(new String[] {});
 			}
 		});
 

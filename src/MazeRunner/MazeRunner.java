@@ -81,6 +81,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private LoadTexturesMaze loadedTexturesMaze;
 	@SuppressWarnings("unused")
 	private StatePauseMenu pausemenu;
+	private HighScore score;
 
 	/*
 	 * **********************************************
@@ -99,6 +100,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		screenWidth = canvas.getWidth();
 		canvas.addGLEventListener(this);
 		gameinitialized = true;
+		score = new HighScore("Berend",0,"");
 	}
 
 	/**

@@ -23,9 +23,10 @@ public class GameDriver{
 	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
 	public static LoadTexturesMaze loadedTexturesMaze;
 	private static Animator anim;	
+	private static GameWindow window;
 	
 	public static void main(String[] args){
-
+//		new NameSetFrame();
 		//Initialize Window
 		initWindow();
 		//Initialize Sounds
@@ -42,12 +43,12 @@ public class GameDriver{
 	 */
 	private static void initWindow(){
 		//Automatically detect screen resolution
-		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		//screenWidth = (int) screenSize.getWidth();
-		//screenHeight = (int) screenSize.getHeight();
+//		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//		screenWidth = (int) screenSize.getWidth();
+//		screenHeight = (int) screenSize.getHeight();
 		
 		//Initializes a window with the specified dimensions
-		GameWindow window = new GameWindow(screenWidth,screenHeight);
+		window = new GameWindow(screenWidth,screenHeight);
 		// First, we set up JOGL. We start with the default settings.
 		GLCapabilities caps = new GLCapabilities();
 		// Then we make sure that JOGL is hardware accelerated and uses double buffering.
@@ -58,5 +59,9 @@ public class GameDriver{
 		canvas.setSize(screenWidth,screenHeight);
 		window.add(canvas);
 		canvas.requestFocus();
+	}
+	
+	public static GameWindow getGameWindow(){
+		return window;
 	}
 }

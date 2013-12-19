@@ -17,7 +17,7 @@ import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.ImageUtil;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
-
+import LevelEditor.OpenLevelFrame;
 /**
  * Maze represents the maze used by MazeRunner.
  * <p>
@@ -40,16 +40,18 @@ import com.sun.opengl.util.texture.TextureIO;
  *
  */
 public class Maze implements VisibleObject {
-	
-	private LoadLevel newMaze = new LoadLevel("level1");
+	private String levelName = "level1";
+	private OpenLevelFrame levelPicker = new OpenLevelFrame();
+	private LoadLevel newMaze;
 	// public final double MAZE_SIZE = 10;
-	public final double MAZE_SIZE_X = newMaze.getWidth();
-	public final double MAZE_SIZE_Z = newMaze.getHeight();
+	public double MAZE_SIZE_X;
+	public double MAZE_SIZE_Z;
 	public final double SQUARE_SIZE = 5;
-	public final Point startPoint =  newMaze.getStartPosition();
+	public Point startPoint;
 	private ArrayList<Keys> doorKeys;
 	
 	private LoadTexturesMaze loadedTexturesMaze;
+	private int[][] maze;
 //	private Texture wallTexture;
 //	private Texture floorTexture;
 //	private Texture roofTexture;
@@ -59,6 +61,18 @@ public class Maze implements VisibleObject {
 
 	public Maze (LoadTexturesMaze temp){
 		loadedTexturesMaze = temp;
+		levelName = levelPicker.getFilePath();
+		levelPicker.requestFocus();
+		if(levelName == null){
+			levelName = "level1";
+		}
+		newMaze = new LoadLevel(levelName);
+		MAZE_SIZE_X = newMaze.getWidth();
+		MAZE_SIZE_Z = newMaze.getHeight();
+		startPoint =  newMaze.getStartPosition();
+		
+		maze = newMaze.outputForMazeRunner();
+		
 	}
 
 //	private int[][] maze = 
@@ -72,9 +86,7 @@ public class Maze implements VisibleObject {
 //		{  1,  0,  0,  0,  1,  1,  1,  0,  0,  1 },
 //		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
 //		{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 }	};
-	
-	private int[][] maze = newMaze.outputForMazeRunner();
-	
+
 	/**
 	 * isWall(int x, int z) checks for a wall.
 	 * <p>

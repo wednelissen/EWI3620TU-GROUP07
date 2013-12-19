@@ -26,18 +26,21 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	// layout van het hoofdmenu
 	private float[] buttonStartGameCoords = new float[] { 200, 25, 400, 75 };
 	private float[] buttonHighScoresCoords = new float[] { 200, 125, 400, 75 };
-	private float[] buttonQuitCoords = new float[] { 200, 225, 400, 75 };
+	private float[] buttonLevelEditorCoords = new float[] {200, 225, 400, 75 };
+	private float[] buttonQuitCoords = new float[] { 200, 325, 400, 75 };
 
 	// define buttons
 	private Button buttonStartGame = new Button(buttonStartGameCoords,
 			screenWidth, screenHeight);
 	private Button buttonHighScores = new Button(buttonHighScoresCoords,
 			screenWidth, screenHeight);
+	private Button buttonLevelEditor = new Button(buttonLevelEditorCoords,
+			screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords, screenWidth,
 			screenHeight);
 
 	private Button[] buttonList = new Button[] { buttonStartGame,
-			buttonHighScores, buttonQuit };
+			buttonHighScores, buttonLevelEditor, buttonQuit };
 	private boolean texturesLoaded = false;
 
 	/**
@@ -45,9 +48,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	 * canvas (when first = false).
 	 * 
 	 * @param canvas
-	 * @param first
-	 *            : only set true if StateMainMenu is the first state to be
-	 *            called, directly after the canvas is created
+	 * @param first: only set true if StateMainMenu is the first state to be
+	 * called, directly after the canvas is created
 	 */
 	public StateMainMenu(GLCanvas canvas, boolean first) {
 		StateMainMenu.canvas = canvas;
@@ -61,7 +63,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		if (!first) {
 			startup = true;
 		}
-
 	}
 
 	@Override
@@ -193,6 +194,13 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			canvas.removeMouseListener(this);
 			canvas.removeKeyListener(this);
 			new StateHighScores(canvas, this);
+		}
+		
+		if (buttonLevelEditor.clickedOnIt(xclick, yclick)) {
+			canvas.setEnabled(false);
+			canvas.setVisible(false);
+			GameDriver.getGameWindow().dispose();
+			LevelEditor.RunLevelEditor.main(new String[] {});
 		}
 
 		if (buttonQuit.clickedOnIt(xclick, yclick)) {
