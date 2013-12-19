@@ -7,7 +7,7 @@ import com.sun.opengl.util.GLUT;
 public class Kogel extends GameObject implements VisibleObject {
 
 	private final static double SQUARE_SIZE = 5;
-	private final static double speed = 0.7;
+	private final static double speed = 0.00007;
 	private double horAngle;
 	private double verAngle;
 	private double deltaTime;

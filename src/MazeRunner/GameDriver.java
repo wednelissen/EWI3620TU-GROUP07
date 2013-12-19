@@ -1,8 +1,7 @@
 package MazeRunner;
 
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
 
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
@@ -18,12 +17,13 @@ import java.awt.Toolkit;
  * @author Wiebe
  *
  */
-public class GameDriver implements KeyListener{
+public class GameDriver{
 	public static StateMainMenu mainMenu;
 	private static GLCanvas canvas;
 	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
 	public static LoadTexturesMaze loadedTexturesMaze;
-	private static Animator anim;		
+	private static Animator anim;	
+	
 	public static void main(String[] args){
 
 		//Initialize Window
@@ -56,34 +56,7 @@ public class GameDriver implements KeyListener{
 		// Now we add the canvas, where OpenGL will actually draw for us. We'll use settings we've just defined. 
 		canvas = new GLCanvas( caps );
 		canvas.setSize(screenWidth,screenHeight);
-		//Add a GameDriver as a KeyListener
-		GameDriver gamedriver = new GameDriver();
-		canvas.addKeyListener(gamedriver);
 		window.add(canvas);
 		canvas.requestFocus();
 	}
-	
-	@Override
-	public void keyPressed(KeyEvent event) {
-		//not used
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent event) {
-		//These keyEvents are available at any point in the game.
-		int code = event.getKeyCode();
-		
-		switch(code){
-		
-		}
-	}	
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// not used
-		
-	}
-	
-	
 }

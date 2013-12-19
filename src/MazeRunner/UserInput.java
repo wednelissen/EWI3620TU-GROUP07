@@ -49,6 +49,12 @@ public class UserInput extends Control implements MouseListener,
 		canvas.addKeyListener(this);
 		this.canvas = canvas;
 	}
+	
+	
+	public void setMazeRunner(MazeRunner mazerunner) {
+		this.mazerunner = mazerunner;
+
+	}
 
 	/*
 	 * **********************************************
@@ -160,17 +166,9 @@ public class UserInput extends Control implements MouseListener,
 	
 	@Override
 	public void mouseDragged(MouseEvent event){
-
-		Xdragged = event.getX();
-		Ydragged = event.getY();
-
-		dx = Xbegin - Xdragged;
-		dy = Ybegin - Ydragged;
-
-		resetMousePosition();
-
+		mouseMoved(event);
 	}
-
+	
 	public void resetMousePosition() {
 		try {
 			Robot robot = new Robot();
@@ -182,12 +180,6 @@ public class UserInput extends Control implements MouseListener,
 			e.printStackTrace();
 		}
 	}
-	
-	public void setMazeRunner(MazeRunner mazerunner) {
-		this.mazerunner = mazerunner;
-
-	}
-
 	/*
 	 * **********************************************
 	 * *		Unused event handlers				*

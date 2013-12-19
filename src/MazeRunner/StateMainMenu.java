@@ -177,6 +177,9 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		}
 	}
 
+	/**
+	 * Detects whether and which button is clicked. 
+	 */
 	@Override
 	public void mouseReleased(MouseEvent me) {
 		int xclick = me.getX();
@@ -198,12 +201,15 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	}
 
+	/**
+	 * Starts a new MazeRunner. Removes the Main menu from the canvas.
+	 */
 	private void startGame() {
 		canvas.removeGLEventListener(this);
 		canvas.removeKeyListener(this);
 		canvas.removeMouseListener(this);
 
-		// Set mouse position to center of screen
+		// Set mouse position to standard position
 		try {
 			Robot robot = new Robot();
 			robot.mouseMove(100, 100);
@@ -216,6 +222,10 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		System.out.println("Game started");
 	}
 
+	/**
+	 * Adds the main menu to the canvas as Listeners. startup is set
+	 * to true to make sure init() is called.
+	 */
 	public void returnTo() {
 		canvas.addKeyListener(this);
 		canvas.addGLEventListener(this);
