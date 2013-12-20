@@ -581,7 +581,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (Guardian temp : tempGuard) {
 			ArrayList<Point> temproute = temp.getCopyRoutes();
 			Point a = temp.getRoute(0);
-			Guard res = new Guard(a.getX(), 6, a.getY(), temproute);
+			Guard res = new Guard(a.getX(), 0, a.getY(), temproute);
 			guards.add(res);
 		}
 	}

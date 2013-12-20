@@ -1,6 +1,8 @@
 package MazeRunner;
 
 import java.awt.Point;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
@@ -50,14 +52,23 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean canMoveBack;
 	private boolean rightForward;
 	private boolean leftForward;
+	
+	private Model modelGuard;
 
 	public Guard(double x, double y, double z, ArrayList<Point> points) {
 //		super((x * SQUARE_SIZE) + (2 * SQUARE_SIZE), y, (z * SQUARE_SIZE)
 //				- (SQUARE_SIZE / 2));
+		
 
 		//PROBEERSEL VAN MENNO
 		super(x * SQUARE_SIZE+(0.5*SQUARE_SIZE), y, z * SQUARE_SIZE+(0.5*SQUARE_SIZE));
 		
+		try {
+			modelGuard = OBJLoader.loadModel("src/modelGuard.obj");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		speed = 0.005;
 		coordinaten = points;
 
@@ -307,8 +318,7 @@ public class Guard extends GameObject implements VisibleObject {
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
 		
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
-		glut.glutSolidCone(SQUARE_SIZE / 2, SQUARE_SIZE / 2, 20, 20);
-
+		modelGuard.draw(gl);
 		gl.glPopMatrix();
 
 		gl.glEnable(GL.GL_CULL_FACE); // zorgt dat achterkanten weer ontzichtbaar worden
