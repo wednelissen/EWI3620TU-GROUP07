@@ -1,6 +1,8 @@
 package MazeRunner;
 
 import java.awt.Point;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
@@ -35,6 +37,7 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean xplus = false;
 	private boolean xmin = false;
 	private boolean attack = false;
+	private Model guardModel;
 
 	/*
 	 * Is de guard binnen een bepaalde regio dan gaat om de zoveel tijd leven
@@ -55,6 +58,12 @@ public class Guard extends GameObject implements VisibleObject {
 
 		startpositie = coordinaten.get(0);
 		finishpositie = coordinaten.get(coordinaten.size() - 1);
+		
+		try {
+			guardModel = OBJLoader.loadModel("src/modelGuard.obj");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -170,14 +179,16 @@ public class Guard extends GameObject implements VisibleObject {
 	 * Display het object dat de guard is
 	 */
 	public void display(GL gl) {
-		GLUT glut = new GLUT();
+//		GLUT glut = new GLUT();
 
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 		gl.glTranslated(locationX - (SQUARE_SIZE / 2), SQUARE_SIZE / 4,
 				locationZ + (SQUARE_SIZE / 2));
-		glut.glutSolidCube((float) SQUARE_SIZE / 2);
+		System.out.println("Guard draw");
+		guardModel.draw(gl);
+//		glut.glutSolidCube((float) SQUARE_SIZE / 2);
 		gl.glPopMatrix();
 
 	}

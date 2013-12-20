@@ -8,6 +8,9 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -23,6 +26,7 @@ import LevelEditor.Guardian;
 import LevelEditor.LoadLevel;
 
 import com.sun.opengl.util.Animator;
+import com.sun.opengl.util.FPSAnimator;
 
 /**
  * MazeRunner is the base class of the game, functioning as the view controller
@@ -68,6 +72,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
 	private ArrayList<Spotlight> spotlights = new ArrayList<Spotlight>();
+
+	private ArrayList<String> modelFileNames = new ArrayList<String>();
+	private ArrayList<Model> models = new ArrayList<Model>();
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
@@ -145,13 +152,14 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (GuardCamera temp : cameras) {
 			visibleObjects.add(temp);
 		}
-
+		
 		for (Guard temp : guards) {
 			visibleObjects.add(temp);
 		}
 
 		for (Spotlight temp : spotlights) {
 			visibleObjects.add(temp);
+			System.out.println("Guard toegevoegd");
 		}
 
 		// Initialize the player.
@@ -250,6 +258,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * reference of the GL context, so it knows where to draw.
 	 */
 	public void display(GLAutoDrawable drawable) {
+		System.out.println("Display start");
 		if (startup) {
 			init(drawable);
 			startup = false;
@@ -279,14 +288,20 @@ public class MazeRunner implements GLEventListener, MouseListener {
 					camera.getVuvZ());
 
 			// Display all the visible objects of MazeRunner.
-			for (Iterator<VisibleObject> it = visibleObjects.iterator(); it
-					.hasNext();) {
-				it.next().display(gl);
-			}
+			for (VisibleObject obj : visibleObjects)
+				if (obj instanceof Spotlight)
+					obj.display(gl);
+
+			for (VisibleObject obj : visibleObjects)
+				if (!(obj instanceof Spotlight))
+					obj.display(gl);
+
+			// for (VisibleObject obj : visibleObjects
+			// obj.display(gl);
 
 			gl.glLoadIdentity();
 			// Flush the OpenGL buffer.
-			gl.glFlush();
+			// gl.glFlush();
 		}
 	}
 

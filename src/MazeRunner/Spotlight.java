@@ -1,5 +1,7 @@
 package MazeRunner;
 
+import java.nio.FloatBuffer;
+
 import javax.media.opengl.GL;
 
 import com.sun.opengl.util.GLUT;
@@ -25,39 +27,10 @@ public class Spotlight extends GameObject implements VisibleObject {
 		float updatedLightPosition[] = { (float) this.locationX,
 				(float) this.locationY, (float) this.locationZ, 1.0f };
 		float updatedLightDirection[] = { 0.0f, -1.0f, 0.0f, 0.0f };
-		if (spotNumber == 0) {
-			gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		} else if (spotNumber == 1) {
-			gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		}else if (spotNumber == 2) {
-			gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT2, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		}else if (spotNumber == 3) {
-			gl.glLightfv(GL.GL_LIGHT3, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT3, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		}else if (spotNumber == 4) {
-			gl.glLightfv(GL.GL_LIGHT4, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT4, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		}else if (spotNumber == 5) {
-			gl.glLightfv(GL.GL_LIGHT5, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT5, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		}else if (spotNumber == 6) {
-			gl.glLightfv(GL.GL_LIGHT6, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT6, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		}else if (spotNumber == 7) {
-			gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, updatedLightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT7, GL.GL_SPOT_DIRECTION,
-					updatedLightDirection, 0);
-		}
+		
+		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_POSITION, updatedLightPosition, 0);
+		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_DIRECTION,
+				updatedLightDirection, 0);
 
 		GLUT glut = new GLUT();
 

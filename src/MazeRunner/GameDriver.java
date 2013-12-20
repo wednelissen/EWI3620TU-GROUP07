@@ -14,7 +14,6 @@ public class GameDriver implements KeyListener{
 	private MazeRunner mazerunner;
 	private static GLCanvas canvas;
 	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
-	public static LoadTexturesMaze loadedTexturesMaze;
 	
 	public GameDriver(){
 	}
