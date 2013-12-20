@@ -12,4 +12,19 @@ public class HighScore {
 		this.levelName = levelname; 
 	}
 
+	public void update(int deltaTime){
+		this.score += deltaTime;
+	}
+	
+	public int getScore(){
+		return this.score;
+	}
+	
+	public String getPlayerName(){
+		return this.playerName;
+	}
+	
+	public String getLevelName(){
+		return this.levelName;
+	}
 }

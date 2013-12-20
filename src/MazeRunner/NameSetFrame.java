@@ -26,7 +26,7 @@ public class NameSetFrame extends JFrame implements ActionListener{
      * dit Jframe is standaard niet zichtbaar. 
      */
     public NameSetFrame(){
-        setTitle("Maze Sizes");
+        setTitle("Name");
         setBounds(100,100,400,200);
         Container c = getContentPane();
         setLayout(null);

@@ -29,6 +29,7 @@ public class Player extends GameObject {
 	private boolean overRuleLeft;
 	private int deltaTimeSum = 0;
 	private boolean overRuleRight;
+	private boolean reachedEndOfLevel = false;
 	
 	/**
 	 * The Player constructor.
@@ -119,6 +120,14 @@ public class Player extends GameObject {
 	 */
 	public void setSpeed(double speed) {
 		this.speed = speed;
+	}
+	
+	/**
+	 * Returns whether the player has reached the end position of the map.
+	 * @return
+	 */
+	public boolean getReachedEndOfLevel(){
+		return this.reachedEndOfLevel;
 	}
 	
 	/**
@@ -262,6 +271,11 @@ public class Player extends GameObject {
 					overRuleRight = false;
 					deltaTimeSum = 0;
 				}
+			}
+			
+			//detect end of level
+			if(locationX == 1 && locationZ == 2){
+				reachedEndOfLevel  = true;
 			}
 			//Reset collision detectors
 			canMoveForward = true;

@@ -267,7 +267,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			updateMovement(deltaTime);
 			updateCamera();
 			updateKeys(deltaTime);
-
+			updateHighscore(deltaTime);
+			if(player.getReachedEndOfLevel()){
+				endGame();
+			}
 //			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 			gl.glLoadIdentity();
@@ -286,6 +289,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			// Flush the OpenGL buffer.
 			gl.glFlush();
 		}
+	}
+
+	private void updateHighscore(int deltaTime) {
+		score.update(deltaTime);
 	}
 
 	/**
@@ -351,6 +358,18 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			temp.alarm();
 		}
 
+	}
+
+	/**
+	 * Stops the game and initializes the game ended state.
+	 */
+	public void endGame() {
+		canvas.removeMouseListener(input);
+		canvas.removeMouseMotionListener(input);
+		canvas.removeKeyListener(input);
+		gamepaused = true;
+		canvas.removeGLEventListener(this);
+		new StateGameEnded(canvas, score);
 	}
 
 	public static Player getPlayer() {
@@ -680,7 +699,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	public double getWalkingSpeed(){
 		return player.getSpeed();
 	}
-
+	
 	// /////////////////////////////////////NOT
 	// USED////////////////////////////////////
 
@@ -724,5 +743,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// TODO Auto-generated method stub
 
 	}
+
 
 }
