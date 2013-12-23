@@ -370,10 +370,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			if (!temp.isAttack()) {
 				temp.update(deltaTime);
 			}
-			//MENNO
-//			temp.playerDetectie(player.locationX, player.locationZ);
-//			temp.aanvallen(player.locationX, player.locationZ, deltaTime);
-//			guardWallChecker(2, temp);
+
+			if(!GOD_MODE){
+				temp.playerDetectie(player.locationX, player.locationZ);
+				temp.aanvallen(player.locationX, player.locationZ, deltaTime);
+			}
 			
 //			System.out.println("x: "+player.locationX + " z: "+player.locationZ+" EDITOR--- x: "
 //			+(int)Math.floor( player.locationX / SQUARE_SIZE )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
@@ -479,79 +480,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 	}
 
-	private void guardWallChecker(int checkdistance, Guard res) {
-
-		if (!GOD_MODE) {
-			if (maze.isWall(
-					res.getLocationX() + checkdistance
-							* -Math.sin(Math.PI * res.getHorAngle() / 180),
-					res.getLocationZ() + checkdistance
-							* -Math.cos(Math.PI * res.getHorAngle() / 180))) {
-				res.setCanMoveForward(false);
-			}
-			// Check backward direction for obstacles
-			if (maze.isWall(
-					res.getLocationX() - checkdistance
-							* -Math.sin(Math.PI * res.getHorAngle() / 180),
-					res.getLocationZ() - checkdistance
-							* -Math.cos(Math.PI * res.getHorAngle() / 180))) {
-				res.setCanMoveBack(false);
-			}
-			// Check left direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							+ checkdistance
-							* -Math.sin(Math.PI * (res.getHorAngle() + 90)
-									/ 180),
-					res.getLocationZ()
-							+ checkdistance
-							* -Math.cos(Math.PI * (res.getHorAngle() + 90)
-									/ 180))) {
-				res.setCanMoveLeft(false);
-			}
-			// check right direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							- checkdistance
-							* -Math.sin(Math.PI * (res.getHorAngle() + 90)
-									/ 180),
-					res.getLocationZ()
-							- checkdistance
-							* -Math.cos(Math.PI * (res.getHorAngle() + 90)
-									/ 180))) {
-				res.setCanMoveRight(false);
-			}
-
-			// Check left-forward direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							+ checkdistance// Math.sqrt(2)
-							* -Math.sin(Math.PI * (res.getHorAngle() + 45)
-									/ 180),
-					res.getLocationZ()
-							+ checkdistance
-							/ Math.sqrt(2)
-							* -Math.cos(Math.PI * (res.getHorAngle() + 45)
-									/ 180))) {
-				res.setLeftForwardWall(true);
-			}
-
-			// Check right-forward direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							- checkdistance// Math.sqrt(2)
-							* -Math.sin(Math.PI * (res.getHorAngle() + 135)
-									/ 180),
-					res.getLocationZ()
-							- checkdistance
-							/ Math.sqrt(2)
-							* -Math.cos(Math.PI * (res.getHorAngle() + 135)
-									/ 180))) {
-				res.setRightForwardWall(true);
-			}
-		}
-	}
-
 	/**
 	 * updateCamera() updates the camera position and orientation.
 	 * <p>
@@ -611,6 +539,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			ArrayList<Point> temproute = temp.getCopyRoutes();
 			Point a = temp.getRoute(0);
 			Guard res = new Guard(a.getX(), 6, a.getY(), temproute);
+			res.maze = this.maze;
 			guards.add(res);
 		}
 	}

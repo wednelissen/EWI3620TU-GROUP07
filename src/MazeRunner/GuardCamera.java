@@ -18,7 +18,7 @@ import com.sun.opengl.util.GLUT;
 
 public class GuardCamera extends GameObject implements VisibleObject {
 
-	private boolean status = true;
+	private boolean alarm = false;
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
 	double playerLocatieX;
@@ -37,21 +37,21 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	}
 
 	/**
-	 * De functie die registreert of de speler gezien wordt door de camera.
+	 * De functie die registreert of de speler gezien wordt door de camera wanneer deze aan staat.
 	 */
-	public void alarm() {
-		// if ((playerLocatieX < locationX + SQUARE_SIZE && playerLocatieX >
-		// locationX
-		// - SQUARE_SIZE)
-		// || (playerLocatieZ < positie.getY() + SQUARE_SIZE && playerLocatieZ >
-		// positie
-		// .getY() - SQUARE_SIZE)) {
-		if (playerPositie.equals(huidigepositie)) {
-			System.out.println("To close");
-
-			status = false;
+	public boolean alarm() {
+		if(thread.visible && playerPositie.equals(huidigepositie) &&!alarm){
+			System.out.println("Camera ALARM");
+			alarm = true;
+			thread.setSleepTime(400);
+			return true;
 		}
-
+		return false;
+	}
+	
+	public void resetAlarm(){
+		alarm = false;
+		thread.setSleepTime(4000);
 	}
 
 	/**
