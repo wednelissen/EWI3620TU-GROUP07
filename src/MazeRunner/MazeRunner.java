@@ -1,3 +1,7 @@
+/**
+ * DIJKSTRA MOET NOG WORDEN GEIMPLEMENTEERD!
+ */
+
 package MazeRunner;
 
 import java.awt.AWTException;
