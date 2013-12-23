@@ -370,7 +370,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			if (!temp.isAttack()) {
 				temp.update(deltaTime);
 			}
-
 			if(!GOD_MODE){
 				temp.playerDetectie(player.locationX, player.locationZ);
 				temp.aanvallen(player.locationX, player.locationZ, deltaTime);
@@ -380,9 +379,15 @@ public class MazeRunner implements GLEventListener, MouseListener {
 //			+(int)Math.floor( player.locationX / SQUARE_SIZE )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
 
 		}
-		for (GuardCamera temp : cameras) {
-			temp.updatePositie(player.locationX, player.locationZ);
-			temp.alarm();
+		for (GuardCamera cam : cameras) {
+			cam.updatePositie(player.locationX, player.locationZ);
+			if(cam.alarm() && !cam.getGuardSend()){ //als het alarm  is afgegaan en er nog geen guard naar toe is gestuurd.
+				//DE KORTSTE ROUTE WORDT GEZOCHT EN ER WORDT EEN GUARD NAAR TOE GESTUURD DIE HET DICHTSBIJ IS.
+				//ALS DE GUARD IS GEARRIVEERD BIJ DE CAMERA MOET HIJ HET ALARM RESETTEN.
+				
+				cam.guardSended();
+			}
+			
 		}
 
 	}

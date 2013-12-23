@@ -19,6 +19,7 @@ import com.sun.opengl.util.GLUT;
 public class GuardCamera extends GameObject implements VisibleObject {
 
 	private boolean alarm = false;
+	private boolean guardSend = false;
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
 	double playerLocatieX;
@@ -51,8 +52,18 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	
 	public void resetAlarm(){
 		alarm = false;
+		
 		thread.setSleepTime(4000);
 	}
+	
+	public boolean getGuardSend(){
+		return guardSend;
+	}
+	
+	public void guardSended(){
+		guardSend = true;
+	}
+	
 
 	/**
 	 * Dit weergeeft de camera in het spel om de zoveel seconden
