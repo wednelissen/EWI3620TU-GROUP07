@@ -9,6 +9,7 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -90,7 +91,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private LoadTexturesMaze loadedTexturesMaze;
 	@SuppressWarnings("unused")
 	private StatePauseMenu pausemenu;
-
+	private boolean watchFromCamera = false;
+	private int watchCameraNumber = 0;
+	
 	/*
 	 * **********************************************
 	 * * Initialization methods 
@@ -366,9 +369,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private void updateMovement(int deltaTime) {
 
 		// update locations
-		player.update(deltaTime);
-		playerWallChecker(checkdistance);
-		playerItemCheck();
+			player.update(deltaTime);
+			playerWallChecker(checkdistance);
+			playerItemCheck();
 		
 		for (Guard temp : guards) {
 			if (!temp.isAttack()) {
@@ -496,12 +499,38 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * runs on a first person view.
 	 */
 	private void updateCamera() {
-		camera.setLocationX(player.getLocationX());
-		camera.setLocationY(player.getLocationY());
-		camera.setLocationZ(player.getLocationZ());
+		if(!watchFromCamera){
+			camera.setLocationX(player.getLocationX());
+			camera.setLocationY(player.getLocationY());
+			camera.setLocationZ(player.getLocationZ());
+		}else{
+			camera.setLocationX(cameras.get(watchCameraNumber).getLocationX());
+			camera.setLocationY(cameras.get(watchCameraNumber).getLocationY()-1);
+			camera.setLocationZ(cameras.get(watchCameraNumber).getLocationZ());
+		}
 		camera.setHorAngle(player.getHorAngle());
 		camera.setVerAngle(player.getVerAngle());
 		camera.calculateVRP();
+	}
+	
+	public boolean watchFromCamera(){
+		return (watchFromCamera = !watchFromCamera);
+	}
+	
+	public void watchFromOtherCamera(boolean plus){
+		if(plus){
+			watchCameraNumber++;
+		}else{
+			watchCameraNumber--;
+		}
+		if(watchCameraNumber < 0){
+			watchCameraNumber = cameras.size() - 1;
+		}
+		
+		if(watchCameraNumber > (cameras.size() - 1)){
+			watchCameraNumber -= (cameras.size());
+		}
+		System.out.println(watchCameraNumber);
 	}
 	
 	private void updateKeys(int deltaTime) {

@@ -34,6 +34,7 @@ public class UserInput extends Control implements MouseListener,
 	private int dy;
 	private GLCanvas canvas;
 	private MazeRunner mazerunner;
+	private boolean freeze = false;
 
 	/**
 	 * UserInput constructor.
@@ -88,26 +89,36 @@ public class UserInput extends Control implements MouseListener,
 
 		int key = event.getKeyCode();
 
-		if (key == KeyEvent.VK_W) {
-			Control.forward = true;
+		if(!freeze){
+			if (key == KeyEvent.VK_W) {
+				Control.forward = true;
+			}
+			if (key == KeyEvent.VK_S) {
+				Control.back = true;
+			}
+			if (key == KeyEvent.VK_A) {
+				Control.left = true;
+			}
+			if (key == KeyEvent.VK_D) {
+				Control.right = true;
+			}
+			if (key == KeyEvent.VK_E) {
+				mazerunner.openDoor();
+			}
+	
+			//Sprinting
+			if (key == KeyEvent.VK_SHIFT){
+				mazerunner.setWalkingSpeed(0.02);
+			}
+		
 		}
-		if (key == KeyEvent.VK_S) {
-			Control.back = true;
-		}
-		if (key == KeyEvent.VK_A) {
-			Control.left = true;
-		}
-		if (key == KeyEvent.VK_D) {
-			Control.right = true;
-		}
-		if (key == KeyEvent.VK_E) {
-			mazerunner.openDoor();
+		
+		
+		if (key == KeyEvent.VK_I){
+			freeze = mazerunner.watchFromCamera();
 		}
 
-		//Sprinting
-		if (key == KeyEvent.VK_SHIFT){
-			mazerunner.setWalkingSpeed(0.02);
-		}
+		
 		// turn on or of GOD mode
 		if (key == KeyEvent.VK_G) {
 			if (MazeRunner.GOD_MODE == false)
@@ -213,6 +224,17 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void mouseReleased(MouseEvent event)
 	{
+		if (freeze){
+			//If left button pressed
+			if (event.getButton () == MouseEvent.BUTTON1){
+				mazerunner.watchFromOtherCamera(true);
+	        }
+			
+	        //If right button pressed
+	        else if (event.getButton () == MouseEvent.BUTTON3){
+	        	mazerunner.watchFromOtherCamera(false);
+	        }
+	     }
 	}
 
 }
