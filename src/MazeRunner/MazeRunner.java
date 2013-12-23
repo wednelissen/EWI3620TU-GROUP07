@@ -514,7 +514,14 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	}
 	
 	public boolean watchFromCamera(){
-		return (watchFromCamera = !watchFromCamera);
+		watchFromCamera = !watchFromCamera;
+		if(watchFromCamera){
+			visibleObjects.add(player);
+		}
+		else{
+			visibleObjects.remove(player);
+		}		
+		return watchFromCamera;
 	}
 	
 	public void watchFromOtherCamera(boolean plus){
