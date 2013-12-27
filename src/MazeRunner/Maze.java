@@ -534,4 +534,8 @@ public class Maze implements VisibleObject {
         
         
 	}
+	
+	public String getLevelName(){
+		return levelName;
+	}
 }

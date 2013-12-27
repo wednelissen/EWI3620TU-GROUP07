@@ -20,7 +20,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	LoadTexturesMaze loadedTexturesMaze;
 	private static GLCanvas canvas;
 	private boolean startup = false;
-
+	private NameSetFrame nameSetFrame = new NameSetFrame();
+	private String playerName = "";
 	private int screenWidth, screenHeight;
 
 	// layout van het hoofdmenu
@@ -63,6 +64,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		if (!first) {
 			startup = true;
 		}
+		nameSetFrame.appear();
 	}
 
 	@Override
@@ -79,20 +81,18 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 //		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
-//		gl.glColor3f(0, 0.5f, 0f);
-
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].draw(gl, loadedTexturesMaze.getTexture("knop"));
 		}
 		;
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
-
-	}
-
-	@Override
-	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
-		// NOT USED
+		if(nameSetFrame.getNameSet()){
+			playerName = nameSetFrame.getName();
+			System.out.println(playerName);
+			nameSetFrame.disappear();
+			nameSetFrame.setNameSet(false);
+		}
 
 	}
 
@@ -162,12 +162,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void keyReleased(KeyEvent event) {
 		int code = event.getKeyCode();
 
@@ -225,7 +219,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			e.printStackTrace();
 		}
 		@SuppressWarnings("unused")
-		MazeRunner mazerunner = new MazeRunner(canvas);
+		MazeRunner mazerunner = new MazeRunner(canvas, playerName);
 
 		System.out.println("Game started");
 	}
@@ -243,31 +237,43 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
+
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// NOT USED
+		
+	}
+	
+	@Override
+	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+		// NOT USED
 
 	}
 }

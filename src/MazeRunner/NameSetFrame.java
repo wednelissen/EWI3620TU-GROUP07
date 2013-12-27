@@ -18,8 +18,8 @@ public class NameSetFrame extends JFrame implements ActionListener{
     private JLabel Melding     = new JLabel("If no name is entered, 'AAA' will be used.");   
     private JPanel panel          = new JPanel(new GridLayout(3,1));
 
-    private int height = 0, width = 0;
-    private boolean mapdrawCheck = false; //Wanneer er een goede waarde is ingevuld en opgeslagen zal deze true worden
+    private String nameString;
+	private boolean nameSet = false;
     
     /**
      * creert een Jframe met twee in te vullen tekst vakken voor de breedte en de hoogte.
@@ -44,65 +44,51 @@ public class NameSetFrame extends JFrame implements ActionListener{
 
         startGame.addActionListener(this);
 
-        setVisible(true);
     }
 
     /**
-     * Wordt bekeken of je op de 'set' of 'clear' knop hebt gedrukt.
-     * indien op de set knop worden de breedte en hoogte naar integers vertaald en wordt het scherm
-     * ontzichtbaar gemaakt.
-     * indien op de clear knop wordt gedrukt worden alleen de breedte en hoogte vlakken leeg gemaakt
-     * en blijft het scherm zichtbaar.
      */
     public void actionPerformed(ActionEvent e){
 		Object source = e.getSource();
 		if (source == startGame) {
-			String nameString = nameField.getText();
+			nameString = nameField.getText();
 
 			if (nameString.equals("")) {
 				nameString = "AAA";
 			}
-			System.out.println(nameString);
+			setNameSet(true);
 		}
 	}
     
+	/**
+	 * 
+	 * @return De naam van de speler.
+	 */
+	public String getNameString(){
+
+		return nameString;
+	}
+	
     /**
      * zorgt dat het Jframe verschijnt
      */
     public void appear(){
     	setVisible(true);
+    }    
+    
+    public void disappear(){
+    	setVisible(false);
     }
     
-    /**
-     * 
-     * @return de breedte als integer.
-     */
-    public int getWidthField(){
-    	return width;
+    public String getName(){
+    	return nameString;
     }
-    
-    /**
-     * 
-     * @return de hoogte als integer
-     */
-    public int getHeightField(){
-    	return height;
-    }
-    
-    /**
-     * zorgt dat de boolean 'mapdrawCheck' weer op false wordt geset. deze is standaard false
-     * en wordt op true geset wanneer een goede breedte en hoogte is geset.
-     */
-    public void resetMapdrawCheck(){
-    	mapdrawCheck= false;
-    }
-    
-    /**
-     * 
-     * @return true als er een goede breedte en hoogte is ingevuld.
-     */
-    public boolean getMapdrawCheck(){
-    	return mapdrawCheck;
-    }
-    
+
+	public boolean getNameSet() {
+		return nameSet;
+	}
+
+	public void setNameSet(boolean nameSet) {
+		this.nameSet = nameSet;
+	}
 }

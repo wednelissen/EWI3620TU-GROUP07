@@ -40,7 +40,7 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		
 		startup = true;
 		this.resume();
-		System.out.println(score.getPlayerName() + " " + score.getScore() + " " + score.getLevelName());
+		System.out.println("Highscore: " + score.getPlayerName() + " " + score.getScore() + " " + score.getLevelName());
 	}
 
 	public void resume() {
