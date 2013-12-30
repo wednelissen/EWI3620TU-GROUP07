@@ -22,6 +22,7 @@ import javax.media.opengl.glu.GLU;
 import LevelEditor.Guardian;
 import LevelEditor.LoadLevel;
 import LevelEditor.Spot;
+import ShortestRoute.MapConversion;
 
 import com.sun.opengl.util.Animator;
 
@@ -145,16 +146,16 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// visibleObjects.add(tempSpot);
 		// }
 
-		 createGuards();
-		 createCameras();
-		 
-		 for (GuardCamera temp : cameras) {
-		 visibleObjects.add(temp);
-		 }
-		
-		 for (Guard temp : guards) {
-		 visibleObjects.add(temp);
-		 }
+		createGuards();
+		createCameras();
+
+		for (GuardCamera temp : cameras) {
+			visibleObjects.add(temp);
+		}
+
+		for (Guard temp : guards) {
+			visibleObjects.add(temp);
+		}
 
 		// Initialize the player.
 
@@ -175,6 +176,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		input.setMazeRunner(this);
 		player.setControl(input);
 		System.out.println("Klaar met creatie objecten");
+		MapConversion map = new MapConversion(maze);
+		map.set();
+		map.print();
 	}
 
 	/*
@@ -194,11 +198,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 	public void init(GLAutoDrawable drawable) {
 		if (initialize) {
-		System.out.println("Maze textures init");
-		initTextures();
-		System.out.println("Creatie objects");
-		initObjects(); // Initialize all the objects!
-		initialize = false;
+			System.out.println("Maze textures init");
+			initTextures();
+			System.out.println("Creatie objects");
+			initObjects(); // Initialize all the objects!
+			initialize = false;
 		}
 		System.out.println("Mazerunner init");
 		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL
