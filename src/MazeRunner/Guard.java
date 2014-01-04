@@ -302,8 +302,6 @@ public class Guard extends GameObject implements VisibleObject {
 	 * Display het object dat de guard is
 	 */
 	public void display(GL gl) {
-		GLUT glut = new GLUT();
-
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
@@ -316,12 +314,11 @@ public class Guard extends GameObject implements VisibleObject {
 		
 		
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
+		gl.glScaled(0.60, 0.60, 0.60);
 		
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
 		modelGuard.draw(gl);
 		gl.glPopMatrix();
-
-		gl.glEnable(GL.GL_CULL_FACE); // zorgt dat achterkanten weer ontzichtbaar worden
 	}
 
 	/**

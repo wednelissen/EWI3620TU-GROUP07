@@ -92,8 +92,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
 	 * defined by GameDriver. It adds itself as a GLEventListener.
 	 */
-	public MazeRunner(GLCanvas canvas) {
-
+	public MazeRunner(GLCanvas canvas, LoadTexturesMaze x) {
+		loadedTexturesMaze = x;
 		GOD_MODE = false;
 		this.canvas = canvas;
 		screenHeight = canvas.getHeight();
@@ -195,8 +195,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 	public void init(GLAutoDrawable drawable) {
 		if (initialize) {
-			System.out.println("Maze textures init");
-			initTextures();
 			System.out.println("Creatie objects");
 			initObjects(); // Initialize all the objects!
 			initialize = false;
@@ -229,11 +227,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
 				cursorImg, new Point(0, 0), "blank cursor");
 		canvas.setCursor(blankCursor);
-	}
-
-	public void initTextures() {
-		loadedTexturesMaze = new LoadTexturesMaze();
-		System.out.println("Textures geladen");
 	}
 
 	/**

@@ -225,7 +225,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			e.printStackTrace();
 		}
 		@SuppressWarnings("unused")
-		MazeRunner mazerunner = new MazeRunner(canvas);
+		MazeRunner mazerunner = new MazeRunner(canvas, loadedTexturesMaze);
 
 		System.out.println("Game started");
 	}
