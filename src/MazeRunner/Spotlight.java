@@ -1,7 +1,5 @@
 package MazeRunner;
 
-import java.nio.FloatBuffer;
-
 import javax.media.opengl.GL;
 
 import com.sun.opengl.util.GLUT;
@@ -56,91 +54,12 @@ public class Spotlight extends GameObject implements VisibleObject {
 
 		System.out.println("Switch activatie: " + spotNumber);
 		// Licht weergeven
-		switch (spotNumber) {
-
-		case 0: {
-			gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_CUTOFF, 75);
-
-			gl.glEnable(GL.GL_LIGHT0);
-			gl.glEnable(GL.GL_LIGHTING);
-
-			System.out.println("Spot: 0 geactiveerd");
-			for (int i = 0; i < lightPosition.length; i++) {
-				System.out.println(lightPosition[i]);
-			}
-			break;
-		}
-
-		case 1: {
-			gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glEnable(GL.GL_LIGHTING);
-			gl.glEnable(GL.GL_LIGHT1);
-			System.out.println("Spot: 1 geactiveerd");
-			for (int i = 0; i < lightPosition.length; i++) {
-				System.out.println(lightPosition[i]);
-			}
-			break;
-		}
-
-		case 2: {
-			gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT2, GL.GL_DIFFUSE, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT2, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glEnable(GL.GL_LIGHTING);
-			gl.glEnable(GL.GL_LIGHT2);
-			System.out.println("Spot: 2 geactiveerd");
-			break;
-		}
-
-		case 3: {
-			gl.glLightfv(GL.GL_LIGHT3, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT3, GL.GL_DIFFUSE, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT3, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glEnable(GL.GL_LIGHTING);
-			gl.glEnable(GL.GL_LIGHT3);
-			break;
-		}
-
-		case 4: {
-			gl.glLightfv(GL.GL_LIGHT4, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT4, GL.GL_DIFFUSE, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT4, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glEnable(GL.GL_LIGHTING);
-			gl.glEnable(GL.GL_LIGHT4);
-			break;
-		}
-
-		case 5: {
-			gl.glLightfv(GL.GL_LIGHT5, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT5, GL.GL_DIFFUSE, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT5, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glEnable(GL.GL_LIGHTING);
-			gl.glEnable(GL.GL_LIGHT5);
-			break;
-		}
-
-		case 6: {
-			gl.glLightfv(GL.GL_LIGHT6, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT6, GL.GL_DIFFUSE, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT6, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glEnable(GL.GL_LIGHTING);
-			gl.glEnable(GL.GL_LIGHT6);
-			break;
-		}
-
-		case 7: {
-			gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, lightPosition, 0);
-			gl.glLightfv(GL.GL_LIGHT7, GL.GL_DIFFUSE, lightColor, 0);
-			gl.glLightfv(GL.GL_LIGHT7, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-			gl.glEnable(GL.GL_LIGHTING);
-			gl.glEnable(GL.GL_LIGHT7);
-			break;
-		}
-		}
+		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_POSITION, lightPosition, 0);
+		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_DIFFUSE, lightColor, 0);
+		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_DIRECTION, lightDirection, 0);
+		gl.glLightf(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_CUTOFF, 50);
+		
+		gl.glEnable(GL.GL_LIGHT0 + spotNumber);
+		gl.glEnable(GL.GL_LIGHTING);
 	}
 }
