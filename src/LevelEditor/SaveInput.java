@@ -28,6 +28,8 @@ public class SaveInput {
 	private CameraList cameraList;
 	private String[] cameras;
 	
+	private ControlCenterList controlCenterList;
+	private String[] controlCenters;
 	
 	
 	/**
@@ -43,12 +45,14 @@ public class SaveInput {
 	 * @param tempCameraList
 	 * @param LevelName
 	 */
-	public SaveInput(MapMenu tempMap, PlacedItemsMenu tempPlacedItems, StartAndEndPosition tempStartAndEnd, SpotList tempSpotList, CameraList tempCameraList, String LevelName){
+	public SaveInput(MapMenu tempMap, PlacedItemsMenu tempPlacedItems, StartAndEndPosition tempStartAndEnd, SpotList tempSpotList, CameraList tempCameraList, ControlCenterList tempControlCenterList, String LevelName){
 		map = tempMap;
 		placedItems = tempPlacedItems;
 		StartAndEnd = tempStartAndEnd;
 		spotList = tempSpotList;
 		cameraList = tempCameraList;
+		controlCenterList = tempControlCenterList;
+		
 		
 		floorPlan = new String[map.getHeight()];
 		guardsPlan = new String[placedItems.guardSize()];
@@ -57,7 +61,7 @@ public class SaveInput {
 		EndPosition = new String();
 		spots = new String[spotList.size()];
 		cameras = new String[cameraList.size()];
-		
+		controlCenters = new String[controlCenterList.size()];
 		
 		this.floorPlanMaze();	//de map wordt vertaald naar enen en nullen
 		this.GuardsPlan();		//de bewakers worden weggeschreven
@@ -65,6 +69,7 @@ public class SaveInput {
 		this.StartAndEndPosition();	//begin en eindpositie worden naar string vertaald.
 		this.SpotsPlan();			//spotjes worden naar string vertaald
 		this.CamerasPlan();			//camera's worden naar string vertaald
+		this.ControlCenterPlan();	//Control Centers worden naar een string vertaald
 		if(StartAndEnd.hasStart() && StartAndEnd.hasEnd()){
 			this.write(LevelName); // de map wordt weggeschereven naar een bestand.
 		}
@@ -213,6 +218,27 @@ public class SaveInput {
 	}
 	
 	/**
+	 * zet alle Control Centers om naar punten zoals x,y;
+	 */
+	public void ControlCenterPlan(){
+		int i = 0;
+		for(ControlCenterEditor s: controlCenterList.getControlCenters()){
+			Point a = s.getPosition();
+			int x = (int)a.getX();
+			int y = (int)a.getY();
+			controlCenters[i] = x + "," +y+";"; 
+			i++;
+		}
+		
+		//DEBUG VOOR DE ControlCenters
+		for(int j=0; j<controlCenters.length; j++){
+			System.out.println(controlCenters[j]);
+		}
+		
+	}
+	
+	
+	/**
 	 * hier worden alle bovenstaande gecreerde Strings weggeschreven naar een bestand met de naam 'name'.
 	 * de eerste regel wordt een ID weggeschreven. bij het laden wordt gecontrolleerd of deze gelijk
 	 * is aan de hier weggeschreven ID zodat het programma weet dat het om een geldig 
@@ -258,6 +284,12 @@ public class SaveInput {
 			pw.println(cameras.length);
 			for(int i=0; i<cameras.length; i++){
 				pw.println(cameras[i]);
+			}
+			
+			pw.println("controlCenter:");
+			pw.println(controlCenters.length);
+			for(int i=0; i<controlCenters.length; i++){
+				pw.println(controlCenters[i]);
 			}
 			
 			pw.println("Guards:");

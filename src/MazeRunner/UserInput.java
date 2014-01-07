@@ -102,21 +102,17 @@ public class UserInput extends Control implements MouseListener,
 			if (key == KeyEvent.VK_D) {
 				Control.right = true;
 			}
-			if (key == KeyEvent.VK_E) {
-				mazerunner.openDoor();
-			}
-	
 			//Sprinting
 			if (key == KeyEvent.VK_SHIFT){
 				mazerunner.setWalkingSpeed(0.02);
 			}
 		
 		}
-		
-		
-		if (key == KeyEvent.VK_I){
+		if (key == KeyEvent.VK_E) {
+			mazerunner.openDoor();
 			freeze = mazerunner.watchFromCamera();
 		}
+
 
 		
 		// turn on or of GOD mode

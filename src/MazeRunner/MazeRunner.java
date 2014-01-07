@@ -1,7 +1,3 @@
-/**
- * DIJKSTRA MOET NOG WORDEN GEIMPLEMENTEERD!
- */
-
 package MazeRunner;
 
 import java.awt.AWTException;
@@ -74,6 +70,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
 	private ArrayList<Spot> spots = new ArrayList<Spot>();
 	private ArrayList<Point> tempSpot = newMaze.getSpots();
+	private ArrayList<Point> tempControlCenter = newMaze.getControlCenters();
+	private ArrayList<ControlCenter> controlCenters = new ArrayList<ControlCenter>();
+	
 
 	private int checkdistance = 2;
 
@@ -186,7 +185,12 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (Guard temp : guards) {
 			visibleObjects.add(temp);
 		}
-
+		
+		createControlCenter();
+		for (ControlCenter temp : controlCenters) {
+			visibleObjects.add(temp);
+		}
+		
 		// Initialize the player.
 
 		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE
@@ -514,14 +518,21 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	}
 	
 	public boolean watchFromCamera(){
-		watchFromCamera = !watchFromCamera;
-		if(watchFromCamera){
-			visibleObjects.add(player);
+		int gebied = 2;
+		for(ControlCenter c: controlCenters){
+			if(Math.abs(player.locationX - c.locationX) < gebied  && Math.abs(player.locationZ - c.locationZ) < gebied){
+				watchFromCamera = !watchFromCamera;
+				if(watchFromCamera){
+					visibleObjects.add(player);
+				}
+				else{
+					visibleObjects.remove(player);
+				}		
+				return watchFromCamera;
+			}
 		}
-		else{
-			visibleObjects.remove(player);
-		}		
-		return watchFromCamera;
+		return false;
+		
 	}
 	
 	public void watchFromOtherCamera(boolean plus){
@@ -612,6 +623,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			Point b = temp.getDoor();
 			Keys res = new Keys(a.getX(), 0, a.getY(), b.getX(), b.getY(), maze.SQUARE_SIZE);
 			keys.add(res);
+		}
+	}
+	
+	public void createControlCenter(){
+		for (Point temp : tempControlCenter) {
+			ControlCenter res = new ControlCenter(temp.getX(), 0, temp.getY(), maze.SQUARE_SIZE);
+			controlCenters.add(res);
 		}
 	}
 	

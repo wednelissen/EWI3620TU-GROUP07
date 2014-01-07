@@ -82,6 +82,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private float[] itemGuardianCoords = new float[] { 5, 105, 48.75f, 100 };
 	private float[] itemKeyCoords = new float[] { 5+48.75f, 105, 48.75f, 100 };
 	private float[] itemCameraCoords = new float[] { 5+2*48.75f, 105, 48.75f, 100 };
+	private float[] itemControlCenterCoords = new float[] { 5+3*48.75f, 105, 48.75f, 100 };
 	
 	private float[] placedItemsCoords = new float[] { 5, 235, 195, 200 };
 	
@@ -118,6 +119,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Button itemGuardian = new Button(itemGuardianCoords, screenWidth, screenHeight);
 	private Button itemKey = new Button(itemKeyCoords, screenWidth, screenHeight);
 	private Button itemCamera = new Button(itemCameraCoords, screenWidth, screenHeight);
+	private Button itemControlCenter = new Button(itemControlCenterCoords, screenWidth, screenHeight);
+	
 	
 	private Button addGuardKeySpotCamera = new Button(addGuardKeySpotCameraCoords, screenWidth, screenHeight);
 	private Button removeGuardKeySpotCamera = new Button(removeGuardKeySpotCameraCoords, screenWidth, screenHeight);
@@ -130,10 +133,12 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Key key = new Key(itemCoords, screenWidth, screenHeight);
 	private Spot spot = new Spot();
 	private Camera camera = new Camera();
+	private ControlCenterEditor controlCenter = new ControlCenterEditor();
 	
 	//Arraylists, de Key en Guard worden in placedItems opgeslagen, op deze wijze kun je ze nog selecteren en veranderen.
 	private SpotList spotList = new SpotList();
 	private CameraList cameraList = new CameraList();
+	private ControlCenterList controlCenterList = new ControlCenterList();
 	
 	private StartAndEndPosition StartEnd = new StartAndEndPosition();
 	private LoadTexturesEditor loadedTexturesEditor;
@@ -333,6 +338,15 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				}
 			}
 			
+			//alle geplaatste control centers worden getekent
+			if(controlCenterList.getControlCenters().size()>0){
+//				gl.glColor3f(0.2f, 1f, 0.6f);
+				for(ControlCenterEditor s: controlCenterList.getControlCenters()){
+					Point a = s.getPosition();
+					map.getBuildingBlockByPosition(a).drawControlCenter(gl, loadedTexturesEditor.getTexture("controlCenterEditor"));
+				}
+			}
+			
 			//alle geplaatste spots, maximaal 8, worden getekent
 			if(spotList.getSpots().size()>0){
 //				gl.glColor3f(1f, 1f, 0f);
@@ -357,6 +371,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		itemGuardian.draw(gl, loadedTexturesEditor.getTexture("guardianEditor"));
 		itemKey.draw(gl, loadedTexturesEditor.getTexture("keyEditor"));
 		itemCamera.draw(gl, loadedTexturesEditor.getTexture("cameraEditor"));
+		itemControlCenter.draw(gl, loadedTexturesEditor.getTexture("controlCenterEditor"));
 		//de items met speciale eigenschappen zoals Key en Guard worden hier getekent.
 		//dit zijn de items die al met een positie in de map zijn geplaatst.
 		placedItems.draw(gl, null);
@@ -392,6 +407,12 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		}
 		
 		if(Mode == ClickOptions.setCamera || Mode == ClickOptions.removeCamera){
+			placedItemsProperties.draw(gl, null);
+			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
+			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
+		}
+		
+		if(Mode == ClickOptions.setControlCenter || Mode == ClickOptions.removeControlCenter){
 			placedItemsProperties.draw(gl, null);
 			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
 			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
@@ -451,7 +472,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		itemSpot.update(screenWidth, screenHeight);
 		itemGuardian.update(screenWidth, screenHeight);
 		itemKey.update(screenWidth, screenHeight);
-		itemCamera.update(screenWidth, screenHeight);		
+		itemCamera.update(screenWidth, screenHeight);
+		itemControlCenter.update(screenWidth, screenHeight);
 		addGuardKeySpotCamera.update(screenWidth, screenHeight);
 		removeGuardKeySpotCamera.update(screenWidth, screenHeight); 
 		removeLastPointGuardOrSetDoorKey.update(screenWidth, screenHeight);
@@ -506,6 +528,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			System.out.println("camera");
 			camera = new Camera();
 			Mode = ClickOptions.setCamera;	
+		}else if(itemControlCenter.clickedOnIt(me.getX(), me.getY())){				//Control Center
+			System.out.println("control center");
+			controlCenter = new ControlCenterEditor();
+			Mode = ClickOptions.setControlCenter;	
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){			//placed Items (kunnen Guard of Keys zijn)
 			Mode = ClickOptions.placedItems;
 			if(placedItems.typeIsGuardian(me.getX(), me.getY())){
@@ -531,7 +557,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			System.out.println(SaveLevel);
 			if(SaveLevel != null){
 				//de gegenereerde map wordt opgeslagen
-				StoreMaze = new SaveInput(map, placedItems, StartEnd, spotList, cameraList, SaveLevel); 
+				StoreMaze = new SaveInput(map, placedItems, StartEnd, spotList, cameraList, controlCenterList, SaveLevel); 
 			}	
 		}else if(load.clickedOnIt(me.getX(), me.getY())){					//Load Window
 			//het level moet ingeladen worden en nog gedisplayd
@@ -560,6 +586,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		StartEnd.setStart(newlevel.getStartPosition());
 		StartEnd.setEnd(newlevel.getEndPosition());
 		cameraList.loadCameras(newlevel.getCameras());
+		controlCenterList.loadControlCenters(newlevel.getControlCenters());
 		spotList.loadSpots(newlevel.getSpots());
 	}
 
@@ -635,6 +662,26 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				camera.setCamera(tempPositie);
 				cameraList.removeCamera(camera);
 				camera = new Camera();
+			}	
+			
+			//Control Centers
+			if(Mode == ClickOptions.setControlCenter){											//place ControlCenter
+				System.out.println("addControlCenter");
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				if(!temp.getWall() && !temp.getDoor()){
+					Point tempPositie = temp.getPosition();
+					controlCenter.setControlCenter(tempPositie);
+					controlCenterList.addControlCenter(controlCenter);
+					controlCenter = new ControlCenterEditor();
+				}
+			}
+			if(Mode == ClickOptions.removeControlCenter){										//Remove ControlCenter
+				System.out.println("removeControlCenter");
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				Point tempPositie = temp.getPosition();
+				controlCenter.setControlCenter(tempPositie);
+				controlCenterList.removeControlCenter(controlCenter);
+				controlCenter = new ControlCenterEditor();
 			}	
 			
 			if(Mode == ClickOptions.guardian){													//Guard
@@ -762,6 +809,14 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}
 		}
 		
+		//mag niet wanneer er een controlCenter staat.
+		for(ControlCenterEditor s: controlCenterList.getControlCenters()){
+			if(s.getPosition().equals(a)){
+				possible = false;
+				break;
+			}
+		}
+		
 		//mag ook niet wanneer er een sleutel staat.
 		for(Key k: placedItems.getAllKeys()){
 			Point p = k.getKey();
@@ -800,6 +855,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	 * voor Camera:
 	 * - toevoegen van een Camera
 	 * - verwijderen van een Camera 
+	 * 
+	 * voor Control Center:
+	 * - toevoegen van een Control Center
+	 * - verwijderen van een Control Center 
 	 * 
 	 * @param me
 	 */
@@ -879,6 +938,15 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				Mode = ClickOptions.removeCamera;
 			}	
 		}
+		
+		else if(Mode == ClickOptions.setControlCenter || Mode == ClickOptions.removeControlCenter){			//Control Center
+			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){	
+				Mode = ClickOptions.setControlCenter;
+			}
+			if(removeGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
+				Mode = ClickOptions.removeControlCenter;
+			}	
+		}
 	}	
 	
 	@Override
@@ -948,6 +1016,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		spotList = new SpotList();
 		camera = new Camera();
 		cameraList = new CameraList();
+		controlCenter = new ControlCenterEditor();
+		controlCenterList = new ControlCenterList();
 		StartEnd = new StartAndEndPosition();
 		
 		placedItems = new PlacedItemsMenu(placedItemsCoords, screenWidth, screenHeight);
