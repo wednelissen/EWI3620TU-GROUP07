@@ -12,6 +12,9 @@ public class OBJLoader {
 		Model m = new Model();
 		String line;
 		while ((line = reader.readLine()) != null) {
+//			if (line.startsWith("mtllib ")) {
+//
+//			}
 			if (line.startsWith("v ")) {
 				// Splits the line into 3 floats which will represent the
 				// vertices of the part of the model

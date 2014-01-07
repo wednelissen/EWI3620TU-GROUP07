@@ -52,12 +52,6 @@ public class Maze implements VisibleObject {
 	
 	private LoadTexturesMaze loadedTexturesMaze;
 	private int[][] maze;
-//	private Texture wallTexture;
-//	private Texture floorTexture;
-//	private Texture roofTexture;
-//	private Texture spotTexture;
-//	private Texture doorTexture, doorBottomTexture;
-//	private boolean texLoaded = false;
 
 	public Maze (LoadTexturesMaze temp){
 		loadedTexturesMaze = temp;
@@ -74,18 +68,6 @@ public class Maze implements VisibleObject {
 		maze = newMaze.outputForMazeRunner();
 		
 	}
-
-//	private int[][] maze = 
-//	{	{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-//		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-//		{  1,  0,  0,  0,  0,  0,  1,  1,  1,  1 },
-//		{  1,  0,  1,  0,  0,  0,  1,  0,  0,  1 },
-//		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-//		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-//		{  1,  0,  0,  0,  1,  0,  1,  0,  0,  1 },
-//		{  1,  0,  0,  0,  1,  1,  1,  0,  0,  1 },
-//		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-//		{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 }	};
 
 	/**
 	 * isWall(int x, int z) checks for a wall.

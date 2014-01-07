@@ -310,7 +310,7 @@ public class Guard extends GameObject implements VisibleObject {
 //				locationZ + (SQUARE_SIZE / 2));
 		
 		//PROBEERSEL VAN MENNO
-		gl.glTranslated(locationX, SQUARE_SIZE/4, locationZ);
+		gl.glTranslated(locationX, 0, locationZ);
 		
 		
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
