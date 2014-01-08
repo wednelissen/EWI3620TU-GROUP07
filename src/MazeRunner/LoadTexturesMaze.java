@@ -23,6 +23,9 @@ public class LoadTexturesMaze {
 
 	private ArrayList<Texture> textureList = new ArrayList<Texture>();
 	private ArrayList<String> textureListNames = new ArrayList<String>();
+	
+	private ArrayList<Model> modelList = new ArrayList<Model>();
+	private ArrayList<String> modelListNames = new ArrayList<String>();
 
 	/**
 	 * Hier maak je alle textures aan en zet je ze in een arraylijst met
@@ -31,11 +34,22 @@ public class LoadTexturesMaze {
 	 * halen in de getter
 	 */
 	public LoadTexturesMaze() {
+		loadTextures();
+		loadModels();
+	}
+	
+	public void loadTextures () {
 		defaultTexture = loadingTexture("default.png");
 		addTextureToList(loadingTexture("wallTexture.png"), "wallTexture");
 		addTextureToList(loadingTexture("floorTexture.png"), "floorTexture");
 		addTextureToList(loadingTexture("doorMazerunner.png"), "doorTexture");
-		addTextureToList(loadingTexture("doorMazerunBottom.png"), "doorBottomTexture");
+		addTextureToList(loadingTexture("MazerunnerGuardTexture.tga"), "doorBottomTexture");
+//		addTextureToList(loadingTexture("doorMazerunBottom.png"), "doorBottomTexture");
+//		addTextureToList(loadingTexture("MazerunnerGuardTexture.tga"), "guardTexture");
+	}
+	
+	public void loadModels () {
+//		addModelToList(OBJLoader.loadModel("src/modelGuard.obj", getTexture("guardTexture")), "modelGuard");
 	}
 
 	/**
@@ -55,7 +69,7 @@ public class LoadTexturesMaze {
 			textureURL = getClass().getClassLoader().getResource(fileName);
 			// read file into BufferedImage
 			BufferedImage texture = ImageIO.read(textureURL);
-			ImageUtil.flipImageVertically(texture);
+//			ImageUtil.flipImageVertically(texture);
 			tempTexture = TextureIO.newTexture(texture, true);
 		} catch (IOException e) {
 			// Wanneer de source niet gevonden is
@@ -88,6 +102,17 @@ public class LoadTexturesMaze {
 		}
 		return defaultTexture;
 	}
+	
+	public Model getModel(String modelName) {
+		for (int i = 0; i < modelListNames.size(); i++) {
+			if (modelListNames.get(i).equals(modelName)) {
+				if (!(modelList.get(i) == null)) {
+					return modelList.get(i);
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Een methode om de texture op een simpele manier toe te voegen aan de
@@ -100,5 +125,10 @@ public class LoadTexturesMaze {
 	public void addTextureToList(Texture myTexture, String textureName) {
 		textureList.add(myTexture);
 		textureListNames.add(textureName);
+	}
+	
+	public void addModelToList(Model myModel, String modelName) {
+		modelList.add(myModel);
+		modelListNames.add(modelName);
 	}
 }

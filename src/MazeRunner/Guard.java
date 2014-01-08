@@ -52,22 +52,18 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean canMoveBack;
 	private boolean rightForward;
 	private boolean leftForward;
-	
+
 	private Model modelGuard;
 
 	public Guard(double x, double y, double z, ArrayList<Point> points) {
-//		super((x * SQUARE_SIZE) + (2 * SQUARE_SIZE), y, (z * SQUARE_SIZE)
-//				- (SQUARE_SIZE / 2));
-		
+		// super((x * SQUARE_SIZE) + (2 * SQUARE_SIZE), y, (z * SQUARE_SIZE)
+		// - (SQUARE_SIZE / 2));
 
-		//PROBEERSEL VAN MENNO
-		super(x * SQUARE_SIZE+(0.5*SQUARE_SIZE), y, z * SQUARE_SIZE+(0.5*SQUARE_SIZE));
-		
-		try {
-			modelGuard = OBJLoader.loadModel("src/modelGuard.obj");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// PROBEERSEL VAN MENNO
+		super(x * SQUARE_SIZE + (0.5 * SQUARE_SIZE), y, z * SQUARE_SIZE
+				+ (0.5 * SQUARE_SIZE));
+
+		modelGuard = OBJLoader.loadModel("src/modelGuard.obj");
 
 		speed = 0.005;
 		coordinaten = points;
@@ -272,29 +268,30 @@ public class Guard extends GameObject implements VisibleObject {
 	 * Geeft de huidige positie van het object Guard.
 	 */
 	public void huidigepositie() {
-		
-//		int x = (int) Math.floor(locationX / SQUARE_SIZE);
-//		int z = (int) Math.floor(locationZ / SQUARE_SIZE);
-		
-		//PROBEERSEL VAN MENNO
-//		int x = (int) Math.floor((locationX-(SQUARE_SIZE/2)) / SQUARE_SIZE);
-//		int z = (int) Math.floor((locationZ-(SQUARE_SIZE/2)) / SQUARE_SIZE);
-		
-		//ANDER PROBEERSEL
-		
+
+		// int x = (int) Math.floor(locationX / SQUARE_SIZE);
+		// int z = (int) Math.floor(locationZ / SQUARE_SIZE);
+
+		// PROBEERSEL VAN MENNO
+		// int x = (int) Math.floor((locationX-(SQUARE_SIZE/2)) / SQUARE_SIZE);
+		// int z = (int) Math.floor((locationZ-(SQUARE_SIZE/2)) / SQUARE_SIZE);
+
+		// ANDER PROBEERSEL
+
 		int xTemp = (int) Math.floor(locationX / SQUARE_SIZE);
 		int zTemp = (int) Math.floor(locationZ / SQUARE_SIZE);
-		
-		double diffx = Math.abs(xTemp*SQUARE_SIZE+0.5*SQUARE_SIZE - locationX);
-		double diffz = Math.abs(zTemp*SQUARE_SIZE+0.5*SQUARE_SIZE - locationZ);
-		
-		if(diffx<0.1 && diffz<0.1){
+
+		double diffx = Math.abs(xTemp * SQUARE_SIZE + 0.5 * SQUARE_SIZE
+				- locationX);
+		double diffz = Math.abs(zTemp * SQUARE_SIZE + 0.5 * SQUARE_SIZE
+				- locationZ);
+
+		if (diffx < 0.1 && diffz < 0.1) {
 			huidigepositie = new Point(xTemp, zTemp);
 		}
-		
 
-	//	huidigepositie = new Point(x, z);
-		//System.out.println(huidigepositie);
+		// huidigepositie = new Point(x, z);
+		// System.out.println(huidigepositie);
 
 	}
 
@@ -306,17 +303,16 @@ public class Guard extends GameObject implements VisibleObject {
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 
-//		gl.glTranslated(locationX - (SQUARE_SIZE / 2), SQUARE_SIZE / 4,
-//				locationZ + (SQUARE_SIZE / 2));
-		
-		//PROBEERSEL VAN MENNO
+		// gl.glTranslated(locationX - (SQUARE_SIZE / 2), SQUARE_SIZE / 4,
+		// locationZ + (SQUARE_SIZE / 2));
+
+		// PROBEERSEL VAN MENNO
 		gl.glTranslated(locationX, 0, locationZ);
-		
-		
+
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
 		gl.glScaled(0.60, 0.60, 0.60);
-		
-		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
+
+		gl.glDisable(GL.GL_CULL_FACE);// zorgt dat de achterkant zichtbaar is
 		modelGuard.draw(gl);
 		gl.glPopMatrix();
 	}

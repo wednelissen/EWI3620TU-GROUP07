@@ -5,16 +5,13 @@ import java.util.ArrayList;
 
 public class OBJLoader {
 
-	public static Model loadModel(String fileName)
-			throws FileNotFoundException, IOException {
+	public static Model loadModel(String fileName) {
+		Model m = new Model();
+		try {
 		BufferedReader reader = new BufferedReader(new FileReader(new File(
 				fileName)));
-		Model m = new Model();
 		String line;
 		while ((line = reader.readLine()) != null) {
-//			if (line.startsWith("mtllib ")) {
-//
-//			}
 			if (line.startsWith("v ")) {
 				// Splits the line into 3 floats which will represent the
 				// vertices of the part of the model
@@ -67,7 +64,25 @@ public class OBJLoader {
 			}
 		}
 		reader.close();
-
-		return m;
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Loading model failed");
+			m = null;
+		}
+		return m;	
+		
 	}
+	
+//	public static void loadTextureFileLocation (String fileName) throws IOException {
+//		BufferedReader reader = new BufferedReader(new FileReader(new File(
+//				fileName)));
+//		String line;
+//		while ((line = reader.readLine()) != null) {
+//			if (line.startsWith("map_Kd ")) {
+//				String fileLocation = String.valueOf(line.split(" ")[1]);
+//				
+//			}
+//		}
+//	}
 }
