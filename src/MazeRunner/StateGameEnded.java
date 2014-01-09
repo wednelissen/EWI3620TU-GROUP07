@@ -37,10 +37,10 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		this.highscore = score;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
-		
 		startup = true;
 		this.resume();
-		System.out.println("Highscore: " + score.getPlayerName() + " " + score.getScore() + " " + score.getLevelName());
+//		System.out.println("Highscore: " + score.getPlayerName() + " " + score.getScore() + " " + score.getLevelName());
+		this.highscore.writeToDB();
 	}
 
 	public void resume() {
