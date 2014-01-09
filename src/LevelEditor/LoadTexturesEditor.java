@@ -56,6 +56,9 @@ public class LoadTexturesEditor {
 		addTextureToList(loadingTexture("loadButton.png"), "loadButton");
 		addTextureToList(loadingTexture("guardianEditor.png"), "guardianEditor");
 		addTextureToList(loadingTexture("keyEditor.png"), "keyEditor");
+		addTextureToList(loadingTexture("controlCenterEditor.png"), "controlCenterEditor");
+		
+		
 	}
 
 	/**

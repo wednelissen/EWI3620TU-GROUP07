@@ -2,6 +2,7 @@ package LevelEditor;
 
 import javax.media.opengl.GL;
 
+import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
 
 public class Window {
@@ -104,6 +105,57 @@ public class Window {
 //		gl.glEnd();
 	}
 	
+	/**
+	BRON: http://stackoverflow.com/questions/10145701/jogl-opengl-n-newline-does-not-working-for-text-rendering
+	Wel zelf de enters, tabs, en spatie lengte geimplementeerd. ook het meeschalen is zelf gemaakt.
+ **/
+public void renderString(GL gl, String s){
+	float witdhString = 0;
+	float translateY = -120;
+	//System.out.println(screenWidth+" "+screenHeight);
+	float scaleX = (float)screenWidth / 800f;
+	float scaleY = (float)screenHeight / 600f;
+	//System.out.println(scaleX+" "+scaleY);
+	final GLUT glut = new GLUT();
+    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glPushMatrix();
+    gl.glLoadIdentity();
+    gl.glOrtho(0, screenWidth, 0, screenHeight, -1, 1);
+    gl.glMatrixMode(GL.GL_MODELVIEW);
+    	gl.glPushMatrix();
+        gl.glLoadIdentity();
+        gl.glTranslatef(x,y,0);
+        float offsetBeginPositionString = scaleY * -18f;
+        gl.glTranslatef(0,offsetBeginPositionString,0);
+        gl.glScalef(0.15f, 0.15f, 1f); //zorgt voor de goede grote lettertype
+        gl.glScalef(scaleX, scaleY, 1f);
+        for(int i =0; i<s.length();i++){
+        	char temp = s.charAt(i);
+        	if(temp=='\n'){            		
+        		gl.glTranslatef(-witdhString,translateY,0);
+        		witdhString = 0;
+        	}
+        	else if(temp=='\t'){
+        		gl.glTranslatef(350,0,0);
+        	}
+        	else if(temp==' '){
+        		gl.glTranslatef(50,0,0);
+        		witdhString += 50f;
+        	}
+        	else{
+        		glut.glutStrokeCharacter(GLUT.STROKE_ROMAN, temp);
+        		witdhString += glut.glutStrokeWidthf(GLUT.STROKE_ROMAN, temp);
+        		
+        	}
+        	
+        	
+        }
+        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glPopMatrix();
+    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glPopMatrix();
+}
+
 	/**
 	 * 
 	 * @param xclick mouse click

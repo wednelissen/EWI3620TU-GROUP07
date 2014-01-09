@@ -3,6 +3,7 @@ package MazeRunner;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -64,6 +65,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
 	private ArrayList<Spot> spots = new ArrayList<Spot>();
 	private ArrayList<Point> tempSpot = newMaze.getSpots();
+	private ArrayList<Point> tempControlCenter = newMaze.getControlCenters();
+	private ArrayList<ControlCenter> controlCenters = new ArrayList<ControlCenter>();
+	
 
 	private int checkdistance = 2;
 
@@ -82,6 +86,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	@SuppressWarnings("unused")
 	private StatePauseMenu pausemenu;
 	private HighScore score;
+
+	private boolean watchFromCamera = false;
+	private int watchCameraNumber = 0;
 
 	/*
 	 * **********************************************
@@ -155,7 +162,12 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (Guard temp : guards) {
 			visibleObjects.add(temp);
 		}
-
+		
+		createControlCenter();
+		for (ControlCenter temp : controlCenters) {
+			visibleObjects.add(temp);
+		}
+		
 		// Initialize the player.
 
 		player = new Player(maze.startPoint.getX() * maze.SQUARE_SIZE
@@ -329,26 +341,32 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private void updateMovement(int deltaTime) {
 
 		// update locations
-		player.update(deltaTime);
-		playerWallChecker(checkdistance);
-		playerItemCheck();
+			player.update(deltaTime);
+			playerWallChecker(checkdistance);
+			playerItemCheck();
 		
 		for (Guard temp : guards) {
 			if (!temp.isAttack()) {
 				temp.update(deltaTime);
 			}
-			//MENNO
-//			temp.playerDetectie(player.locationX, player.locationZ);
-//			temp.aanvallen(player.locationX, player.locationZ, deltaTime);
-//			guardWallChecker(2, temp);
+			if(!GOD_MODE){
+				temp.playerDetectie(player.locationX, player.locationZ);
+				temp.aanvallen(player.locationX, player.locationZ, deltaTime);
+			}
 			
 //			System.out.println("x: "+player.locationX + " z: "+player.locationZ+" EDITOR--- x: "
 //			+(int)Math.floor( player.locationX / SQUARE_SIZE )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
 
 		}
-		for (GuardCamera temp : cameras) {
-			temp.updatePositie(player.locationX, player.locationZ);
-			temp.alarm();
+		for (GuardCamera cam : cameras) {
+			cam.updatePositie(player.locationX, player.locationZ);
+			if(cam.alarm() && !cam.getGuardSend()){ //als het alarm  is afgegaan en er nog geen guard naar toe is gestuurd.
+				//DE KORTSTE ROUTE WORDT GEZOCHT EN ER WORDT EEN GUARD NAAR TOE GESTUURD DIE HET DICHTSBIJ IS.
+				//ALS DE GUARD IS GEARRIVEERD BIJ DE CAMERA MOET HIJ HET ALARM RESETTEN.
+				
+				cam.guardSended();
+			}
+			
 		}
 
 	}
@@ -446,79 +464,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 	}
 
-	private void guardWallChecker(int checkdistance, Guard res) {
-
-		if (!GOD_MODE) {
-			if (maze.isWall(
-					res.getLocationX() + checkdistance
-							* -Math.sin(Math.PI * res.getHorAngle() / 180),
-					res.getLocationZ() + checkdistance
-							* -Math.cos(Math.PI * res.getHorAngle() / 180))) {
-				res.setCanMoveForward(false);
-			}
-			// Check backward direction for obstacles
-			if (maze.isWall(
-					res.getLocationX() - checkdistance
-							* -Math.sin(Math.PI * res.getHorAngle() / 180),
-					res.getLocationZ() - checkdistance
-							* -Math.cos(Math.PI * res.getHorAngle() / 180))) {
-				res.setCanMoveBack(false);
-			}
-			// Check left direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							+ checkdistance
-							* -Math.sin(Math.PI * (res.getHorAngle() + 90)
-									/ 180),
-					res.getLocationZ()
-							+ checkdistance
-							* -Math.cos(Math.PI * (res.getHorAngle() + 90)
-									/ 180))) {
-				res.setCanMoveLeft(false);
-			}
-			// check right direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							- checkdistance
-							* -Math.sin(Math.PI * (res.getHorAngle() + 90)
-									/ 180),
-					res.getLocationZ()
-							- checkdistance
-							* -Math.cos(Math.PI * (res.getHorAngle() + 90)
-									/ 180))) {
-				res.setCanMoveRight(false);
-			}
-
-			// Check left-forward direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							+ checkdistance// Math.sqrt(2)
-							* -Math.sin(Math.PI * (res.getHorAngle() + 45)
-									/ 180),
-					res.getLocationZ()
-							+ checkdistance
-							/ Math.sqrt(2)
-							* -Math.cos(Math.PI * (res.getHorAngle() + 45)
-									/ 180))) {
-				res.setLeftForwardWall(true);
-			}
-
-			// Check right-forward direction for obstacles
-			if (maze.isWall(
-					res.getLocationX()
-							- checkdistance// Math.sqrt(2)
-							* -Math.sin(Math.PI * (res.getHorAngle() + 135)
-									/ 180),
-					res.getLocationZ()
-							- checkdistance
-							/ Math.sqrt(2)
-							* -Math.cos(Math.PI * (res.getHorAngle() + 135)
-									/ 180))) {
-				res.setRightForwardWall(true);
-			}
-		}
-	}
-
 	/**
 	 * updateCamera() updates the camera position and orientation.
 	 * <p>
@@ -526,12 +471,52 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * runs on a first person view.
 	 */
 	private void updateCamera() {
-		camera.setLocationX(player.getLocationX());
-		camera.setLocationY(player.getLocationY());
-		camera.setLocationZ(player.getLocationZ());
+		if(!watchFromCamera){
+			camera.setLocationX(player.getLocationX());
+			camera.setLocationY(player.getLocationY());
+			camera.setLocationZ(player.getLocationZ());
+		}else{
+			camera.setLocationX(cameras.get(watchCameraNumber).getLocationX());
+			camera.setLocationY(cameras.get(watchCameraNumber).getLocationY()-1);
+			camera.setLocationZ(cameras.get(watchCameraNumber).getLocationZ());
+		}
 		camera.setHorAngle(player.getHorAngle());
 		camera.setVerAngle(player.getVerAngle());
 		camera.calculateVRP();
+	}
+	
+	public boolean watchFromCamera(){
+		int gebied = 2;
+		for(ControlCenter c: controlCenters){
+			if(Math.abs(player.locationX - c.locationX) < gebied  && Math.abs(player.locationZ - c.locationZ) < gebied){
+				watchFromCamera = !watchFromCamera;
+				if(watchFromCamera){
+					visibleObjects.add(player);
+				}
+				else{
+					visibleObjects.remove(player);
+				}		
+				return watchFromCamera;
+			}
+		}
+		return false;
+		
+	}
+	
+	public void watchFromOtherCamera(boolean plus){
+		if(plus){
+			watchCameraNumber++;
+		}else{
+			watchCameraNumber--;
+		}
+		if(watchCameraNumber < 0){
+			watchCameraNumber = cameras.size() - 1;
+		}
+		
+		if(watchCameraNumber > (cameras.size() - 1)){
+			watchCameraNumber -= (cameras.size());
+		}
+		System.out.println(watchCameraNumber);
 	}
 	
 	private void updateKeys(int deltaTime) {
@@ -581,7 +566,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (Guardian temp : tempGuard) {
 			ArrayList<Point> temproute = temp.getCopyRoutes();
 			Point a = temp.getRoute(0);
-			Guard res = new Guard(a.getX(), 0, a.getY(), temproute);
+			Guard res = new Guard(a.getX(), 6, a.getY(), temproute);
+			res.maze = this.maze;
 			guards.add(res);
 		}
 	}
@@ -609,6 +595,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			Point b = temp.getDoor();
 			Keys res = new Keys(a.getX(), 0, a.getY(), b.getX(), b.getY(), maze.SQUARE_SIZE);
 			keys.add(res);
+		}
+	}
+	
+	public void createControlCenter(){
+		for (Point temp : tempControlCenter) {
+			ControlCenter res = new ControlCenter(temp.getX(), 0, temp.getY(), maze.SQUARE_SIZE);
+			controlCenters.add(res);
 		}
 	}
 	

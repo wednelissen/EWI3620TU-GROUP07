@@ -1,5 +1,9 @@
 package MazeRunner;
 
+import javax.media.opengl.GL;
+
+import com.sun.opengl.util.GLUT;
+
 import Sound.*;
 
 /**
@@ -19,7 +23,7 @@ import Sound.*;
  * @author Bruno Scheele
  *
  */
-public class Player extends GameObject {	
+public class Player extends GameObject implements VisibleObject {	
 	protected double horAngle, verAngle;
 	private boolean canMoveForward,canMoveBack,canMoveLeft,canMoveRight;
 	private boolean leftForwardWall, rightForwardWall;
@@ -328,5 +332,24 @@ public class Player extends GameObject {
 		SoundEffect.WALK.walk();
 		locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5);
 		locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5);
+	}
+
+	@Override
+	public void display(GL gl) {
+		GLUT glut = new GLUT();
+
+		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
+		gl.glPushMatrix();
+		gl.glTranslated(locationX, 0, locationZ);
+		
+		
+		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
+		
+		glut.glutSolidTeapot(2);
+
+		gl.glPopMatrix();
+
+		gl.glEnable(GL.GL_CULL_FACE); // zet de instellingen weer terug zoals ze stonden		
 	}
 }
