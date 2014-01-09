@@ -131,6 +131,9 @@ public class UserInput extends Control implements MouseListener,
 			canvas.removeKeyListener(this);
 
 		}
+		if (key == KeyEvent.VK_NUMPAD5){
+			mazerunner.endGame();
+		}
 
 	}
 

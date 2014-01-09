@@ -26,7 +26,6 @@ public class GameDriver{
 	private static GameWindow window;
 	
 	public static void main(String[] args){
-//		new NameSetFrame();
 		//Initialize Window
 		initWindow();
 		//Initialize Sounds
