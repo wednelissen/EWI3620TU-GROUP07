@@ -2,6 +2,7 @@ package ShortestRoute;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +15,12 @@ public class RouteAlgoritme {
 	private ArrayList<Point> openList = new ArrayList<Point>();
 	private ArrayList<Point> closedList = new ArrayList<Point>();
 	private List<Point> nodes = new ArrayList<Point>();
+	private Map<Point, Integer> distance = new HashMap<Point, Integer>();
 	private Maze maze;
 	private Point guardLocation;
-
 	private Point camera;
-
 	private int[][] mazeCoord;
+	private ArrayList<Point> shortestPath = new ArrayList<Point>();
 
 	public RouteAlgoritme(Maze maz) {
 		this.maze = maz;
@@ -31,6 +32,7 @@ public class RouteAlgoritme {
 			for (int j = 0; j < mazeCoord[i].length; j++) {
 				if (mazeCoord[i][j] == 0) {
 					Point temp = new Point(i, j);
+					distance.put(temp, Integer.MAX_VALUE);
 					openList.add(temp);
 				}
 			}
@@ -38,57 +40,104 @@ public class RouteAlgoritme {
 
 	}
 
-	public void checkAdjecencies() {
-		for (Point node : nodes) {
-			Point top = new Point((int) node.getX(), (int) node.getY() + 1);
-			Point bottom = new Point((int) node.getX(), (int) node.getY() - 1);
-			Point right = new Point((int) node.getX() + 1, (int) node.getY());
-			Point left = new Point((int) node.getX() - 1, (int) node.getY());
-			closedList.add(node);
-
-			if (openList.contains(top)) {
-				nodes.add(top);
-				predecessor.put(node, top);
-
-			}
-			if (openList.contains(bottom)) {
-				nodes.add(bottom);
-				predecessor.put(node, bottom);
-
-			}
-			if (openList.contains(right)) {
-				nodes.add(right);
-				predecessor.put(node, right);
-
-			}
-			if (openList.contains(left)) {
-				nodes.add(left);
-				predecessor.put(node, left);
-
-			}
-			if (nodes.contains(camera)) {
-				// returnShortestRoute();
-				System.out.println("found");
-			}
-			openList.remove(node);
+	public boolean checkAdjecencies() {
+		Point node = selectSmallestValue();
+		if (node == null) {
+			return false;
 		}
+		Point top = new Point((int) node.getX(), (int) node.getY() + 1);
+		Point bottom = new Point((int) node.getX(), (int) node.getY() - 1);
+		Point right = new Point((int) node.getX() + 1, (int) node.getY());
+		Point left = new Point((int) node.getX() - 1, (int) node.getY());
+		closedList.add(node);
 
+		int distanceNode = distance.get(node);
+
+		if (openList.contains(top) && !closedList.contains(top)) {
+			if ((distanceNode + 1) < distance.get(top)) {
+				distance.put(top, distanceNode + 1);
+				predecessor.put(top, node);
+			}
+
+		}
+		if (openList.contains(bottom) && !closedList.contains(bottom)) {
+			if ((distanceNode + 1) < distance.get(bottom)) {
+				distance.put(bottom, distanceNode + 1);
+				predecessor.put(bottom, node);
+			}
+
+		}
+		if (openList.contains(right) && !closedList.contains(right)) {
+			if ((distanceNode + 1) < distance.get(right)) {
+				distance.put(right, distanceNode + 1);
+				predecessor.put(right, node);
+			}
+
+		}
+		if (openList.contains(left) && !closedList.contains(left)) {
+			if ((distanceNode + 1) < distance.get(left)) {
+				distance.put(left, distanceNode + 1);
+				predecessor.put(left, node);
+			}
+
+		}
+		if (node.equals(camera)) {
+			System.out.println("found");
+		}
+		return true;
 	}
 
-	// private ArrayList<Point> returnShortestRoute() {
-	//
-	// }
+	private Point selectSmallestValue() {
+		int minimalValue = Integer.MAX_VALUE;
+		Point res = new Point();
+		res = null; // zodat hij null returnt indien er geen minimale waarde is
+					// gevonden. dit komt voor wanneer een guard niet bij een
+					// camera kan komen.
+		for (Point p : openList) {
+			if (!closedList.contains(p)) {
+				int dist = distance.get(p);
+				if (dist < minimalValue) {
+					minimalValue = dist;
+					res = p;
+				}
+			}
+		}
+		return res;
+	}
+
+	private void backtracking(Point end) {
+		if (end.equals(guardLocation)) {
+			shortestPath.add(end);
+			Collections.reverse(shortestPath);
+		} else {
+			Point a = predecessor.get(end);
+
+			shortestPath.add(end);
+			backtracking(a);
+		}
+	}
 
 	public void algorithm(Point cam, Point guard) {
 		this.camera = cam;
 		this.guardLocation = guard;
 		mapConversion();
-		nodes.add(guardLocation);
-		for (Point punts : nodes) {
-			System.out.println(punts);
+		distance.put(guardLocation, 0);
+		System.out.println("begin punt: " + guardLocation);
+		System.out.println("Eind punt: " + camera);
+		boolean found = true;
+
+		while (!closedList.contains(camera)) {
+			if (!checkAdjecencies()) {
+				found = false;
+				break;
+			}
+
 		}
-		while (openList.size() > 0) {
-			checkAdjecencies();
+
+		if (found) {
+			backtracking(camera);
+			for (Point p : shortestPath)
+				System.out.println(p);
 
 		}
 

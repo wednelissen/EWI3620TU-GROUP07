@@ -202,7 +202,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
 		player.setControl(input);
-		route = new RouteAlgoritme(maze);
 
 	}
 
@@ -391,17 +390,20 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			// )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
 
 		}
-		for (Guard guard : guards) {
-			for (GuardCamera cam : cameras) {
-				cam.updatePositie(player.locationX, player.locationZ);
-				if (cam.alarm() && !cam.getGuardSend()) {
+
+		for (GuardCamera cam : cameras) {
+			cam.updatePositie(player.locationX, player.locationZ);
+			if (cam.alarm() && !cam.getGuardSend()) {
+				for (Guard guard : guards) {
+					route = new RouteAlgoritme(maze);
 					route.algorithm(cam.getHuidigepositie(),
 							guard.getHuidigepositie());
-					cam.guardSended();
-
 				}
+				// cam.guardSended();
+
 			}
 		}
+
 	}
 
 	public static Player getPlayer() {
