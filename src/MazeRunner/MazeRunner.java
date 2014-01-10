@@ -187,6 +187,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
 		player.setControl(input);
+		player.setEndPoint(maze.endPoint);
 		System.out.println("Klaar met creatie objecten");
 	}
 

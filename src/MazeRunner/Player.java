@@ -1,5 +1,7 @@
 package MazeRunner;
 
+import java.awt.Point;
+
 import javax.media.opengl.GL;
 
 import com.sun.opengl.util.GLUT;
@@ -34,6 +36,8 @@ public class Player extends GameObject implements VisibleObject {
 	private int deltaTimeSum = 0;
 	private boolean overRuleRight;
 	private boolean reachedEndOfLevel = false;
+	private Point endPoint;
+	private double checkarea = 0.5*5; // should be 0.5*MAZE_SQUARE_SIZE
 	
 	/**
 	 * The Player constructor.
@@ -56,6 +60,14 @@ public class Player extends GameObject implements VisibleObject {
 		horAngle = h;
 		verAngle = v;
 		speed = 0.01;
+	}
+	
+	/**
+	 * Used to set the map endpoint for game completion
+	 * @param endpoint
+	 */
+	public void setEndPoint(Point endpoint){
+		this.endPoint = endpoint;
 	}
 	
 	/**
@@ -278,9 +290,12 @@ public class Player extends GameObject implements VisibleObject {
 			}
 			
 			//detect end of level
-			if(locationX == 1 && locationZ == 2){
+			//COORDINATES SHOULD BE SCALED BY MAZE_SQUARE_SIZE
+			if((Math.abs(locationX-(endPoint.getX()+0.5)*5) < checkarea) && (Math.abs(locationZ-(endPoint.getY()+0.5)*5) < checkarea)){
 				reachedEndOfLevel  = true;
+				System.out.println("Reached end of level");
 			}
+			
 			//Reset collision detectors
 			canMoveForward = true;
 			canMoveBack = true;

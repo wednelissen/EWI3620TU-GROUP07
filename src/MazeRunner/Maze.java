@@ -48,6 +48,7 @@ public class Maze implements VisibleObject {
 	public double MAZE_SIZE_Z;
 	public final double SQUARE_SIZE = 5;
 	public Point startPoint;
+	public Point endPoint;
 	private ArrayList<Keys> doorKeys;
 	
 	private LoadTexturesMaze loadedTexturesMaze;
@@ -70,7 +71,7 @@ public class Maze implements VisibleObject {
 		MAZE_SIZE_X = newMaze.getWidth();
 		MAZE_SIZE_Z = newMaze.getHeight();
 		startPoint =  newMaze.getStartPosition();
-		
+		endPoint = newMaze.getEndPosition();
 		maze = newMaze.outputForMazeRunner();
 		
 	}
