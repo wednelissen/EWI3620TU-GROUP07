@@ -42,12 +42,12 @@ public class Model {
 	}
 
 	public void draw(GL gl) {
-		if (myTexture != null) {
-			myTexture.enable();
-			myTexture.bind();
-		}
 		gl.glBegin(GL.GL_TRIANGLES);
 		for (Face face : faces) {
+			if (myTexture != null) {
+				myTexture.enable();
+				myTexture.bind();
+			}
 			ArrayList<Integer> vertexIndices = face.getVertexIndices();
 			ArrayList<Integer> normalIndices = face.getNormalIndices();
 			ArrayList<Integer> textureIndices = face.getTextureIndices();
@@ -82,5 +82,9 @@ public class Model {
 		if (myTexture != null) {
 			myTexture.disable();
 		}
+	}
+	
+	public void setTexture (Texture myTexture) {
+		myTexture = this.myTexture;
 	}
 }

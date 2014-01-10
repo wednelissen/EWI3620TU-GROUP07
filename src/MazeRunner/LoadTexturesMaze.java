@@ -21,12 +21,12 @@ public class LoadTexturesMaze {
 
 	private Texture defaultTexture;
 
-	private ArrayList<Texture> textureList = new ArrayList<Texture>();
-	private ArrayList<String> textureListNames = new ArrayList<String>();
+	private static ArrayList<Texture> textureList = new ArrayList<Texture>();
+	private static ArrayList<String> textureListNames = new ArrayList<String>();
 	
-	private ArrayList<Model> modelList = new ArrayList<Model>();
-	private ArrayList<String> modelListNames = new ArrayList<String>();
-
+	private static ArrayList<Model> modelList = new ArrayList<Model>();
+	private static ArrayList<String> modelListNames = new ArrayList<String>();
+	
 	/**
 	 * Hier maak je alle textures aan en zet je ze in een arraylijst met
 	 * textures. Daarnaast geef je de textures ook een naam en zet je deze in de
@@ -43,13 +43,12 @@ public class LoadTexturesMaze {
 		addTextureToList(loadingTexture("wallTexture.png"), "wallTexture");
 		addTextureToList(loadingTexture("floorTexture.png"), "floorTexture");
 		addTextureToList(loadingTexture("doorMazerunner.png"), "doorTexture");
-		addTextureToList(loadingTexture("MazerunnerGuardTexture.tga"), "doorBottomTexture");
-//		addTextureToList(loadingTexture("doorMazerunBottom.png"), "doorBottomTexture");
-//		addTextureToList(loadingTexture("MazerunnerGuardTexture.tga"), "guardTexture");
+		addTextureToList(loadingTexture("doorMazerunBottom.png"), "doorBottomTexture");
+		addTextureToList(loadingTexture("modelGuard.png"), "modelGuardTexture");
 	}
 	
 	public void loadModels () {
-//		addModelToList(OBJLoader.loadModel("src/modelGuard.obj", getTexture("guardTexture")), "modelGuard");
+		addModelToList(OBJLoader.loadModel("src/modelGuard.obj", getTexture("guardTexture")), "modelGuard");
 	}
 
 	/**
@@ -69,7 +68,7 @@ public class LoadTexturesMaze {
 			textureURL = getClass().getClassLoader().getResource(fileName);
 			// read file into BufferedImage
 			BufferedImage texture = ImageIO.read(textureURL);
-//			ImageUtil.flipImageVertically(texture);
+			ImageUtil.flipImageVertically(texture);
 			tempTexture = TextureIO.newTexture(texture, true);
 		} catch (IOException e) {
 			// Wanneer de source niet gevonden is
@@ -92,7 +91,7 @@ public class LoadTexturesMaze {
 	 * @param textureName
 	 * @return
 	 */
-	public Texture getTexture(String textureName) {
+	public static Texture getTexture(String textureName) {
 		for (int i = 0; i < textureListNames.size(); i++) {
 			if (textureListNames.get(i).equals(textureName)) {
 				if (!(textureList.get(i) == null)) {
@@ -100,10 +99,10 @@ public class LoadTexturesMaze {
 				}
 			}
 		}
-		return defaultTexture;
+		return null;
 	}
 	
-	public Model getModel(String modelName) {
+	public static Model getModel(String modelName) {
 		for (int i = 0; i < modelListNames.size(); i++) {
 			if (modelListNames.get(i).equals(modelName)) {
 				if (!(modelList.get(i) == null)) {

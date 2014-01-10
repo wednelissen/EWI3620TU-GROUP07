@@ -169,11 +169,11 @@ public class MapMenu extends Window {
 	 * zal als deur worden getekent.
 	 * @param gl
 	 */
-	public void drawBlocks(GL gl, LoadTexturesEditor loadedTexturesEditor) {
+	public void drawBlocks(GL gl) {
 		for(int j=0; j < TotalBuildingBlockY; j++){
 			for(int i=0; i < TotalBuildingBlockX; i++){
 				if(BuildingBlocks[i][j].getFloor()){
-					BuildingBlocks[i][j].draw(gl, loadedTexturesEditor.getTexture("editorFloor"));
+					BuildingBlocks[i][j].draw(gl, LoadTexturesEditor.getTexture("editorFloor"));
 				}
 				else if(BuildingBlocks[i][j].getDoor()){
 						if(BuildingBlocks[i][j].getKeyRequired()){
@@ -185,12 +185,12 @@ public class MapMenu extends Window {
 						BuildingBlocks[i][j].drawBlock(gl, null);
 //						gl.glColor3f(0.0f, 0, 0f);
 //					gl.glColor3f(0.5f, 0.1f, 0f);
-					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("editorDoor"));
+					BuildingBlocks[i][j].drawBlock(gl, LoadTexturesEditor.getTexture("editorDoor"));
 //					gl.glColor3f(0.0f, 0, 0f);
 					
 				}
 				else{
-					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("editorWall"));
+					BuildingBlocks[i][j].drawBlock(gl, LoadTexturesEditor.getTexture("editorWall"));
 				}
 			}
 		}

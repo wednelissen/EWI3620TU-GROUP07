@@ -3,10 +3,13 @@ package MazeRunner;
 import java.io.*;
 import java.util.ArrayList;
 
+import com.sun.opengl.util.texture.Texture;
+
 public class OBJLoader {
 
-	public static Model loadModel(String fileName) {
+	public static Model loadModel(String fileName, Texture myTexture) {
 		Model m = new Model();
+		m.setTexture(myTexture);
 		try {
 		BufferedReader reader = new BufferedReader(new FileReader(new File(
 				fileName)));
@@ -73,16 +76,4 @@ public class OBJLoader {
 		return m;	
 		
 	}
-	
-//	public static void loadTextureFileLocation (String fileName) throws IOException {
-//		BufferedReader reader = new BufferedReader(new FileReader(new File(
-//				fileName)));
-//		String line;
-//		while ((line = reader.readLine()) != null) {
-//			if (line.startsWith("map_Kd ")) {
-//				String fileLocation = String.valueOf(line.split(" ")[1]);
-//				
-//			}
-//		}
-//	}
 }

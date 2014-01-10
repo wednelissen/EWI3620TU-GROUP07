@@ -271,18 +271,18 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		//als de breedte en lengte zijn ingegeven mogen de buildingBlocks worden getekent in de map.
 		//alle items in de map worden ook getekent indien aan de if is voldaan.
 		if(mapCreated){
-			map.drawBlocks(gl, loadedTexturesEditor);
+			map.drawBlocks(gl);
 			
 			//startpunt wordt getekent
 			if(StartEnd.hasStart()){
 				Point a = StartEnd.getStart();
-				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("editorStartPos"));
+				map.getBuildingBlockByPosition(a).drawBlock(gl, LoadTexturesEditor.getTexture("editorStartPos"));
 			}
 			
 			//eindpunt wordt getekent
 			if(StartEnd.hasEnd()){
 				Point a = StartEnd.getEnd();
-				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("editorEndPos"));
+				map.getBuildingBlockByPosition(a).drawBlock(gl, LoadTexturesEditor.getTexture("editorEndPos"));
 			}
 			
 			//alle guards zullen worden getekent met blauwe blokjes. 
@@ -292,7 +292,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				for(Guardian g: placedItems.getAllGuards()){
 					for(int i = 0; i <g.routeSize(); i++){
 						Point a = g.getRoute(i);
-						map.getBuildingBlockByPosition(a).drawGuardianPath(gl, loadedTexturesEditor.getTexture("editorGuardianStepsBlue"));			
+						map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardianStepsBlue"));			
 					}
 				}
 			}
@@ -313,7 +313,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 //				gl.glColor3f(0.5f, 0, 0f);
 				for(int i = 0; i <guard.routeSize(); i++){
 					Point a = guard.getRoute(i);
-					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, loadedTexturesEditor.getTexture("editorGuardianStepsRed"));			
+					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardianStepsRed"));			
 				}
 				
 			}
@@ -330,7 +330,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 //				gl.glColor3f(0.2f, 1f, 0.6f);
 				for(Camera s: cameraList.getCameras()){
 					Point a = s.getPosition();
-					map.getBuildingBlockByPosition(a).drawCameras(gl, loadedTexturesEditor.getTexture("editorCamera"));
+					map.getBuildingBlockByPosition(a).drawCameras(gl, LoadTexturesEditor.getTexture("editorCamera"));
 				}
 			}
 			
@@ -339,7 +339,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 //				gl.glColor3f(1f, 1f, 0f);
 				for(Spot s: spotList.getSpots()){
 					Point a = s.getPosition();
-					map.getBuildingBlockByPosition(a).drawSpot(gl, loadedTexturesEditor.getTexture("editorSpot"));
+					map.getBuildingBlockByPosition(a).drawSpot(gl, LoadTexturesEditor.getTexture("editorSpot"));
 				}
 			}
 			
@@ -351,60 +351,60 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 
 		//het item Menu word getekent met de items waarop geklikt kan worden
 		items.draw(gl, null);
-		itemFloor.draw(gl, loadedTexturesEditor.getTexture("editorFloor"));
-		itemWall.draw(gl, loadedTexturesEditor.getTexture("editorWall"));
-		itemDoor.draw(gl, loadedTexturesEditor.getTexture("editorDoor"));
-		itemSpot.draw(gl, loadedTexturesEditor.getTexture("editorSpot"));
-		itemGuardian.draw(gl, loadedTexturesEditor.getTexture("editorGuardian"));
-		itemKey.draw(gl, loadedTexturesEditor.getTexture("editorKey"));
-		itemCamera.draw(gl, loadedTexturesEditor.getTexture("editorCamera"));
+		itemFloor.draw(gl, LoadTexturesEditor.getTexture("editorFloor"));
+		itemWall.draw(gl, LoadTexturesEditor.getTexture("editorWall"));
+		itemDoor.draw(gl, LoadTexturesEditor.getTexture("editorDoor"));
+		itemSpot.draw(gl, LoadTexturesEditor.getTexture("editorSpot"));
+		itemGuardian.draw(gl, LoadTexturesEditor.getTexture("editorGuardian"));
+		itemKey.draw(gl, LoadTexturesEditor.getTexture("editorKey"));
+		itemCamera.draw(gl, LoadTexturesEditor.getTexture("editorCamera"));
 		//de items met speciale eigenschappen zoals Key en Guard worden hier getekent.
 		//dit zijn de items die al met een positie in de map zijn geplaatst.
 		placedItems.draw(gl, null);
-		placedItems.drawItems(gl, loadedTexturesEditor);
+		placedItems.drawItems(gl);
 		
 		//de extra menu's indien op een  speciale item is gedrukt
 		if(Mode == ClickOptions.guardian){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorAddButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorRemoveButton"));  
-			removeLastPointGuardOrSetDoorKey.draw(gl, loadedTexturesEditor.getTexture("editorDeleteLastPoint")); 
-			showAllGuardsKeys.draw(gl, loadedTexturesEditor.getTexture("editorShowAll")); 
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
+			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorDeleteLastPoint")); 
+			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAll")); 
 		}
 		
 		if(Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorAddButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorRemoveButton"));  
-			removeLastPointGuardOrSetDoorKey.draw(gl, loadedTexturesEditor.getTexture("editorDeleteDoor")); 
-			showAllGuardsKeys.draw(gl, loadedTexturesEditor.getTexture("editorShowAll")); 
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
+			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorDeleteDoor")); 
+			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAll")); 
 		}
 		
 		if(Mode == ClickOptions.key){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorAddButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorRemoveButton"));  
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		if(Mode == ClickOptions.setSpot || Mode == ClickOptions.removeSpot){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorAddButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorRemoveButton"));  
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		if(Mode == ClickOptions.setCamera || Mode == ClickOptions.removeCamera){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorAddButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("editorRemoveButton"));  
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		
 		//draw the clickable boxes
-		setSizes.draw(gl, loadedTexturesEditor.getTexture("editorSizeButton"));
-		setStart.draw(gl, loadedTexturesEditor.getTexture("editorSetStartButton"));
-		setEnd.draw(gl, loadedTexturesEditor.getTexture("editorSetEndButton"));
-		save.draw(gl, loadedTexturesEditor.getTexture("editorSaveButton"));
-		load.draw(gl, loadedTexturesEditor.getTexture("editorLoadButton"));
+		setSizes.draw(gl, LoadTexturesEditor.getTexture("editorSizeButton"));
+		setStart.draw(gl, LoadTexturesEditor.getTexture("editorSetStartButton"));
+		setEnd.draw(gl, LoadTexturesEditor.getTexture("editorSetEndButton"));
+		save.draw(gl, LoadTexturesEditor.getTexture("editorSaveButton"));
+		load.draw(gl, LoadTexturesEditor.getTexture("editorLoadButton"));
 	}
 
 	@Override

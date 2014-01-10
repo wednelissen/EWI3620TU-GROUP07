@@ -21,8 +21,8 @@ public class LoadTexturesEditor {
 
 	private Texture defaultTexture = loadingTexture("default.png");
 
-	private ArrayList<Texture> textureList = new ArrayList<Texture>();
-	private ArrayList<String> textureListNames = new ArrayList<String>();
+	private static ArrayList<Texture> textureList = new ArrayList<Texture>();
+	private static ArrayList<String> textureListNames = new ArrayList<String>();
 
 	/**
 	 * Hier maak je alle textures aan en zet je ze in een arraylijst met
@@ -98,7 +98,7 @@ public class LoadTexturesEditor {
 	 * @param textureName
 	 * @return
 	 */
-	public Texture getTexture(String textureName) {
+	public static Texture getTexture(String textureName) {
 		for (int i = 0; i < textureListNames.size(); i++) {
 			if (textureListNames.get(i).equals(textureName)) {
 				if (!(textureList.get(i) == null)) {
@@ -106,7 +106,7 @@ public class LoadTexturesEditor {
 				}
 			}
 		}
-		return defaultTexture;
+		return null;
 	}
 
 	/**

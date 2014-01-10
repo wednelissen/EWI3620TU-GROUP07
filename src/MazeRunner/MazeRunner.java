@@ -78,7 +78,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private boolean startup = true;
 	private boolean initialize = true;
 
-	private LoadTexturesMaze loadedTexturesMaze;
 	@SuppressWarnings("unused")
 	private StatePauseMenu pausemenu;
 	private HighScore score;
@@ -92,8 +91,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
 	 * defined by GameDriver. It adds itself as a GLEventListener.
 	 */
-	public MazeRunner(GLCanvas canvas, LoadTexturesMaze x) {
-		loadedTexturesMaze = x;
+	public MazeRunner(GLCanvas canvas) {
 		GOD_MODE = false;
 		this.canvas = canvas;
 		screenHeight = canvas.getHeight();
@@ -125,16 +123,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		visibleObjects = new ArrayList<VisibleObject>();
 
 		// Add the maze that we will be using.
-		maze = new Maze(loadedTexturesMaze);
+		maze = new Maze();
 		visibleObjects.add(maze);
-
-		// // Add the spots that we will be using
-		// for (int i = 0; i < Loadlevel.getSpots.size(); i++) {
-		// Spotlight tempSpot = new Spotlight(maze.SQUARE_SIZE,
-		// loadedTexturesMaze.getTexture("spotlight"),
-		// Loadlevel.getSpotlight.get(i));
-		// visibleObjects.add(tempSpot);
-		// }
 
 		createKeys();
 		maze.setKeys(keys);

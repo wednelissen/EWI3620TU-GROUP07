@@ -22,7 +22,7 @@ public class Button extends Window {
 	}
 	
 	public void draw(GL gl, Texture myTexture) {
-		float windowColour[] = { 1.0f, 1.0f, 1.0f, 0f };
+		float windowColour[] = { 0.4f, 1.60f, 0.6f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, windowColour, 0);
 		if (myTexture != null)
 		{
