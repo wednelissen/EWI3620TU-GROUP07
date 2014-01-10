@@ -56,7 +56,7 @@ public class PlacedItemsMenu extends Window{
 	 * @param guard
 	 */
 	public void addGuard(Guardian guard){
-		if(guard.routeSize()>0){ //er mogen geen guard toegevoegd worden zonder route.
+		if(guard.routeSize()>1){ //er mogen geen guard toegevoegd worden zonder route.
 			Guards.add(guard);
 			//hier worden alle items posities opnieuw geset na het toevoegen van een guard of een key.	
 			setGuardAndKeySizes();

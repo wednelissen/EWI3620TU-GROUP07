@@ -7,31 +7,38 @@ import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import java.awt.Toolkit;
 
-
+/**
+ * The GameDriver class is used to start the game. It initializes a GameWindow and attaches
+ * a GLCanvas to it. OpenGL is set to be hardware accelerated and double buffered. Sound
+ * effects are loaded before starting the game. The main menu is initialized on the full-screen canvas.
+ * @author Wiebe
+ *
+ */
 public class GameDriver implements KeyListener{
 	
-	private boolean gamerunning = false;
-	private MazeRunner mazerunner;
 	private static GLCanvas canvas;
 	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
 	public static LoadTexturesMaze loadedTexturesMaze;
-	
-	public GameDriver(){
-	}
-	
+		
 	public static void main(String[] args){
 		
 		//Initialize Window
 		initWindow();
+		//Initialize Sounds
+		Sound.SoundEffect.init();
 		//Show Main Menu
 		new StateMainMenu(canvas, true);
 	}
 	
+	/**
+	 * Initializes a window with a GLCanvas to draw on. Screen resolution is detected and the
+	 * window and canvas are set to be full-screen.
+	 */
 	private static void initWindow(){
 		//Automatically detect screen resolution
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		screenWidth = (int) screenSize.getWidth();
-		screenHeight = (int) screenSize.getHeight();
+		//screenWidth = (int) screenSize.getWidth();
+		//screenHeight = (int) screenSize.getHeight();
 		
 		//Initializes a window with the specified dimensions
 		GameWindow window = new GameWindow(screenWidth,screenHeight);
@@ -59,7 +66,6 @@ public class GameDriver implements KeyListener{
 	@Override
 	public void keyReleased(KeyEvent event) {
 		//These keyEvents are available at any point in the game.
-		//For instance, pressing escape exits the game.
 		int code = event.getKeyCode();
 		
 		switch(code){
@@ -69,10 +75,14 @@ public class GameDriver implements KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+		// not used
 		
 	}
 	
+	/**
+	 * Returns the canvas on which the game is displayed.
+	 * @return
+	 */
 	public static GLCanvas getCanvas(){
 		return GameDriver.canvas;
 	}

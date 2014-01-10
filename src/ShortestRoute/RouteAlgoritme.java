@@ -2,66 +2,95 @@ package ShortestRoute;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import MazeRunner.Maze;
 
 public class RouteAlgoritme {
 
-	private Point cam;
-	private Point guardLocation;
+	private Map<Point, Point> predecessor = new HashMap<Point, Point>();
+	private ArrayList<Point> openList = new ArrayList<Point>();
+	private ArrayList<Point> closedList = new ArrayList<Point>();
+	private List<Point> nodes = new ArrayList<Point>();
 	private Maze maze;
-	private int[][] mazeCoord = maze.getMaze();
-	private List<Point> openList;
-	private List<Point> closedList;
-	private Point node;
-	private Point currentSquare;
-	private int heuristicDist;
-	private int nodeDist = 1;
-	ArrayList<Point> tempList;
-	private int x;
-	private int y;
-	private int totalWeight;
+	private Point guardLocation;
 
-	/*
-	 * Elke aanliggende node van de locatie in de map moet gecheckt worden. Er
-	 * moeten funcites komen voor de lengte van de totale route tot nog toe en
-	 * de geschatte lengte van de route die nog gaat komen. Elke node die
-	 * bezocht die bezcoht is wordt dan toegevoegd aan een lijst en daar wordt
-	 * de beste lijst uit gehaald. Die lijst wordt de input voor een guard net
-	 * zoals een patrouille. Als een cam een guard spot dan guards binnen een
-	 * bepaald gebied stoppen met lopen, lopen naar de cam, dan gaan ze weer
-	 * terug naar orginele route en weer patrouille lopen.
-	 */
+	private Point camera;
+
+	private int[][] mazeCoord;
 
 	public RouteAlgoritme(Maze maz) {
 		this.maze = maz;
+		this.mazeCoord = maze.getMaze();
 	}
 
-	public void update(double x, double y) {
-		Point guardLocation = new Point((int) x, (int) y);
+	public void mapConversion() {
+		for (int i = 0; i < mazeCoord.length; i++) {
+			for (int j = 0; j < mazeCoord[i].length; j++) {
+				if (mazeCoord[i][j] == 0) {
+					Point temp = new Point(i, j);
+					openList.add(temp);
+				}
+			}
+		}
+
 	}
 
-	public void startNode() {
-		openList.add(guardLocation);
+	public void checkAdjecencies() {
+		for (Point node : nodes) {
+			Point top = new Point((int) node.getX(), (int) node.getY() + 1);
+			Point bottom = new Point((int) node.getX(), (int) node.getY() - 1);
+			Point right = new Point((int) node.getX() + 1, (int) node.getY());
+			Point left = new Point((int) node.getX() - 1, (int) node.getY());
+			closedList.add(node);
+
+			if (openList.contains(top)) {
+				nodes.add(top);
+				predecessor.put(node, top);
+
+			}
+			if (openList.contains(bottom)) {
+				nodes.add(bottom);
+				predecessor.put(node, bottom);
+
+			}
+			if (openList.contains(right)) {
+				nodes.add(right);
+				predecessor.put(node, right);
+
+			}
+			if (openList.contains(left)) {
+				nodes.add(left);
+				predecessor.put(node, left);
+
+			}
+			if (nodes.contains(camera)) {
+				// returnShortestRoute();
+				System.out.println("found");
+			}
+			openList.remove(node);
+		}
+
 	}
 
-	public void tempListAdd(int x, int z) {
-		tempList.add(node(x, y + 1));
-		tempList.add(node[x][z - 1]);
-		tempList.add(node[x + 1][z]);
-		tempList.add(node[x - 1][z]);
-	}
+	// private ArrayList<Point> returnShortestRoute() {
+	//
+	// }
 
-	public void distCheck() {
-		for (Point temp : tempList)
-			totalWeight = heuristicWeight(temp) + nodeDist;
-	}
+	public void algorithm(Point cam, Point guard) {
+		this.camera = cam;
+		this.guardLocation = guard;
+		mapConversion();
+		nodes.add(guardLocation);
+		for (Point punts : nodes) {
+			System.out.println(punts);
+		}
+		while (openList.size() > 0) {
+			checkAdjecencies();
 
-	private int heuristicWeight(Point x) {
-		heuristicDist = ((int) (Math.abs(x.getX() - cam.getX()) + Math.abs(cam
-				.getY() - x.getY())));
-		return heuristicDist;
-	}
+		}
 
+	}
 }

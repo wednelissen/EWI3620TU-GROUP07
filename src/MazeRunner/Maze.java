@@ -1,6 +1,7 @@
 package MazeRunner;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
@@ -38,13 +39,16 @@ public class Maze implements VisibleObject {
 	public final double MAZE_SIZE_Z = newMaze.getHeight();
 	public final double SQUARE_SIZE = 5;
 	public final Point startPoint = newMaze.getStartPosition();
+	private ArrayList<Keys> doorKeys;
+
 	private LoadTexturesMaze loadedTexturesMaze;
 
-	private Texture wallTexture;
-	private Texture floorTexture;
-	private Texture roofTexture;
-	private Texture spotTexture;
-	private boolean texLoaded = false;
+	// private Texture wallTexture;
+	// private Texture floorTexture;
+	// private Texture roofTexture;
+	// private Texture spotTexture;
+	// private Texture doorTexture, doorBottomTexture;
+	// private boolean texLoaded = false;
 
 	public Maze(LoadTexturesMaze temp) {
 		loadedTexturesMaze = temp;
@@ -64,8 +68,6 @@ public class Maze implements VisibleObject {
 
 	private int[][] maze = newMaze.outputForMazeRunner();
 
-	private boolean test = true;
-
 	/**
 	 * isWall(int x, int z) checks for a wall.
 	 * <p>
@@ -78,16 +80,22 @@ public class Maze implements VisibleObject {
 	 * @return whether there is a wall at maze[x][z]
 	 */
 	public boolean isWall(int x, int z) {
-		// DEBUG VAN Keys
-		// if(test){
-		// ArrayList<Key> temp = newMaze.getKeys();
-		// for(int i=0; i<temp.size(); i++){
-		// System.out.println(temp.get(i));
-		// }
-		// test = false;
-		// }
 		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
 			return maze[x][z] == 1;
+		else
+			return false;
+	}
+
+	public boolean isClosedDoor(int x, int z) {
+		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
+			return maze[x][z] == 2;
+		else
+			return false;
+	}
+
+	public boolean isOpeningDoor(int x, int z) {
+		if (x >= 0 && x < MAZE_SIZE_X && z >= 0 && z < MAZE_SIZE_Z)
+			return maze[x][z] == 3;
 		else
 			return false;
 	}
@@ -109,7 +117,41 @@ public class Maze implements VisibleObject {
 	public boolean isWall(double x, double z) {
 		int gX = convertToGridX(x);
 		int gZ = convertToGridZ(z);
-		return isWall(gX, gZ);
+		return (isWall(gX, gZ) || isClosedDoor(gX, gZ) || isOpeningDoor(gX, gZ));
+	}
+
+	public int[][] getMaze() {
+		return maze;
+	}
+
+	public boolean isWallOrClosedDoor(double x, double z) {
+		int gX = convertToGridX(x);
+		int gZ = convertToGridZ(z);
+		return (isWall(gX, gZ) || isClosedDoor(gX, gZ) || isOpeningDoor(gX, gZ));
+	}
+
+	public boolean isClosedDoor(double x, double z) {
+		int gX = convertToGridX(x);
+		int gZ = convertToGridZ(z);
+		return isClosedDoor(gX, gZ);
+	}
+
+	public boolean isOpeningDoor(double x, double z) {
+		int gX = convertToGridX(x);
+		int gZ = convertToGridZ(z);
+		return isOpeningDoor(gX, gZ);
+	}
+
+	public void openDoor(Point a) {
+		int x = (int) a.getX();
+		int z = (int) a.getY();
+		maze[x][z] = 3;
+	}
+
+	public void removeDoor(Point a) {
+		int x = (int) a.getX();
+		int z = (int) a.getY();
+		maze[x][z] = 0;
 	}
 
 	/**
@@ -134,6 +176,10 @@ public class Maze implements VisibleObject {
 		return (int) Math.floor(z / SQUARE_SIZE);
 	}
 
+	public void setKeys(ArrayList<Keys> keys) {
+		doorKeys = keys;
+	}
+
 	public void display(GL gl) {
 
 		for (int i = 0; i < MAZE_SIZE_X; i++) {
@@ -149,6 +195,32 @@ public class Maze implements VisibleObject {
 							loadedTexturesMaze.getTexture("floorTexture"));
 					drawRoof(gl, SQUARE_SIZE,
 							loadedTexturesMaze.getTexture("floorTexture"));
+				}
+				if (isClosedDoor(i, j)) {
+					for (Keys k : doorKeys) {
+						if (k.getDoor().equals(new Point(i, j))) {
+							drawClosedDoor(gl, SQUARE_SIZE,
+									loadedTexturesMaze
+											.getTexture("doorTexture"),
+									loadedTexturesMaze
+											.getTexture("doorBottomTexture"),
+									k.getKeyColor());
+						}
+					}
+				}
+				if (isOpeningDoor(i, j)) {
+					for (Keys k : doorKeys) {
+						if (k.getDoor().equals(new Point(i, j))) {
+							double translateValue = k.openingDoor();
+							if (translateValue > SQUARE_SIZE) {
+								removeDoor(new Point(i, j));
+								doorKeys.remove(k);
+							}
+							drawOpeningDoor(gl, SQUARE_SIZE, translateValue,
+									k.getKeyColor());
+							break;
+						}
+					}
 				}
 				gl.glPopMatrix();
 			}
@@ -190,9 +262,6 @@ public class Maze implements VisibleObject {
 
 	}
 
-	/*
-	 * ******************EXTRA****************************************
-	 */
 	private void drawWall(GL gl, double size, Texture myTexture) {
 		// set the colour for the wall
 		float wallColour[] = { 1.0f, 1.0f, 1.0f, 0f };
@@ -275,13 +344,6 @@ public class Maze implements VisibleObject {
 		myTexture.disable();
 	}
 
-	private void drawBars(GL gl, double size) {
-		GLUT glut = new GLUT();
-		float barColour[] = { 0.5f, 0.5f, 0.5f, 0.5f };
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, barColour, 0);
-		glut.glutSolidCylinder(1, 1, 1, 1);
-	}
-
 	private void drawRoof(GL gl, double size, Texture myTexture) {
 		// Setting the floor color and material.
 		float roofColour[] = { 1.0f, 1.0f, 1.0f, 0.0f }; // The floor is blue.
@@ -305,6 +367,152 @@ public class Maze implements VisibleObject {
 		gl.glVertex3d(0, size, size);
 		gl.glEnd();
 		myTexture.disable();
+	}
+
+	private void drawClosedDoor(GL gl, double size, Texture myTexture,
+			Texture myTexture2, float[] keyCardHoleColor) {
+		// set the colour for the wall
+		float DoorColor[] = { 1.0f, 0.0f, 0.0f, 0f };
+		// sets the material and lighting for the wall
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, DoorColor, 0);
+
+		// Wanneer er geen texture gevonden is, teken toch maar een vierkant
+		if (myTexture != null) {
+			// Eerst de texture aanzetten
+			myTexture.enable();
+			// Dan de texture binden aan het volgende object
+			myTexture.bind();
+		}
+
+		gl.glBegin(GL.GL_QUADS);
+		// Voorzijde muur
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex3d(0, 0, 0);
+		gl.glTexCoord2d(1, 1);
+		gl.glVertex3d(0, size, 0);
+		gl.glTexCoord2d(0, 1);
+		gl.glVertex3d(size, size, 0);
+		gl.glTexCoord2d(0, 0);
+		gl.glVertex3d(size, 0, 0);
+
+		// Achterzijde muur
+		gl.glTexCoord2d(0, 1);
+		gl.glVertex3d(0, size, size);
+		gl.glTexCoord2d(0, 0);
+		gl.glVertex3d(0, 0, size);
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex3d(size, 0, size);
+		gl.glTexCoord2d(1, 1);
+		gl.glVertex3d(size, size, size);
+
+		// Bovenzijde muur
+		gl.glTexCoord2d(0, 0);
+		gl.glVertex3d(size, 0, size);
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex3d(size, 0, 0);
+		gl.glTexCoord2d(1, 1);
+		gl.glVertex3d(size, size, 0);
+		gl.glTexCoord2d(0, 1);
+		gl.glVertex3d(size, size, size);
+
+		// Onderzijde muur
+		gl.glTexCoord2d(0, 0);
+		gl.glVertex3d(0, 0, 0);
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex3d(0, 0, size);
+		gl.glTexCoord2d(1, 1);
+		gl.glVertex3d(0, size, size);
+		gl.glTexCoord2d(0, 1);
+		gl.glVertex3d(0, size, 0);
+
+		gl.glEnd();
+		myTexture.disable();
+
+		// Sleutel gat
+
+		// DIT MOET WEG
+		gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
+				keyCardHoleColor[2]);
+
+		gl.glBegin(GL.GL_QUADS);
+
+		// HIER KUNNEN DE MATEN WORDEN OPGEGEVEN. GEDEELD DOOR WORDT NIET
+		// ONDERSTEUND
+		// JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven aan
+		// is 0,0
+		// double x_links = 239/298, x_rechts = 267/298, y_laag = 211/424,
+		// y_hoog = 240/424;
+		double x_links = 0.8, x_rechts = 0.895, y_laag = 0.428, y_hoog = 0.497;// 0.566;
+
+		gl.glVertex3d((1 - x_links) * size, y_hoog * size, -0.01); // rechtsboven
+		gl.glVertex3d((1 - x_links) * size, y_laag * size, -0.01); // links
+																	// onder
+		gl.glVertex3d((1 - x_rechts) * size, y_laag * size, -0.01); // rechts
+																	// onder
+		gl.glVertex3d((1 - x_rechts) * size, y_hoog * size, -0.01); // linksboven
+
+		// Achterzijde muur
+		gl.glVertex3d(x_links * size, y_hoog * size, size + 0.01); // linksboven
+		gl.glVertex3d(x_links * size, y_laag * size, size + 0.01); // linksonder
+		gl.glVertex3d(x_rechts * size, y_laag * size, size + 0.01); // rechtsonder
+		gl.glVertex3d(x_rechts * size, y_hoog * size, size + 0.01); // rechtsboven
+
+		// Bovenzijde muur, y,x
+		gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_links) * size); // linksonder
+		gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_rechts) * size); // rechtonder
+		gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_rechts) * size); // rechtsboven
+		gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_links) * size); // linksboven
+
+		// Onderzijde muur y,x
+		gl.glVertex3d(0 - 0.01, y_laag * size, x_links * size); // linksonder
+		gl.glVertex3d(0 - 0.01, y_laag * size, x_rechts * size);
+		gl.glVertex3d(0 - 0.01, y_hoog * size, x_rechts * size);
+		gl.glVertex3d(0 - 0.01, y_hoog * size, x_links * size); // linksboven
+
+		gl.glEnd();
+
+		// DIT MOET WEG
+		gl.glColor3f(1, 1, 1);
+
+		if (myTexture2 != null) {
+			// Eerst de texture aanzetten
+			myTexture2.enable();
+			// Dan de texture binden aan het volgende object
+			myTexture2.bind();
+		}
+		gl.glBegin(GL.GL_QUADS);
+		// onderzijde DEZE MOET EEN ANDERE TEXTURE
+		gl.glTexCoord2d(0, 0);
+		gl.glVertex3d(0, 0, size);
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex3d(0, 0, 0);
+		gl.glTexCoord2d(1, 1);
+		gl.glVertex3d(size, 0, 0);
+		gl.glTexCoord2d(0, 1);
+		gl.glVertex3d(size, 0, size);
+
+		gl.glEnd();
+		myTexture2.disable();
+
+	}
+
+	private void drawOpeningDoor(GL gl, double size, double opening,
+			float[] keyCardHoleColor) {
+		gl.glTranslated(0, opening, 0);
+		drawClosedDoor(gl, SQUARE_SIZE,
+				loadedTexturesMaze.getTexture("doorTexture"),
+				loadedTexturesMaze.getTexture("doorBottomTexture"),
+				keyCardHoleColor);
+	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	// //////////////////////////WORDT NIET MEER GEBRUIKT????//////////////////
+	// ////////////////////////////////////////////////////////////////////////
+	private void drawBars(GL gl, double size) {
+		GLUT glut = new GLUT();
+		float barColour[] = { 0.5f, 0.5f, 0.5f, 0.5f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, barColour, 0);
+		glut.glutSolidCylinder(1, 1, 1, 1);
 	}
 
 	public void drawSpot(GL gl, double size, Texture myTexture) {
@@ -334,9 +542,9 @@ public class Maze implements VisibleObject {
 		glut.glutSolidCylinder(lightRadius, lightSize, 20, 20);
 		// glut.glutSolidCube((float)lightSize);
 
-	}
+		// ////////////////////////////////////////////////////////////////////////////
+		// ////////////////////////////////////////////////////////////////////////////
+		// ////////////////////////////////////////////////////////////////////////////
 
-	public int[][] getMaze() {
-		return maze;
 	}
 }

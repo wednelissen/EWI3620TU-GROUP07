@@ -18,12 +18,18 @@ import com.sun.opengl.util.GLUT;
 
 public class GuardCamera extends GameObject implements VisibleObject {
 
-	private boolean status = true;
+	private boolean alarm = false;
+	private boolean guardSend = false;
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
 	double playerLocatieX;
 	double playerLocatieZ;
 	private Point huidigepositie;
+
+	public Point getHuidigepositie() {
+		return huidigepositie;
+	}
+
 	private Point playerPositie;
 	private ThreadLoop thread = new ThreadLoop();
 
@@ -37,21 +43,31 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	}
 
 	/**
-	 * De functie die registreert of de speler gezien wordt door de camera.
+	 * De functie die registreert of de speler gezien wordt door de camera
+	 * wanneer deze aan staat.
 	 */
-	public void alarm() {
-		// if ((playerLocatieX < locationX + SQUARE_SIZE && playerLocatieX >
-		// locationX
-		// - SQUARE_SIZE)
-		// || (playerLocatieZ < positie.getY() + SQUARE_SIZE && playerLocatieZ >
-		// positie
-		// .getY() - SQUARE_SIZE)) {
-		if (playerPositie.equals(huidigepositie)) {
-			System.out.println("To close");
-
-			status = false;
+	public boolean alarm() {
+		if (thread.visible && playerPositie.equals(huidigepositie) && !alarm) {
+			System.out.println("Camera ALARM");
+			alarm = true;
+			thread.setSleepTime(400);
+			return true;
 		}
+		return false;
+	}
 
+	public void resetAlarm() {
+		alarm = false;
+
+		thread.setSleepTime(4000);
+	}
+
+	public boolean getGuardSend() {
+		return guardSend;
+	}
+
+	public void guardSended() {
+		guardSend = true;
 	}
 
 	/**
@@ -71,11 +87,17 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		if (thread.visible) {
 			gl.glPushMatrix();
 			gl.glTranslated(locationX, -SQUARE_SIZE * 3, locationZ);
+
+			// DIT MOET WEG
 			gl.glColor3f(1, 0, 0);
+
 			gl.glRotatef(-90, 1, 0, 0);
 			glut.glutWireCone(SQUARE_SIZE * 2, SQUARE_SIZE * 4, 50, 50);
 			gl.glPopMatrix();
 		}
+
+		// DIT MOET WEG
+		gl.glColor3f(1, 1, 1);
 
 	}
 
