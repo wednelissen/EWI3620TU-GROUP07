@@ -137,6 +137,7 @@ public void renderString(GL gl, String s){
         	}
         	else if(temp=='\t'){
         		gl.glTranslatef(350,0,0);
+        		witdhString += 350f;
         	}
         	else if(temp==' '){
         		gl.glTranslatef(50,0,0);

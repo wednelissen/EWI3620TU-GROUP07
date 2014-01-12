@@ -6,13 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
- * Represents a high score. Contains the player name, the player's score and
- * the name of the map on which the score was attained. Can be written to 
- * a database.
+ * Represents a high score. Contains the player name, the player's score and the
+ * name of the map on which the score was attained. Can be written to a
+ * database.
+ * 
  * @author Wiebe
- *
+ * 
  */
 public class HighScore {
 
@@ -28,6 +30,7 @@ public class HighScore {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param playername
 	 * @param score
 	 * @param levelname
@@ -153,8 +156,61 @@ public class HighScore {
 				String playerDB = rs.getString("playerName");
 				int scoreDB = rs.getInt("score");
 				String levelDB = rs.getString("levelName");
-				res += "playerName = " + playerDB + "\tscore = " + scoreDB
-						+ "\tlevelName = " + levelDB + "\n";
+				res += playerDB + "\t" + scoreDB + " " + levelDB + "\n";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			System.out.println("Closing the connection.");
+			if (connection != null)
+				try {
+					connection.close();
+				} catch (SQLException ignore) {
+				}
+		}
+		return res;
+	}
+	
+	/**
+	 * Connects to the database to retrieve the saved high scores. Returns an
+	 * ArrayList containing the 10 best highscores
+	 * 
+	 * Used source:
+	 * http://www.developer.com/java/data/jdbc-and-mysql-discussion-and-sample-code-for-jdbc-programs.html
+	 * 
+	 * @return
+	 */
+	public static ArrayList<HighScore> getHighScores(int j) {
+		ArrayList<HighScore> res = new ArrayList<HighScore>();
+		try {
+			System.out.println("Loading driver...");
+			Class.forName("com.mysql.jdbc.Driver");
+			System.out.println("Driver loaded!");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(
+					"Cannot find the driver in the classpath!", e);
+		}
+		try {
+			System.out.println("Connecting database...");
+			connection = DriverManager.getConnection(url, username, password);
+			System.out.println("Database connected!");
+		} catch (SQLException e) {
+			throw new RuntimeException("Cannot connect the database!", e);
+		}
+		try {
+			stmt = connection.createStatement(
+					ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+
+			rs = stmt.executeQuery("SELECT * "
+					+ "from highScores ORDER BY score");
+			int i = 0;
+			while (rs.next() && i < j) {
+				i += 1;
+				String playerDB = rs.getString("playerName");
+				int scoreDB = rs.getInt("score");
+				String levelDB = rs.getString("levelName");
+				res.add(new HighScore(playerDB,scoreDB, levelDB));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

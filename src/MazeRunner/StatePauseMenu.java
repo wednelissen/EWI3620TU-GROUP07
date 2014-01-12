@@ -47,11 +47,12 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 
 	public void resume() {
 		if(canvas != null){
-		this.canvas.setCursor(null);
-		this.canvas.addKeyListener(this);
-		this.canvas.addGLEventListener(this);
-		this.canvas.addMouseListener(this);
-		System.out.println("Pause menu loaded");
+			startup = true;
+			this.canvas.setCursor(null);
+			this.canvas.addKeyListener(this);
+			this.canvas.addGLEventListener(this);
+			this.canvas.addMouseListener(this);
+			System.out.println("Pause menu loaded");
 		}
 	}
 	

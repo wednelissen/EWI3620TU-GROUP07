@@ -293,6 +293,7 @@ public class Player extends GameObject implements VisibleObject {
 			//COORDINATES SHOULD BE SCALED BY MAZE_SQUARE_SIZE
 			if((Math.abs(locationX-(endPoint.getX()+0.5)*5) < checkarea) && (Math.abs(locationZ-(endPoint.getY()+0.5)*5) < checkarea)){
 				reachedEndOfLevel  = true;
+				SoundEffect.WALK.stop();
 				System.out.println("Reached end of level");
 			}
 			

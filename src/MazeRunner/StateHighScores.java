@@ -3,7 +3,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import LevelEditor.Button;
+import LevelEditor.Window;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -16,6 +18,10 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 	private MazeRunner mazerunner;
 	private int screenWidth, screenHeight;
 	private StateMainMenu mainmenu;
+	private ArrayList<HighScore> highScoreList = HighScore.getHighScores(20);
+	private String playerNameString = "\tNAME\n\n";
+	private String scoreString = "\tSCORE\n\n";
+	private String levelNameString = "\tLEVEL\n\n";
 	//layout van het hoofdmenu
 	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50};
 	
@@ -24,7 +30,16 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 
 	private Button[] buttonList = new Button[] {	buttonBack
 													 };
+	
+	//define display windows for high scores
+	private float[] nameWindowCoords = new float[] {100,50,150,500};
+	private float[] scoreWindowCoords = new float[] {325,50,150,500};
+	private float[] levelWindowCoords = new float[] {550,50,150,500};
 
+	private Window nameWindow = new Window(nameWindowCoords, screenWidth, screenHeight);
+	private Window scoreWindow = new Window(scoreWindowCoords, screenWidth, screenHeight);
+	private Window levelWindow = new Window(levelWindowCoords, screenWidth, screenHeight);
+	
 	/**
 	 * Loads the High Score state on the given Canvas. Switches to the default cursor
 	 * and adds the High Score Menu as KeyListener etc.
@@ -43,6 +58,12 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		canvas.addMouseListener(this);
 		System.out.println("Highscores loaded");
 		startup = true;
+		
+		for(HighScore score: highScoreList){
+			playerNameString += " " + score.getPlayerName() + "\n";
+			scoreString += " " + score.getScore() + "\n";
+			levelNameString += " " + score.getLevelName() + "\n";
+		}
 	}
 	
 	@Override
@@ -63,15 +84,22 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].draw(gl, null);
-		};
+		}
 		
+		nameWindow.draw(gl, null);
+		scoreWindow.draw(gl, null);
+		levelWindow.draw(gl, null);
+		
+
+		nameWindow.renderString(gl, playerNameString);
+		scoreWindow.renderString(gl, scoreString);
+		levelWindow.renderString(gl, levelNameString);
+
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 		
 	}
-
-
-
+	
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 		
@@ -116,6 +144,9 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 			buttonList[i].update(screenWidth,screenHeight);
 		};
 		
+		nameWindow.update(screenWidth, screenHeight);
+		scoreWindow.update(screenWidth, screenHeight);
+		levelWindow.update(screenWidth, screenHeight);
 	}
 
 
