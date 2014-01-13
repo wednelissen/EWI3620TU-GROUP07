@@ -91,9 +91,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
 	 * defined by GameDriver. It adds itself as a GLEventListener.
 	 */
-	public MazeRunner(GLCanvas canvas) {
+	public MazeRunner(GLCanvas canvass) {
 		GOD_MODE = false;
-		this.canvas = canvas;
+		this.canvas = canvass;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
 		canvas.addGLEventListener(this);

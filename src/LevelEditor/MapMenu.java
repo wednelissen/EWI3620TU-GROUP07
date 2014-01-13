@@ -177,10 +177,10 @@ public class MapMenu extends Window {
 				}
 				else if(BuildingBlocks[i][j].getDoor()){
 						if(BuildingBlocks[i][j].getKeyRequired()){
-							gl.glColor3f(0.0f, 1f, 0.90f);
+							//gl.glColor3f(0.0f, 1f, 0.90f);
 						}
 						else{
-							gl.glColor3f(0.5f, 0.1f, 0.90f);
+							//gl.glColor3f(0.5f, 0.1f, 0.90f);
 						}
 						BuildingBlocks[i][j].drawBlock(gl, null);
 //						gl.glColor3f(0.0f, 0, 0f);

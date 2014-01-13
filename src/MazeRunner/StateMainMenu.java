@@ -52,8 +52,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	 *            : only set true if StateMainMenu is the first state to be
 	 *            called, directly after the canvas is created
 	 */
-	public StateMainMenu(GLCanvas canvas, boolean first) {
-		StateMainMenu.canvas = canvas;
+	public StateMainMenu(GLCanvas canvass, boolean first) {
+		StateMainMenu.canvas = canvass;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
 		System.out.println("screenHeight: " + screenHeight);
@@ -68,6 +68,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		
 		if(!texturesLoaded){
 			init(drawable);
 		}
@@ -78,18 +79,20 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		}
 
 		GL gl = drawable.getGL();
-
+		
 		// Set the clear color and clear the screen.
 		// gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
-		// gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+		 gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
 		// gl.glColor3f(0, 0.5f, 0f);
-
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].draw(gl, LoadTexturesMaze.getTexture("knop"));
 		}
 		;
+		
+		//gl.glLoadIdentity(); //Wanneer je deze inschakeld begint hij te knipperen bij het reshapen van het window??????
+		
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 
@@ -149,8 +152,10 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		GL gl = drawable.getGL();
 
 		// Set the new screen size and adjusting the viewport
+		
 		screenWidth = width;
 		screenHeight = height;
+		System.out.println(screenWidth+" "+ screenHeight);
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 
 		for (int i = 0; i < buttonList.length; i++) {

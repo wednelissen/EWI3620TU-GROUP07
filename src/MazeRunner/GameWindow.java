@@ -28,7 +28,7 @@ public class GameWindow extends Frame {
 				System.exit(0); 
 			}
 		});
-		this.setUndecorated(true);
+		//this.setUndecorated(true);
 		setVisible(true);
 		
 	}

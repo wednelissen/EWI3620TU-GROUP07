@@ -121,7 +121,9 @@ public class UserInput extends Control implements MouseListener,
 
 			mazerunner.pauseSwitch();
 			System.out.println("Open Pause menu");
-			canvas.removeKeyListener(this);
+//			canvas.removeKeyListener(this);
+//			canvas.removeMouseListener(this);
+//			canvas.removeMouseMotionListener(this);
 
 		}
 
