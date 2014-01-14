@@ -59,13 +59,7 @@ public class Guard extends GameObject implements VisibleObject {
 
 	public Guard(double x, double y, double z, ArrayList<Point> points) {
 		super(x * SQUARE_SIZE+(0.5*SQUARE_SIZE), y, z * SQUARE_SIZE+(0.5*SQUARE_SIZE));
-		
-		try {
-			modelGuard = OBJLoader.loadModel("src/modelGuard.obj");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		modelGuard = LoadTexturesMaze.getModel("modelGuard");
 		speed = 0.005;
 		coordinaten = points;
 
@@ -311,7 +305,7 @@ public class Guard extends GameObject implements VisibleObject {
 	 * Display het object dat de guard is
 	 */
 	public void display(GL gl) {
-		GLUT glut = new GLUT();
+		
 
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
@@ -320,6 +314,7 @@ public class Guard extends GameObject implements VisibleObject {
 		gl.glTranslated(locationX, SQUARE_SIZE/4, locationZ);
 		
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
+		gl.glScaled(0.60, 0.60, 0.60);
 		
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
 		modelGuard.draw(gl);

@@ -169,28 +169,28 @@ public class MapMenu extends Window {
 	 * zal als deur worden getekent.
 	 * @param gl
 	 */
-	public void drawBlocks(GL gl, LoadTexturesEditor loadedTexturesEditor) {
+	public void drawBlocks(GL gl) {
 		for(int j=0; j < TotalBuildingBlockY; j++){
 			for(int i=0; i < TotalBuildingBlockX; i++){
 				if(BuildingBlocks[i][j].getFloor()){
-					BuildingBlocks[i][j].draw(gl, loadedTexturesEditor.getTexture("floorEditor"));
+					BuildingBlocks[i][j].draw(gl, LoadTexturesEditor.getTexture("editorFloor"));
 				}
 				else if(BuildingBlocks[i][j].getDoor()){
 						if(BuildingBlocks[i][j].getKeyRequired()){
-							gl.glColor3f(0.0f, 1f, 0.90f);
+							//gl.glColor3f(0.0f, 1f, 0.90f);
 						}
 						else{
-							gl.glColor3f(0.5f, 0.1f, 0.90f);
+							//gl.glColor3f(0.5f, 0.1f, 0.90f);
 						}
 						BuildingBlocks[i][j].drawBlock(gl, null);
 //						gl.glColor3f(0.0f, 0, 0f);
 //					gl.glColor3f(0.5f, 0.1f, 0f);
-					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("doorEditor"));
+					BuildingBlocks[i][j].drawBlock(gl, LoadTexturesEditor.getTexture("editorDoor"));
 //					gl.glColor3f(0.0f, 0, 0f);
 					
 				}
 				else{
-					BuildingBlocks[i][j].drawBlock(gl, loadedTexturesEditor.getTexture("wallEditor"));
+					BuildingBlocks[i][j].drawBlock(gl, LoadTexturesEditor.getTexture("editorWall"));
 				}
 			}
 		}

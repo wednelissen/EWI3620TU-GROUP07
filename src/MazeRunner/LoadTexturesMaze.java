@@ -21,9 +21,12 @@ public class LoadTexturesMaze {
 
 	private Texture defaultTexture;
 
-	private ArrayList<Texture> textureList = new ArrayList<Texture>();
-	private ArrayList<String> textureListNames = new ArrayList<String>();
-
+	private static ArrayList<Texture> textureList = new ArrayList<Texture>();
+	private static ArrayList<String> textureListNames = new ArrayList<String>();
+	
+	private static ArrayList<Model> modelList = new ArrayList<Model>();
+	private static ArrayList<String> modelListNames = new ArrayList<String>();
+	
 	/**
 	 * Hier maak je alle textures aan en zet je ze in een arraylijst met
 	 * textures. Daarnaast geef je de textures ook een naam en zet je deze in de
@@ -31,11 +34,22 @@ public class LoadTexturesMaze {
 	 * halen in de getter
 	 */
 	public LoadTexturesMaze() {
+		loadTextures();
+		loadModels();
+	}
+	
+	public void loadTextures () {
 		defaultTexture = loadingTexture("default.png");
+		addTextureToList(loadingTexture("default.png"), "default");
 		addTextureToList(loadingTexture("wallTexture.png"), "wallTexture");
 		addTextureToList(loadingTexture("floorTexture.png"), "floorTexture");
 		addTextureToList(loadingTexture("doorMazerunner.png"), "doorTexture");
 		addTextureToList(loadingTexture("doorMazerunBottom.png"), "doorBottomTexture");
+		addTextureToList(loadingTexture("modelGuard.png"), "modelGuardTexture");
+	}
+	
+	public void loadModels () {
+		addModelToList(OBJLoader.loadModel("src/modelGuard.obj", getTexture("guardTexture")), "modelGuard");
 	}
 
 	/**
@@ -78,7 +92,7 @@ public class LoadTexturesMaze {
 	 * @param textureName
 	 * @return
 	 */
-	public Texture getTexture(String textureName) {
+	public static Texture getTexture(String textureName) {
 		for (int i = 0; i < textureListNames.size(); i++) {
 			if (textureListNames.get(i).equals(textureName)) {
 				if (!(textureList.get(i) == null)) {
@@ -86,7 +100,18 @@ public class LoadTexturesMaze {
 				}
 			}
 		}
-		return defaultTexture;
+		return null;
+	}
+	
+	public static Model getModel(String modelName) {
+		for (int i = 0; i < modelListNames.size(); i++) {
+			if (modelListNames.get(i).equals(modelName)) {
+				if (!(modelList.get(i) == null)) {
+					return modelList.get(i);
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -100,5 +125,10 @@ public class LoadTexturesMaze {
 	public void addTextureToList(Texture myTexture, String textureName) {
 		textureList.add(myTexture);
 		textureListNames.add(textureName);
+	}
+	
+	public void addModelToList(Model myModel, String modelName) {
+		modelList.add(myModel);
+		modelListNames.add(modelName);
 	}
 }
