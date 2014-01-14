@@ -45,10 +45,11 @@ public class UserInput extends Control implements MouseListener,
 	 * @param canvas The GLCanvas to which to add the listeners.
 	 */
 	public UserInput(GLCanvas canvas) {
-		canvas.addMouseListener(this);
-		canvas.addMouseMotionListener(this);
-		canvas.addKeyListener(this);
 		this.canvas = canvas;
+		this.canvas.addMouseListener(this);
+		this.canvas.addMouseMotionListener(this);
+		this.canvas.addKeyListener(this);
+		
 	}
 	
 	
@@ -71,6 +72,15 @@ public class UserInput extends Control implements MouseListener,
 		dx = 0;
 		dy = 0;
 
+	}
+	
+	private void restPLayer(){
+		Control.forward = false;
+		Control.back = false;
+		Control.left = false;
+		Control.right = false;
+		//Stop sprinting
+		mazerunner.setWalkingSpeed(0.01);
 	}
 
 	/*
@@ -125,10 +135,12 @@ public class UserInput extends Control implements MouseListener,
 
 		// open pause menu
 		if (key == KeyEvent.VK_ESCAPE) {
-
+			this.restPLayer();
 			mazerunner.pauseSwitch();
 			System.out.println("Open Pause menu");
-			canvas.removeKeyListener(this);
+//			canvas.removeKeyListener(this);
+//			canvas.removeMouseListener(this);
+//			canvas.removeMouseMotionListener(this);
 
 		}
 		if (key == KeyEvent.VK_NUMPAD5){

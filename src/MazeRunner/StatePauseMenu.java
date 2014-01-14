@@ -41,17 +41,16 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		screenWidth = canvas.getWidth();
 		this.mazerunner = mazerunner;
 		
-		startup = true;
 		this.resume();
 	}
 
 	public void resume() {
 		if(canvas != null){
-			startup = true;
 			this.canvas.setCursor(null);
 			this.canvas.addKeyListener(this);
 			this.canvas.addGLEventListener(this);
 			this.canvas.addMouseListener(this);
+			startup = true;
 			System.out.println("Pause menu loaded");
 		}
 	}
@@ -179,7 +178,7 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 			resumeGame();
 		}
 		if(buttonMainMenu.clickedOnIt(xclick, yclick)){
-			
+			returnToMainMenu();
 		}
 		if(buttonQuit.clickedOnIt(xclick,yclick)){
 			System.exit(0);

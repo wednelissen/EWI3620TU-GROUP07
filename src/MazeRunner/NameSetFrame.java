@@ -43,7 +43,6 @@ public class NameSetFrame extends JFrame implements ActionListener{
         c.add(Melding);
 
         startGame.addActionListener(this);
-
     }
 
     /**

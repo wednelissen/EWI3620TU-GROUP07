@@ -4,8 +4,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+
 import LevelEditor.Button;
 import LevelEditor.Window;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -22,7 +24,7 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 	private String scoreString = "\tSCORE\n\n";
 	private String levelNameString = "\tLEVEL\n\n";
 	//layout van het hoofdmenu
-	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50};
+	private float[] buttonBackCoords = new float[] { 50, 50, 50, 50};
 	
 	//define buttons
 	private Button buttonBack = new Button(buttonBackCoords, screenWidth, screenHeight);
@@ -46,8 +48,8 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 	 * @param canvas : The Canvas on which the High Score Menu will be drawn
 	 * @param mazerunner : The game which will be resumed when button resume is clicked
 	 */
-	public StateHighScores(GLCanvas canvas, StateMainMenu mainmenu){
-		StateHighScores.canvas = canvas;
+	public StateHighScores(GLCanvas canvass, StateMainMenu mainmenu){
+		StateHighScores.canvas = canvass;
 		this.mainmenu = mainmenu;
 		canvas.setCursor(null);
 		screenHeight = canvas.getHeight();
@@ -75,19 +77,19 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		GL gl = drawable.getGL();
 
 		// Set the clear color and clear the screen.
-		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
+		//gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
-		gl.glColor3f(0, 0.5f, 0f);
+		//gl.glColor3f(0, 0.5f, 0f);
 		
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].draw(gl, null);
 		}
 		
-		nameWindow.draw(gl, null);
-		scoreWindow.draw(gl, null);
-		levelWindow.draw(gl, null);
+//		nameWindow.draw(gl, null);
+//		scoreWindow.draw(gl, null);
+//		levelWindow.draw(gl, null);
 		
 
 		nameWindow.renderString(gl, playerNameString);

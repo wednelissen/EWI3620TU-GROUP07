@@ -82,7 +82,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private boolean startup = true;
 	private boolean initialize = true;
 	private String playerName = "";
-	private LoadTexturesMaze loadedTexturesMaze;
+
+
 	@SuppressWarnings("unused")
 	private StatePauseMenu pausemenu;
 	private HighScore score;
@@ -99,6 +100,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
 	 * defined by GameDriver. It adds itself as a GLEventListener.
 	 */
+
 	public MazeRunner(GLCanvas canvas, String playerName) {
 
 		GOD_MODE = false;
@@ -132,17 +134,12 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		visibleObjects = new ArrayList<VisibleObject>();
 
 		// Add the maze that we will be using.
-		maze = new Maze(loadedTexturesMaze);
-		score = new HighScore(playerName, 0, maze.getLevelName());
-		visibleObjects.add(maze);
 
-		// // Add the spots that we will be using
-		// for (int i = 0; i < Loadlevel.getSpots.size(); i++) {
-		// Spotlight tempSpot = new Spotlight(maze.SQUARE_SIZE,
-		// loadedTexturesMaze.getTexture("spotlight"),
-		// Loadlevel.getSpotlight.get(i));
-		// visibleObjects.add(tempSpot);
-		// }
+		
+		maze = new Maze();
+		score = new HighScore(playerName, 0, maze.getLevelName());
+		
+		visibleObjects.add(maze);
 
 		createKeys();
 		maze.setKeys(keys);
@@ -209,8 +206,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 	public void init(GLAutoDrawable drawable) {
 		if (initialize) {
-			System.out.println("Maze textures init");
-			initTextures();
 			System.out.println("Creatie objects");
 			initObjects(); // Initialize all the objects!
 			initialize = false;
@@ -243,11 +238,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
 				cursorImg, new Point(0, 0), "blank cursor");
 		canvas.setCursor(blankCursor);
-	}
-
-	public void initTextures() {
-		loadedTexturesMaze = new LoadTexturesMaze();
-		System.out.println("Textures geladen");
 	}
 
 	/**
@@ -285,8 +275,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			if(player.getReachedEndOfLevel()){
 				endGame();
 			}
-//			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 			gl.glLoadIdentity();
 			glu.gluLookAt(camera.getLocationX(), camera.getLocationY(),
 					camera.getLocationZ(), camera.getVrpX(), camera.getVrpY(),

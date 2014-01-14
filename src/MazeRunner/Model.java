@@ -4,11 +4,15 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
+import com.sun.opengl.util.texture.Texture;
+
 public class Model {
 	private ArrayList<ArrayList<Float>> vertices = new ArrayList<ArrayList<Float>>();
 	private ArrayList<ArrayList<Float>> normals = new ArrayList<ArrayList<Float>>();
 	private ArrayList<ArrayList<Float>> textures = new ArrayList<ArrayList<Float>>();
 	private ArrayList<Face> faces = new ArrayList<Face>();
+
+	private Texture myTexture;
 
 	public void addVertice(float x, float y, float z) {
 		ArrayList<Float> verticeCoords = new ArrayList<Float>();
@@ -40,6 +44,10 @@ public class Model {
 	public void draw(GL gl) {
 		gl.glBegin(GL.GL_TRIANGLES);
 		for (Face face : faces) {
+			if (myTexture != null) {
+				myTexture.enable();
+				myTexture.bind();
+			}
 			ArrayList<Integer> vertexIndices = face.getVertexIndices();
 			ArrayList<Integer> normalIndices = face.getNormalIndices();
 			ArrayList<Integer> textureIndices = face.getTextureIndices();
@@ -71,5 +79,12 @@ public class Model {
 							.get((vertexIndices.get(2)) - 1).get(2));
 		}
 		gl.glEnd();
+		if (myTexture != null) {
+			myTexture.disable();
+		}
+	}
+	
+	public void setTexture (Texture myTexture) {
+		myTexture = this.myTexture;
 	}
 }
