@@ -1,9 +1,9 @@
 package MazeRunner;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import LevelEditor.Button;
 import LevelEditor.Window;
 import javax.media.opengl.GL;
@@ -11,43 +11,41 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 
-public class StateHighScores implements GLEventListener, KeyListener, MouseListener{
-	
+public class StateHowToPlay implements GLEventListener, KeyListener,
+		MouseListener {
+
 	private static GLCanvas canvas;
 	private boolean startup = false;
 	private int screenWidth, screenHeight;
 	private StateMainMenu mainmenu;
-	private ArrayList<HighScore> highScoreList = HighScore.getHighScores(20);
-	private String playerNameString = "\tNAME\n\n";
-	private String scoreString = "\tSCORE\n\n";
-	private String levelNameString = "\tLEVEL\n\n";
-	//layout van het hoofdmenu
-	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50};
-	
-	//define buttons
-	private Button buttonBack = new Button(buttonBackCoords, screenWidth, screenHeight);
+	private String instructionString = "HOW TO PLAY\n";
+	// layout
+	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50 };
 
-	private Button[] buttonList = new Button[] {	buttonBack
-													 };
-	
-	//define display windows for high scores
-	private float[] nameWindowCoords = new float[] {100,50,150,500};
-	private float[] scoreWindowCoords = new float[] {325,50,150,500};
-	private float[] levelWindowCoords = new float[] {550,50,150,500};
+	// define buttons
+	private Button buttonBack = new Button(buttonBackCoords, screenWidth,
+			screenHeight);
 
-	private Window nameWindow = new Window(nameWindowCoords, screenWidth, screenHeight);
-	private Window scoreWindow = new Window(scoreWindowCoords, screenWidth, screenHeight);
-	private Window levelWindow = new Window(levelWindowCoords, screenWidth, screenHeight);
-	
+	private Button[] buttonList = new Button[] { buttonBack };
+
+	// define display window for instruction text
+	private float[] instructionWindowCoords = new float[] { 50, 50, 700, 500 };
+
+	private Window instructionWindow = new Window(instructionWindowCoords,
+			screenWidth, screenHeight);
+
 	/**
-	 * Loads the High Score state on the given Canvas. Switches to the default cursor
-	 * and adds the High Score Menu as KeyListener etc.
-	 * 	 
-	 * @param canvas : The Canvas on which the High Score Menu will be drawn
-	 * @param mazerunner : The game which will be resumed when button resume is clicked
+	 * Loads the How To Play state on the given Canvas. Switches to the default
+	 * cursor and adds the High Score Menu as KeyListener etc.
+	 * 
+	 * @param canvas
+	 *            : The Canvas on which the How To Play Menu will be drawn.
+	 * @param mazerunner
+	 *            : The game which will be resumed when the resume button is
+	 *            clicked.
 	 */
-	public StateHighScores(GLCanvas canvas, StateMainMenu mainmenu){
-		StateHighScores.canvas = canvas;
+	public StateHowToPlay(GLCanvas canvas, StateMainMenu mainmenu) {
+		StateHowToPlay.canvas = canvas;
 		this.mainmenu = mainmenu;
 		canvas.setCursor(null);
 		screenHeight = canvas.getHeight();
@@ -55,23 +53,17 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		canvas.addKeyListener(this);
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
-		System.out.println("Highscores loaded");
+		System.out.println("How To Play loaded");
 		startup = true;
-		
-		for(HighScore score: highScoreList){
-			playerNameString += " " + score.getPlayerName() + "\n";
-			scoreString += " " + score.getScore() + "\n";
-			levelNameString += " " + score.getLevelName() + "\n";
-		}
 	}
-	
+
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		if(startup){
-        	init(drawable);
-        	startup = false;
-        }
-		
+		if (startup) {
+			init(drawable);
+			startup = false;
+		}
+
 		GL gl = drawable.getGL();
 
 		// Set the clear color and clear the screen.
@@ -80,35 +72,28 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 
 		// Draw the buttons.
 		gl.glColor3f(0, 0.5f, 0f);
-		
-		for(int i = 0; i< buttonList.length; i++){
+
+		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].draw(gl, null);
 		}
-		
-		nameWindow.draw(gl, null);
-		scoreWindow.draw(gl, null);
-		levelWindow.draw(gl, null);
-		
 
-		nameWindow.renderString(gl, playerNameString);
-		scoreWindow.renderString(gl, scoreString);
-		levelWindow.renderString(gl, levelNameString);
+		instructionWindow.draw(gl, null);
+
+		instructionWindow.renderString(gl, instructionString);
 
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
-		
+
 	}
-	
+
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
-		
+
 	}
-
-
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("Highscore menu init");
+		System.out.println("How To Play init");
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -139,16 +124,13 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
 		startup = false;
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].update(screenWidth,screenHeight);
-		};
-		
-		nameWindow.update(screenWidth, screenHeight);
-		scoreWindow.update(screenWidth, screenHeight);
-		levelWindow.update(screenWidth, screenHeight);
+		for (int i = 0; i < buttonList.length; i++) {
+			buttonList[i].update(screenWidth, screenHeight);
+		}
+		;
+
+		instructionWindow.update(screenWidth, screenHeight);
 	}
-
-
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
@@ -159,11 +141,11 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		screenWidth = width;
 		screenHeight = height;
 		gl.glViewport(0, 0, screenWidth, screenHeight);
-		
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].update(screenWidth,screenHeight);
-		};
-		
+
+		for (int i = 0; i < buttonList.length; i++) {
+			buttonList[i].update(screenWidth, screenHeight);
+		}
+
 		// Update the projection to an orthogonal projection using the new
 		// screen size
 		gl.glMatrixMode(GL.GL_PROJECTION);
@@ -172,28 +154,7 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 
 	}
 
-	@Override
-	public void keyPressed(KeyEvent event) {
-		int code = event.getKeyCode();
-		
-		switch(code){
-		
-		case KeyEvent.VK_ESCAPE:
-			System.out.println("HIGHSCORES/ESCAPE");
-				returnToMainMenu();
-		}
-	}
-	
-	@Override
-	public void mouseReleased(MouseEvent me) {
-		int xclick = me.getX();
-		int yclick = me.getY();
-		if(buttonBack.clickedOnIt(xclick, yclick)){
-			returnToMainMenu();
-		}
-	}
- 
-	private void returnToMainMenu(){
+	private void returnToMainMenu() {
 		System.out.println("Return to main menu");
 		canvas.removeGLEventListener(this);
 		canvas.removeKeyListener(this);
@@ -202,43 +163,56 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		canvas.addKeyListener(mainmenu);
 		canvas.addMouseListener(mainmenu);
 	}
-		
-	///////////////////////////NOT USED////////////////////////////////////
-	
+
 	@Override
-	public void keyReleased(KeyEvent event) {
-		
+	public void keyPressed(KeyEvent event) {
+		int code = event.getKeyCode();
+
+		switch (code) {
+
+		case KeyEvent.VK_ESCAPE:
+			System.out.println("HOWTOPLAY/ESCAPE");
+			returnToMainMenu();
+		}
 	}
-	
+
 	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseReleased(MouseEvent me) {
+		int xclick = me.getX();
+		int yclick = me.getY();
+		if (buttonBack.clickedOnIt(xclick, yclick)) {
+			returnToMainMenu();
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// NOT USED
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// NOT USED
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		// NOT USED
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		// NOT USED
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		// NOT USED
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		// NOT USED
 	}
-
-
 }

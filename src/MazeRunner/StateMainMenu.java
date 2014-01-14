@@ -27,8 +27,9 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	// layout van het hoofdmenu
 	private float[] buttonStartGameCoords = new float[] { 200, 25, 400, 75 };
 	private float[] buttonHighScoresCoords = new float[] { 200, 125, 400, 75 };
-	private float[] buttonLevelEditorCoords = new float[] {200, 225, 400, 75 };
-	private float[] buttonQuitCoords = new float[] { 200, 325, 400, 75 };
+	private float[] buttonLevelEditorCoords = new float[] { 200, 225, 400, 75 };
+	private float[] buttonHowToPlayCoords = new float[] { 200, 325, 400, 75 };
+	private float[] buttonQuitCoords = new float[] { 200, 425, 400, 75 };
 
 	// define buttons
 	private Button buttonStartGame = new Button(buttonStartGameCoords,
@@ -37,11 +38,13 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			screenWidth, screenHeight);
 	private Button buttonLevelEditor = new Button(buttonLevelEditorCoords,
 			screenWidth, screenHeight);
+	private Button buttonHowToPlay = new Button(buttonHowToPlayCoords,
+			screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords, screenWidth,
 			screenHeight);
-
+	
 	private Button[] buttonList = new Button[] { buttonStartGame,
-			buttonHighScores, buttonLevelEditor, buttonQuit };
+			buttonHighScores, buttonLevelEditor, buttonHowToPlay, buttonQuit };
 	private boolean texturesLoaded = false;
 
 	/**
@@ -49,7 +52,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	 * canvas (when first = false).
 	 * 
 	 * @param canvas
-	 * @param first: only set true if StateMainMenu is the first state to be
+	 * @param first : only set true if StateMainMenu is the first state to be
 	 * called, directly after the canvas is created
 	 */
 	public StateMainMenu(GLCanvas canvas, boolean first) {
@@ -77,8 +80,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		GL gl = drawable.getGL();
 
 		// Set the clear color and clear the screen.
-//		gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
-//		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+		// gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
+		// gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// Draw the buttons.
 		for (int i = 0; i < buttonList.length; i++) {
@@ -87,7 +90,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		;
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
-		if(nameSetFrame.getNameSet()){
+		if (nameSetFrame.getNameSet()) {
 			playerName = nameSetFrame.getName();
 			System.out.println(playerName);
 			nameSetFrame.disappear();
@@ -99,9 +102,9 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		System.out.println("Main menu init");
-		if(!texturesLoaded ){
-		loadedTexturesMaze = new LoadTexturesMaze();
-		texturesLoaded = true;
+		if (!texturesLoaded) {
+			loadedTexturesMaze = new LoadTexturesMaze();
+			texturesLoaded = true;
 		}
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
@@ -151,7 +154,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].update(screenWidth, screenHeight);
 		}
-		
 
 		// Update the projection to an orthogonal projection using the new
 		// screen size
@@ -189,12 +191,19 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			canvas.removeKeyListener(this);
 			new StateHighScores(canvas, this);
 		}
-		
+
 		if (buttonLevelEditor.clickedOnIt(xclick, yclick)) {
 			canvas.setEnabled(false);
 			canvas.setVisible(false);
 			GameDriver.getGameWindow().dispose();
 			LevelEditor.RunLevelEditor.main(new String[] {});
+		}
+		
+		if (buttonHowToPlay.clickedOnIt(xclick, yclick)) {
+			canvas.removeGLEventListener(this);
+			canvas.removeMouseListener(this);
+			canvas.removeKeyListener(this);
+			new StateHowToPlay(canvas, this);
 		}
 
 		if (buttonQuit.clickedOnIt(xclick, yclick)) {
@@ -225,8 +234,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	}
 
 	/**
-	 * Adds the main menu to the canvas as Listeners. startup is set
-	 * to true to make sure init() is called.
+	 * Adds the main menu to the canvas as Listeners. startup is set to true to
+	 * make sure init() is called.
 	 */
 	public void returnTo() {
 		canvas.addKeyListener(this);
@@ -264,13 +273,13 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		// NOT USED
 
 	}
-	
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// NOT USED
-		
+
 	}
-	
+
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 		// NOT USED
