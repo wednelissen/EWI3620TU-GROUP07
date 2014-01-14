@@ -18,15 +18,29 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 	private boolean startup = false;
 	private int screenWidth, screenHeight;
 	private StateMainMenu mainmenu;
-	private String instructionString = "HOW TO PLAY\n";
+	private String instructionString = "HOW TO PLAY\n\n"
+			+ "You are a convicted felon facing death row. Your only chance to survive is to\n"
+			+ "escape the prison you are held in, before being put in the electric chair.\n\n"
+			+ "Getting out will not be easy though. You’ll have to pass guards and their security\n"
+			+ "cameras, gain access to locked doors and, of course, make sure you get out\nbefore lockdown.\n\n"
+			+ "If you are spotted by a guard, he will chase you and attempt to catch you.\n"
+			+ "When caught, you will be returned to your cell.\n\n"
+			+ "In case you are spotted by a security camera, at least one guard will be alerted\n"
+			+ "and will be drawn to your location.\n\n"
+			+ "Use your mouse to look around.\n"
+			+ "Use W, A, S and D to move.\n" + "Press E for actions.\n"
+			+ "Use Shift to sprint.";
+
 	// layout
 	private float[] buttonBackCoords = new float[] { 0, 0, 50, 50 };
-
+	private float[] wasdImageCoords = new float[] { 570, 320, 160, 120 };
 	// define buttons
 	private Button buttonBack = new Button(buttonBackCoords, screenWidth,
 			screenHeight);
+	private Button wasdImage = new Button(wasdImageCoords, screenWidth,
+			screenHeight);
 
-	private Button[] buttonList = new Button[] { buttonBack };
+	private Button[] buttonList = new Button[] { buttonBack, wasdImage };
 
 	// define display window for instruction text
 	private float[] instructionWindowCoords = new float[] { 50, 50, 700, 500 };
@@ -86,10 +100,7 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 
 	}
 
-	@Override
-	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 
-	}
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -127,7 +138,6 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].update(screenWidth, screenHeight);
 		}
-		;
 
 		instructionWindow.update(screenWidth, screenHeight);
 	}
@@ -214,5 +224,10 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// NOT USED
+	}
+	
+	@Override
+	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+
 	}
 }
