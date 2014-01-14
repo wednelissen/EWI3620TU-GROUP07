@@ -181,11 +181,12 @@ public class Guard extends GameObject implements VisibleObject {
 	public void display(GL gl) {
 //		GLUT glut = new GLUT();
 
-		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
+		float cubeColor[] = { 0f, 0f, 1f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
-		gl.glTranslated(locationX - (SQUARE_SIZE / 2), SQUARE_SIZE / 4,
+		gl.glTranslated(locationX - (SQUARE_SIZE / 2), 0,
 				locationZ + (SQUARE_SIZE / 2));
+		gl.glScaled(0.6, 0.6, 0.6);
 		System.out.println("Guard draw");
 		guardModel.draw(gl);
 //		glut.glutSolidCube((float) SQUARE_SIZE / 2);

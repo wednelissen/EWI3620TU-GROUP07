@@ -57,7 +57,7 @@ public class Spotlight extends GameObject implements VisibleObject {
 		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_POSITION, lightPosition, 0);
 		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_DIFFUSE, lightColor, 0);
 		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_DIRECTION, lightDirection, 0);
-		gl.glLightf(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_CUTOFF, 50);
+		gl.glLightf(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_CUTOFF, 60);
 		
 		gl.glEnable(GL.GL_LIGHT0 + spotNumber);
 		gl.glEnable(GL.GL_LIGHTING);

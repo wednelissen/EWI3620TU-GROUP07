@@ -268,7 +268,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			GLU glu = new GLU();
 
 			// ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
-			gl.glColor3f(1, 1, 1);
 
 			// Calculating time since last frame.
 			Calendar now = Calendar.getInstance();
