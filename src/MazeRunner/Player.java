@@ -1,5 +1,13 @@
 package MazeRunner;
 
+import java.awt.Point;
+
+import javax.media.opengl.GL;
+
+import com.sun.opengl.util.GLUT;
+
+import Sound.*;
+
 /**
  * Player represents the actual player in MazeRunner.
  * <p>
@@ -17,8 +25,8 @@ package MazeRunner;
  * @author Bruno Scheele
  *
  */
-public class Player extends GameObject {	
-	private double horAngle, verAngle;
+public class Player extends GameObject implements VisibleObject {	
+	protected double horAngle, verAngle;
 	private boolean canMoveForward,canMoveBack,canMoveLeft,canMoveRight;
 	private boolean leftForwardWall, rightForwardWall;
 	private double speed;
@@ -27,6 +35,9 @@ public class Player extends GameObject {
 	private boolean overRuleLeft;
 	private int deltaTimeSum = 0;
 	private boolean overRuleRight;
+	private boolean reachedEndOfLevel = false;
+	private Point endPoint;
+	private double checkarea = 0.5*5; // should be 0.5*MAZE_SQUARE_SIZE
 	
 	/**
 	 * The Player constructor.
@@ -49,6 +60,14 @@ public class Player extends GameObject {
 		horAngle = h;
 		verAngle = v;
 		speed = 0.01;
+	}
+	
+	/**
+	 * Used to set the map endpoint for game completion
+	 * @param endpoint
+	 */
+	public void setEndPoint(Point endpoint){
+		this.endPoint = endpoint;
 	}
 	
 	/**
@@ -117,6 +136,14 @@ public class Player extends GameObject {
 	 */
 	public void setSpeed(double speed) {
 		this.speed = speed;
+	}
+	
+	/**
+	 * Returns whether the player has reached the end position of the map.
+	 * @return
+	 */
+	public boolean getReachedEndOfLevel(){
+		return this.reachedEndOfLevel;
 	}
 	
 	/**
@@ -245,7 +272,7 @@ public class Player extends GameObject {
 			if(overRuleLeft){
 				stepLeft(deltaTime, Math.min(absCos,absSin) * speed);
 				deltaTimeSum  = deltaTimeSum + deltaTime;
-				System.out.println(deltaTimeSum);
+//				System.out.println(deltaTimeSum);
 				if(deltaTimeSum >= 100 | !(control.getForward() | control.getBack())){
 					overRuleLeft = false;
 					deltaTimeSum = 0;
@@ -255,12 +282,21 @@ public class Player extends GameObject {
 			if(overRuleRight){
 				stepRight(deltaTime, Math.min(absCos, absSin) * speed);
 				deltaTimeSum = deltaTimeSum + deltaTime;
-				System.out.println(deltaTimeSum);
+//				System.out.println(deltaTimeSum);
 				if(deltaTimeSum >= 100 | !(control.getForward() | control.getBack())){
 					overRuleRight = false;
 					deltaTimeSum = 0;
 				}
 			}
+			
+			//detect end of level
+			//COORDINATES SHOULD BE SCALED BY MAZE_SQUARE_SIZE
+			if((Math.abs(locationX-(endPoint.getX()+0.5)*5) < checkarea) && (Math.abs(locationZ-(endPoint.getY()+0.5)*5) < checkarea)){
+				reachedEndOfLevel  = true;
+				SoundEffect.WALK.stop();
+				System.out.println("Reached end of level");
+			}
+			
 			//Reset collision detectors
 			canMoveForward = true;
 			canMoveBack = true;
@@ -268,10 +304,22 @@ public class Player extends GameObject {
 			canMoveRight = true;
 			leftForwardWall = false;
 			rightForwardWall = false;
+			
+			//Stop walking sounds when no input is received
+			if(!(control.getForward() || control.getBack() || control.getRight() || control.getLeft()) ){
+				SoundEffect.WALK.stop();
+			}
 		}
 	}
 
+	/**
+	 * Updates locationX and locantionZ according to forward movement. 
+	 * Also updates locationY if god mode is enabled.
+	 * @param deltaTime
+	 * @param speed
+	 */
 	private void stepForward(int deltaTime, double speed) {
+		SoundEffect.WALK.walk();
 		locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180);
 		locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180);
 		if(MazeRunner.GOD_MODE){
@@ -279,7 +327,14 @@ public class Player extends GameObject {
 		}
 	}
 
+	/**
+	 * Updates locationX and locantionZ according to backward movement. 
+	 * Also updates locationY if god mode is enabled.
+	 * @param deltaTime
+	 * @param speed
+	 */
 	private void stepBack(int deltaTime, double speed) {
+		SoundEffect.WALK.walk();
 		locationX = locationX + speed * deltaTime * Math.sin(Math.PI * horAngle / 180);
 		locationZ = locationZ + speed * deltaTime * Math.cos(Math.PI * horAngle / 180);
 		if(MazeRunner.GOD_MODE){
@@ -287,13 +342,44 @@ public class Player extends GameObject {
 		}
 	}
 
+	/**
+	 * Updates locationX and locantionZ according to movement. 
+	 * @param deltaTime
+	 * @param speed
+	 */
 	private void stepLeft(int deltaTime, double speed) {
+		SoundEffect.WALK.walk();
 		locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180 + Math.PI * 0.5);
 		locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180 + Math.PI * 0.5);
 	}
 
+	/**
+	 * Updates locationX and locantionZ according to movement towards the right. 
+	 * @param deltaTime
+	 * @param speed
+	 */
 	private void stepRight(int deltaTime, double speed) {
+		SoundEffect.WALK.walk();
 		locationX = locationX - speed * deltaTime * Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5);
 		locationZ = locationZ - speed * deltaTime * Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5);
+	}
+
+	@Override
+	public void display(GL gl) {
+		GLUT glut = new GLUT();
+
+		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
+		gl.glPushMatrix();
+		gl.glTranslated(locationX, 0, locationZ);
+		
+		
+		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
+		
+		glut.glutSolidTeapot(2);
+
+		gl.glPopMatrix();
+
+		gl.glEnable(GL.GL_CULL_FACE); // zet de instellingen weer terug zoals ze stonden		
 	}
 }

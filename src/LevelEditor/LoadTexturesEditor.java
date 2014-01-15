@@ -19,10 +19,10 @@ import com.sun.opengl.util.texture.TextureIO;
  */
 public class LoadTexturesEditor {
 
-	private Texture defaultTexture;
+	private Texture defaultTexture = loadingTexture("default.png");
 
-	private ArrayList<Texture> textureList = new ArrayList<Texture>();
-	private ArrayList<String> textureListNames = new ArrayList<String>();
+	private static ArrayList<Texture> textureList = new ArrayList<Texture>();
+	private static ArrayList<String> textureListNames = new ArrayList<String>();
 
 	/**
 	 * Hier maak je alle textures aan en zet je ze in een arraylijst met
@@ -31,31 +31,34 @@ public class LoadTexturesEditor {
 	 * halen in de getter
 	 */
 	public LoadTexturesEditor() {
-		defaultTexture = loadingTexture("default.png");
-		addTextureToList(loadingTexture("wallEditor.png"), "wallEditor");
-		addTextureToList(loadingTexture("floorEditor.png"), "floorEditor");
-		addTextureToList(loadingTexture("doorEditor.png"), "doorEditor");
-		addTextureToList(loadingTexture("guardianStepsBlue.png"),
-				"guardianStepsBlue");
-		addTextureToList(loadingTexture("guardianStepsRed.png"),
-				"guardianStepsRed");
-		addTextureToList(loadingTexture("cameraEditor.png"), "cameraEditor");
-		addTextureToList(loadingTexture("spotEditor.png"), "spotEditor");
-		addTextureToList(loadingTexture("startPos.png"), "startPos");
-		addTextureToList(loadingTexture("endPos.png"), "endPos");
-		addTextureToList(loadingTexture("addButton.png"), "addButton");
-		addTextureToList(loadingTexture("removeButton.png"), "removeButton");
-		addTextureToList(loadingTexture("removeLastPointGuardButton.png"),
-				"removeLastPointGuardButton");
-		addTextureToList(loadingTexture("showAllGuardsButton.png"),
-				"showAllGuardsButton");
-		addTextureToList(loadingTexture("setStartButton.png"), "setStartButton");
-		addTextureToList(loadingTexture("setEndButton.png"), "setEndButton");
-		addTextureToList(loadingTexture("setWidthButton.png"), "setWidthButton");
-		addTextureToList(loadingTexture("saveButton.png"), "saveButton");
-		addTextureToList(loadingTexture("loadButton.png"), "loadButton");
-		addTextureToList(loadingTexture("guardianEditor.png"), "guardianEditor");
-		addTextureToList(loadingTexture("keyEditor.png"), "keyEditor");
+
+		addTextureToList(loadingTexture("default.png"), "default");
+		addTextureToList(loadingTexture("editorWall.png"), "editorWall");
+		addTextureToList(loadingTexture("editorFloor.png"), "editorFloor");
+		addTextureToList(loadingTexture("editorDoor.png"), "editorDoor");
+		addTextureToList(loadingTexture("editorGuardianStepsBlue.png"),
+				"editorGuardianStepsBlue");
+		addTextureToList(loadingTexture("editorGuardianStepsRed.png"),
+				"editorGuardianStepsRed");
+		addTextureToList(loadingTexture("editorCamera.png"), "editorCamera");
+		addTextureToList(loadingTexture("editorSpot.png"), "editorSpot");
+		addTextureToList(loadingTexture("editorStartPos.png"), "editorStartPos");
+		addTextureToList(loadingTexture("editorEndPos.png"), "editorEndPos");
+		addTextureToList(loadingTexture("editorAddButton.png"), "editorAddButton");
+		addTextureToList(loadingTexture("editorRemoveButton.png"), "editorRemoveButton");
+		addTextureToList(loadingTexture("editorRemoveLastPointGuardButton.png"),
+				"editorRemoveLastPointGuardButton");
+		addTextureToList(loadingTexture("editorShowAllGuardsButton.png"),
+				"editorShowAllGuardsButton");
+		addTextureToList(loadingTexture("editorSetStartButton.png"), "editorSetStartButton");
+		addTextureToList(loadingTexture("editorSetEndButton.png"), "editorSetEndButton");
+		addTextureToList(loadingTexture("editorSetSizeButton.png"), "editorSetSizeButton");
+		addTextureToList(loadingTexture("editorSaveButton.png"), "editorSaveButton");
+		addTextureToList(loadingTexture("editorLoadButton.png"), "editorLoadButton");
+		addTextureToList(loadingTexture("editorGuardian.png"), "editorGuardian");
+		addTextureToList(loadingTexture("editorKey.png"), "editorKey");
+		addTextureToList(loadingTexture("controlCenterEditor.png"), "controlCenterEditor");
+
 	}
 
 	/**
@@ -98,7 +101,7 @@ public class LoadTexturesEditor {
 	 * @param textureName De naam van de texture zoals deze is opgeslagen in de class LoadTexturesEditor
 	 * @return De texture die opgevraagd is of een default texture wanneer de naam niet bekend is
 	 */
-	public Texture getTexture(String textureName) {
+	public static Texture getTexture(String textureName) {
 		for (int i = 0; i < textureListNames.size(); i++) {
 			if (textureListNames.get(i).equals(textureName)) {
 				if (!(textureList.get(i) == null)) {
@@ -106,7 +109,7 @@ public class LoadTexturesEditor {
 				}
 			}
 		}
-		return defaultTexture;
+		return null;
 	}
 
 	/**

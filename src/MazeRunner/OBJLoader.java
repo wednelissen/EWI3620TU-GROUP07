@@ -3,13 +3,17 @@ package MazeRunner;
 import java.io.*;
 import java.util.ArrayList;
 
+
+import com.sun.opengl.util.texture.Texture;
+
 public class OBJLoader {
 
-	public static Model loadModel(String fileName)
-			throws FileNotFoundException, IOException {
+	public static Model loadModel(String fileName, Texture myTexture) {
+		Model m = new Model();
+		m.setTexture(myTexture);
+		try {
 		BufferedReader reader = new BufferedReader(new FileReader(new File(
 				fileName)));
-		Model m = new Model();
 		String line;
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("v ")) {
@@ -64,7 +68,12 @@ public class OBJLoader {
 			}
 		}
 		reader.close();
-
-		return m;
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Loading model failed");
+			m = null;
+		}
+		return m;	
 	}
 }

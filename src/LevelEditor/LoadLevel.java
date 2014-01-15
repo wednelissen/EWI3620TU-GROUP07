@@ -17,6 +17,8 @@ public class LoadLevel {
 	private int spotSize;	
 	private String[] cameraPlan;
 	private int cameraSize;
+	private String[] controlCenterPlan;
+	private int controlCenterSize;
 	private String[] guardsPlan;
 	private String[] keysPlan;
 	private int guardSize;
@@ -78,6 +80,15 @@ public class LoadLevel {
 				for(int i = 0; i < cameraSize; i++){
 					cameraPlan[i] = sc.next();		
 				}	
+				
+				//de Control Centers worden ingelezen als cijfers die de punten voorstellen waar een control center staat.
+				sc.next(); //laad het kopje met tekst controlCenter:
+				String ControlCenterSizePrint = sc.next();
+				controlCenterSize = Integer.parseInt(ControlCenterSizePrint);
+				controlCenterPlan = new String[controlCenterSize];
+				for(int i = 0; i < controlCenterSize; i++){
+					controlCenterPlan[i] = sc.next();		
+				}
 				
 				
 				//de guards worden ingelezen als cijfers die de punten voorstellen waar een bewaker loopt.
@@ -183,10 +194,6 @@ public class LoadLevel {
 			for(int i = 0; i < width; i++){
 				String temp = floorPlan[j].charAt(i) + "";
 				int temp2 = Integer.parseInt(temp);
-				//voor nu nog even de deuren
-				if(temp2 == 2){
-					temp2 = 1;
-				}
 				maze[i][j] = temp2;	
 			}
 		}
@@ -249,7 +256,23 @@ public class LoadLevel {
 		return result;
 	}
 	
-	
+	/**
+	 * 
+	 * @return 
+	 * een Arraylist van Punten waar de control Centers zich bevinden
+	 */
+	public ArrayList<Point> getControlCenters(){
+		ArrayList<Point> result = new ArrayList<Point>();
+		for(int i=0; i<controlCenterSize; i++){
+			String[] a = controlCenterPlan[i].split(";");
+			String[] b = a[0].split(",");
+			int x = Integer.parseInt(b[0]);
+			int y = Integer.parseInt(b[1]);
+			Point temp = new Point(x,y);
+			result.add(temp);	
+		}
+		return result;
+	}
 
 	/**
 	 * 

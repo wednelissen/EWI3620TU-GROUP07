@@ -58,7 +58,6 @@ build/
 *_p.c
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
@@ -228,3 +227,4 @@ jogl_cg.dll
 gluegen-rt.dll
 how_ya_doin_x.wav
 src/Sound/how_ya_doin_x.wav
+level1_oud

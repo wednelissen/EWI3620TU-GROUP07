@@ -26,15 +26,15 @@ import javax.media.opengl.GLCanvas;
 public class UserInput extends Control implements MouseListener,
 		MouseMotionListener, KeyListener {
 	// Fields to help calculate mouse movement
-	private int Xbegin;
-	private int Ybegin;
+	private int Xbegin = 100;
+	private int Ybegin = 100;
 	private int Xdragged;
 	private int Ydragged;
 	private int dx;
 	private int dy;
 	private GLCanvas canvas;
-	boolean gamepaused = false; // used for game pausing
 	private MazeRunner mazerunner;
+	private boolean freeze = false;
 
 	/**
 	 * UserInput constructor.
@@ -45,10 +45,17 @@ public class UserInput extends Control implements MouseListener,
 	 * @param canvas The GLCanvas to which to add the listeners.
 	 */
 	public UserInput(GLCanvas canvas) {
-		canvas.addMouseListener(this);
-		canvas.addMouseMotionListener(this);
-		canvas.addKeyListener(this);
 		this.canvas = canvas;
+		this.canvas.addMouseListener(this);
+		this.canvas.addMouseMotionListener(this);
+		this.canvas.addKeyListener(this);
+		
+	}
+	
+	
+	public void setMazeRunner(MazeRunner mazerunner) {
+		this.mazerunner = mazerunner;
+
 	}
 
 	/*
@@ -59,12 +66,21 @@ public class UserInput extends Control implements MouseListener,
 
 	@Override
 	public void update() {
-		// TODO: Set dX and dY to values corresponding to mouse movement
+		// DONE: Set dX and dY to values corresponding to mouse movement
 		Control.dX = dx;
 		Control.dY = dy;
 		dx = 0;
 		dy = 0;
 
+	}
+	
+	private void restPLayer(){
+		Control.forward = false;
+		Control.back = false;
+		Control.left = false;
+		Control.right = false;
+		//Stop sprinting
+		mazerunner.setWalkingSpeed(0.01);
 	}
 
 	/*
@@ -75,36 +91,40 @@ public class UserInput extends Control implements MouseListener,
 
 	@Override
 	public void mousePressed(MouseEvent event) {
-		// TODO: Detect the location where the mouse has been pressed
-		// Xbegin = event.getX();
-		// Ybegin = event.getY();
-		// System.out.println("start punt: " + Xbegin + " " + Ybegin);
-		// System.out.println("god mode aan: " + MazeRunner.GOD_MODE);
+		//TODO: Implement shooting
 	}
 
 	@Override
 	public void keyPressed(KeyEvent event) {
-		// Set forward, back, left and right to corresponding key presses
 
 		int key = event.getKeyCode();
-		// System.out.println("toets " + key);
 
-		if (key == KeyEvent.VK_W) {
-			Control.forward = true;
-		}
-		if (key == KeyEvent.VK_S) {
-			Control.back = true;
-		}
-		if (key == KeyEvent.VK_A) {
-			Control.left = true;
-		}
-		if (key == KeyEvent.VK_D) {
-			Control.right = true;
-		}
+		if(!freeze){
+			if (key == KeyEvent.VK_W) {
+				Control.forward = true;
+			}
+			if (key == KeyEvent.VK_S) {
+				Control.back = true;
+			}
+			if (key == KeyEvent.VK_A) {
+				Control.left = true;
+			}
+			if (key == KeyEvent.VK_D) {
+				Control.right = true;
+			}
+			//Sprinting
+			if (key == KeyEvent.VK_SHIFT){
+				mazerunner.setWalkingSpeed(0.02);
+			}
 		
-		if (key == KeyEvent.VK_SHIFT){
-			mazerunner.setWalkingSpeed(0.02);
 		}
+		if (key == KeyEvent.VK_E) {
+			mazerunner.openDoor();
+			freeze = mazerunner.watchFromCamera();
+		}
+
+
+		
 		// turn on or of GOD mode
 		if (key == KeyEvent.VK_G) {
 			if (MazeRunner.GOD_MODE == false)
@@ -115,12 +135,16 @@ public class UserInput extends Control implements MouseListener,
 
 		// open pause menu
 		if (key == KeyEvent.VK_ESCAPE) {
-
-			gamepaused = mazerunner.pauseSwitch();
+			this.restPLayer();
+			mazerunner.pauseSwitch();
 			System.out.println("Open Pause menu");
-			canvas.removeGLEventListener(mazerunner);
-			canvas.removeKeyListener(this);
-			new StatePauseMenu(canvas, this.mazerunner);
+//			canvas.removeKeyListener(this);
+//			canvas.removeMouseListener(this);
+//			canvas.removeMouseMotionListener(this);
+
+		}
+		if (key == KeyEvent.VK_NUMPAD5){
+			mazerunner.endGame();
 		}
 
 	}
@@ -143,6 +167,7 @@ public class UserInput extends Control implements MouseListener,
 			Control.right = false;
 		}
 		
+		//Stop sprinting
 		if (key == KeyEvent.VK_SHIFT){
 			mazerunner.setWalkingSpeed(0.01);
 		}
@@ -151,45 +176,37 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void mouseMoved(MouseEvent event) {
 
-		boolean roboMouse = false;
-		Xbegin = 100;
-		Ybegin = 100;
-		// System.out.println(Xbegin + "," + Ybegin);
-
 		Xdragged = event.getX();
 		Ydragged = event.getY();
-		if (!roboMouse) {
-			dx = Xbegin - Xdragged;
-			dy = Ybegin - Ydragged;
 
-		}
+		dx = Xbegin - Xdragged;
+		dy = Ybegin - Ydragged;
+
+		resetMousePosition();
+
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent event){
+		mouseMoved(event);
+	}
+	
+	public void resetMousePosition() {
 		try {
 			Robot robot = new Robot();
-			roboMouse = true;
+
 			robot.mouseMove(Xbegin, Ybegin);
-			roboMouse = false;
+
 		} catch (AWTException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
-	
-	public void setMazeRunner(MazeRunner mazerunner) {
-		this.mazerunner = mazerunner;
-
-	}
-
 	/*
 	 * **********************************************
 	 * *		Unused event handlers				*
 	 * **********************************************
 	 */
-	
-	@Override
-	public void mouseDragged(MouseEvent event){
-		
-	}
 
 	@Override
 	public void keyTyped(KeyEvent event)
@@ -214,6 +231,17 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void mouseReleased(MouseEvent event)
 	{
+		if (freeze){
+			//If left button pressed
+			if (event.getButton () == MouseEvent.BUTTON1){
+				mazerunner.watchFromOtherCamera(true);
+	        }
+			
+	        //If right button pressed
+	        else if (event.getButton () == MouseEvent.BUTTON3){
+	        	mazerunner.watchFromOtherCamera(false);
+	        }
+	     }
 	}
 
 }
