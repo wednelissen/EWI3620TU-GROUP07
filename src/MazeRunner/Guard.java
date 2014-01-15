@@ -20,22 +20,21 @@ import com.sun.opengl.util.GLUT;
 public class Guard extends GameObject implements VisibleObject {
 
 	private ArrayList<Point> coordinaten;
-
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
 	public Maze maze;
 	private double speed;
 	private boolean richting = true;
+
 	private Point startpositie;
+
 	private Point eindpositie;
 	private Point huidigepositie;
 
-	public Point getHuidigepositie() {
-		return huidigepositie;
-	}
-
 	private Point finishpositie;
+
 	private int teller = 1;
+
 	private boolean zplus = false; // loopt naar beneden
 	private boolean zmin = false; // loopt naar boven
 	private boolean xplus = false; // loopt naar rechts
@@ -49,6 +48,11 @@ public class Guard extends GameObject implements VisibleObject {
 	private double startAngle;
 	private boolean startCheck = true;
 	private boolean finishCheck = false;
+	private boolean busted;
+	private boolean alarmed = false;
+
+	private boolean patrol = true;
+	private ArrayList<Point> patrolCoordinaten;
 
 	private boolean canMoveForward;
 	private boolean canMoveLeft;
@@ -56,6 +60,8 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean overRuleLeft;
 	private boolean overRuleRight;
 	private int deltaTimeSum = 0;
+	private Point patrolStartPositie;
+	private boolean resettingPatrol = false;
 
 	public Guard(double x, double y, double z, ArrayList<Point> points) {
 		super(x * SQUARE_SIZE + (0.5 * SQUARE_SIZE), y, z * SQUARE_SIZE
@@ -63,8 +69,10 @@ public class Guard extends GameObject implements VisibleObject {
 
 		speed = 0.005;
 		coordinaten = points;
+		patrolCoordinaten = points;
 
 		startpositie = coordinaten.get(0);
+		patrolStartPositie = coordinaten.get(0);
 		finishpositie = coordinaten.get(coordinaten.size() - 1);
 		huidigepositie = startpositie;
 		startHoek();
@@ -87,14 +95,6 @@ public class Guard extends GameObject implements VisibleObject {
 			startAngle = 180;
 			zminPrev = true;
 		}
-	}
-
-	public void setCanMoveForward(boolean b) {
-		this.canMoveForward = b;
-	}
-
-	public void setSpeed(double speed) {
-		this.speed = speed;
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class Guard extends GameObject implements VisibleObject {
 			updateAttackPosition(deltaTime);
 
 			if (Math.abs(diffX) < 2.5 && Math.abs(diffZ) < 2.5) {
-				System.out.println("busted!!!");
+				busted = true;
 			}
 
 		}
@@ -566,6 +566,110 @@ public class Guard extends GameObject implements VisibleObject {
 	public void setCanMoveLeft(boolean b) {
 		this.canMoveLeft = b;
 
+	}
+
+	public ArrayList<Point> getCoordinaten() {
+		return coordinaten;
+	}
+
+	public void setCoordinaten(ArrayList<Point> coordinaten) {
+		this.coordinaten = coordinaten;
+	}
+
+	public Point getStartpositie() {
+		return startpositie;
+	}
+
+	public void setStartpositie(Point startpositie) {
+		this.startpositie = startpositie;
+	}
+
+	public Point getEindpositie() {
+		return eindpositie;
+	}
+
+	public void setEindpositie(Point eindpositie) {
+		this.eindpositie = eindpositie;
+	}
+
+	public Point getHuidigepositie() {
+		return huidigepositie;
+	}
+
+	public Point getFinishpositie() {
+		return finishpositie;
+	}
+
+	public void setFinishpositie(Point finishpositie) {
+		this.finishpositie = finishpositie;
+	}
+
+	public Point getPatrolStartPositie() {
+		return patrolStartPositie;
+	}
+
+	public void setPatrolStartPositie(Point patrolStartPositie) {
+		this.patrolStartPositie = patrolStartPositie;
+	}
+
+	public boolean isResettingPatrol() {
+		return resettingPatrol;
+	}
+
+	public void setResettingPatrol(boolean resettingPatrol) {
+		this.resettingPatrol = resettingPatrol;
+	}
+
+	public ArrayList<Point> getPatrolCoordinaten() {
+		return patrolCoordinaten;
+	}
+
+	public void setPatrolCoordinaten(ArrayList<Point> patrolCoordinaten) {
+		this.patrolCoordinaten = patrolCoordinaten;
+	}
+
+	public int getTeller() {
+		return teller;
+	}
+
+	public void setTeller(int teller) {
+		this.teller = teller;
+	}
+
+	public boolean isRichting() {
+		return richting;
+	}
+
+	public void setRichting(boolean richting) {
+		this.richting = richting;
+	}
+
+	public void setCanMoveForward(boolean b) {
+		this.canMoveForward = b;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public boolean isBusted() {
+		return busted;
+	}
+
+	public boolean isAlarmed() {
+		return alarmed;
+	}
+
+	public void setAlarmed(boolean alarmed) {
+		this.alarmed = alarmed;
+	}
+
+	public boolean isPatrol() {
+		return patrol;
+	}
+
+	public void setPatrol(boolean patrol) {
+		this.patrol = patrol;
 	}
 
 }

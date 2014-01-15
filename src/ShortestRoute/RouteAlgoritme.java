@@ -82,7 +82,7 @@ public class RouteAlgoritme {
 
 		}
 		if (node.equals(camera)) {
-			System.out.println("found");
+
 		}
 		return true;
 	}
@@ -117,13 +117,13 @@ public class RouteAlgoritme {
 		}
 	}
 
-	public void algorithm(Point cam, Point guard) {
+	public ArrayList<Point> algorithm(Point cam, Point guard) {
+		ArrayList<Point> route = new ArrayList<Point>();
 		this.camera = cam;
 		this.guardLocation = guard;
 		mapConversion();
 		distance.put(guardLocation, 0);
-		System.out.println("begin punt: " + guardLocation);
-		System.out.println("Eind punt: " + camera);
+
 		boolean found = true;
 
 		while (!closedList.contains(camera)) {
@@ -135,11 +135,15 @@ public class RouteAlgoritme {
 		}
 
 		if (found) {
+
 			backtracking(camera);
-			for (Point p : shortestPath)
-				System.out.println(p);
+			for (Point p : shortestPath) {
+
+				route.add(p);
+
+			}
 
 		}
-
+		return route;
 	}
 }
