@@ -99,11 +99,17 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private float[] saveCoords = new float[] { 640, 565, 75, 20 };
 	private float[] loadCoords = new float[] { 720, 565, 75, 20 };
 	
+	private float[] MeldingCoords = new float[] { 330, 280, 75, 20 };
+	private float[] Melding2Coords = new float[] { 290, 565, 75, 20 };
+	
 	//define the windows
 	private MapMenu map = new MapMenu(mapCoords, screenWidth, screenHeight);
 	private Window items = new Window(itemCoords, screenWidth, screenHeight);
 	private PlacedItemsMenu placedItems = new PlacedItemsMenu(placedItemsCoords, screenWidth, screenHeight);
 	private Window placedItemsProperties = new Window(placedItemsPropertiesCoords, screenWidth, screenHeight);
+	private Window Melding = new Window(MeldingCoords, screenWidth, screenHeight);
+	private Window Melding2 = new Window(Melding2Coords, screenWidth, screenHeight);
+	
 	
 	//define the buttons
 	private Button setStart = new Button(setStartCoords, screenWidth, screenHeight);
@@ -357,10 +363,30 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				}
 			}
 			
+			//geeft een melding als begin en eind punt nog niet geset zijn.
+			if(!StartEnd.hasStart() && !StartEnd.hasEnd()){
+				gl.glColor3f(0, 0, 0);
+				Melding2.renderString(gl, "can't save: Begin and End are not set.");
+				gl.glColor3f(1, 1, 1);
+			}
+			else if(!StartEnd.hasStart()){
+					gl.glColor3f(0, 0, 0);
+					Melding2.renderString(gl, "can't save: Begin point is not set.");
+					gl.glColor3f(1, 1, 1);
+			}
+			else if(!StartEnd.hasEnd()){
+				gl.glColor3f(0, 0, 0);
+				Melding2.renderString(gl, "can't save: End point is not set.");
+				gl.glColor3f(1, 1, 1);
+		}
 //			gl.glColor3f(0f, 0f, 0f);
 		}
 		else{
 			map.draw(gl, null);
+			gl.glColor3f(0, 0, 0);
+			Melding.renderString(gl, "You need to set the maze sizes at 'Size',\n\tbefore you can add items.");
+			gl.glColor3f(1, 1, 1);
+
 		}
 
 		//het item Menu word getekent met de items waarop geklikt kan worden
@@ -459,6 +485,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		//update the windows and button sizes
 		map.update(screenWidth, screenHeight);
+		Melding.update(screenWidth, screenHeight);
+		Melding2.update(screenWidth, screenHeight);
 		map.updateBlocks(screenWidth, screenHeight);
 		items.update(screenWidth, screenHeight);
 		placedItems.update(screenWidth, screenHeight);
