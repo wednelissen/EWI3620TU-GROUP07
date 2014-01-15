@@ -312,7 +312,7 @@ public class Guard extends GameObject implements VisibleObject {
 		gl.glTranslated(locationX, 0, locationZ);
 		
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
-		gl.glScaled(0.60, 0.60, 0.60);
+		gl.glScaled(0.50, 0.50, 0.50);
 		
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
 		modelGuard.draw(gl);

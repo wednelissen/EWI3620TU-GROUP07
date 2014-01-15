@@ -299,7 +299,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			//alle guards zullen worden getekent met blauwe blokjes. 
 			//indien je 1 specifieke guard hebt geselecteerd word deze met rode blokjes getekent
 			if(AllGuardsOnOff){
-//				gl.glColor3f(0f, 0f, 0.5f);
 				for(Guardian g: placedItems.getAllGuards()){
 					for(int i = 0; i <g.routeSize(); i++){
 						Point a = g.getRoute(i);
@@ -310,7 +309,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			
 			//alle sleutels die zijn geplaatst worden getekent.
 			if(AllKeysOnOff){
-//				gl.glColor3f(0.1f, 0.3f, 0.5f);
 				for(Key k: placedItems.getAllKeys()){
 					Point a = k.getKey();
 					map.getBuildingBlockByPosition(a).drawKey(gl);			
@@ -321,7 +319,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			//er worden rode kruisjes getekend in de blokjes waar de guard loopt. 
 			//dit geld alleen voor deze ene geselecteerde guard.
 			if(guard.routeSize()>0 && Mode == ClickOptions.guardian){
-//				gl.glColor3f(0.5f, 0, 0f);
 				for(int i = 0; i <guard.routeSize(); i++){
 					Point a = guard.getRoute(i);
 					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardianStepsRed"));			
@@ -331,14 +328,12 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			
 			//tijdelijke sleutel die is geselecteerd wordt getekent
 			if(key.hasPosition() && (Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor) ){
-//				gl.glColor3f(0.1f, 0.3f, 0.5f);
 				Point a = key.getKey();
 				map.getBuildingBlockByPosition(a).drawKey(gl);	
 			}
 			
 			//alle geplaatste camara's worden getekent
 			if(cameraList.getCameras().size()>0){
-//				gl.glColor3f(0.2f, 1f, 0.6f);
 				for(Camera s: cameraList.getCameras()){
 					Point a = s.getPosition();
 					map.getBuildingBlockByPosition(a).drawCameras(gl, LoadTexturesEditor.getTexture("editorCamera"));
@@ -347,7 +342,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			
 			//alle geplaatste control centers worden getekent
 			if(controlCenterList.getControlCenters().size()>0){
-//				gl.glColor3f(0.2f, 1f, 0.6f);
 				for(ControlCenterEditor s: controlCenterList.getControlCenters()){
 					Point a = s.getPosition();
 					map.getBuildingBlockByPosition(a).drawControlCenter(gl, LoadTexturesEditor.getTexture("controlCenterEditor"));
@@ -356,7 +350,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			
 			//alle geplaatste spots, maximaal 8, worden getekent
 			if(spotList.getSpots().size()>0){
-//				gl.glColor3f(1f, 1f, 0f);
 				for(Spot s: spotList.getSpots()){
 					Point a = s.getPosition();
 					map.getBuildingBlockByPosition(a).drawSpot(gl, LoadTexturesEditor.getTexture("editorSpot"));
@@ -379,7 +372,6 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				Melding2.renderString(gl, "can't save: End point is not set.");
 				gl.glColor3f(1, 1, 1);
 		}
-//			gl.glColor3f(0f, 0f, 0f);
 		}
 		else{
 			map.draw(gl, null);

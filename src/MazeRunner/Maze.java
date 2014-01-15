@@ -414,8 +414,8 @@ public class Maze implements VisibleObject {
 		// Sleutel gat
 
 		// DIT MOET WEG
-//		 gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
-//		 keyCardHoleColor[2]);
+		 gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
+		 keyCardHoleColor[2]);
 
 		gl.glBegin(GL.GL_QUADS);
 
@@ -455,7 +455,7 @@ public class Maze implements VisibleObject {
 		gl.glEnd();
 
 		// DIT MOET WEG
-//		 gl.glColor3f(1, 1, 1);
+		 gl.glColor3f(1, 1, 1);
 
 		if (myTexture2 != null) {
 			// Eerst de texture aanzetten

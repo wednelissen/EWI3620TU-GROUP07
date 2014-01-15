@@ -137,6 +137,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// We define an ArrayList of VisibleObjects to store all the objects
 		// that need to be displayed by MazeRunner.
 		visibleObjects = new ArrayList<VisibleObject>();
+		
+		createSpots(gl);
+		for (Spotlight temp: spotlights) {
+			visibleObjects.add(temp);
+		}
 
 		// Add the maze that we will be using.	
 		maze = new Maze();
@@ -597,10 +602,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	public void createSpots(GL gl) {
 		// Hoogte van de spot, moet nog veranderen
-		double spotHeight = maze.SQUARE_SIZE;
+		double spotHeight = 5;
 		int i = 0;
 		for (Point temp : tempSpots) {
-			Spotlight res = new Spotlight(gl, maze.SQUARE_SIZE,
+			Spotlight res = new Spotlight(gl, 5,
 					LoadTexturesMaze.getTexture("spotlight"), temp.getX(),
 					spotHeight, temp.getY(), i);
 			spotlights.add(res);
