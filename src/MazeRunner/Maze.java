@@ -1,23 +1,10 @@
 package MazeRunner;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-
 import LevelEditor.LoadLevel;
-import LevelEditor.Key;
-
-import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
-
-import LevelEditor.LoadLevel;
-
-import com.sun.opengl.util.GLUT;
-import com.sun.opengl.util.ImageUtil;
 import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
 import LevelEditor.OpenLevelFrame;
 
 /**
@@ -489,6 +476,15 @@ public class Maze implements VisibleObject {
 	
 	public String getLevelName(){
 		return levelName;
+	}
+	
+	/**
+	 * Returns the LoadLevel-representation of the Maze. Used to 
+	 * import all objects such as cameras into MazeRunner.
+	 * @return
+	 */
+	public LoadLevel getLoadLevel(){
+		return this.newMaze;
 	}
 
 
