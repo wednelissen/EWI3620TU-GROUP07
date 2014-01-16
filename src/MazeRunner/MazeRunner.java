@@ -301,6 +301,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private void updateHighscore(int deltaTime) {
 		score.update(deltaTime);
 	}
+	
+	public void updateHighScoreCamera(){
+		score.alarmedCameraUpdate();
+	}
 
 	/**
 	 * reshape(GLAutoDrawable, int, int, int, int, int) is called upon whenever
@@ -593,7 +597,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 	public void createCameras(ArrayList<Point> tempCamera) {
 		for (Point temp : tempCamera) {
-			GuardCamera res = new GuardCamera(temp.getX(), 6, temp.getY());
+			GuardCamera res = new GuardCamera(temp.getX(), 6, temp.getY(),this);
 			cameras.add(res);
 		}
 	}

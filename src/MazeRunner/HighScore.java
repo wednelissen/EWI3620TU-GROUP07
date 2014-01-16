@@ -50,6 +50,10 @@ public class HighScore {
 	public void update(int deltaTime) {
 		this.score += deltaTime;
 	}
+	
+	public void alarmedCameraUpdate(){
+		this.score += 10000;
+	}
 
 	public int getScore() {
 		return this.score;
