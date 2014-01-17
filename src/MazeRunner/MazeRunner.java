@@ -420,6 +420,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 							.get(alarmedCoordinates.size() - 1));
 					closestGuard.setRichting(true);
 					closestGuard.setTeller(1);
+					//resettingRoute = false;
 
 				}
 			}
@@ -456,6 +457,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 					temp.setResettingPatrol(false);
 					temp.setPatrol(true);
 					setPatrol();
+					resettingRoute = false;
 				}
 
 			}
@@ -474,16 +476,15 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			ArrayList<Point> patrolCoordinaten = closestGuard
 					.getPatrolCoordinaten();
 			System.out.println("print hij deze" + patrolCoordinaten);
-			ArrayList<Point> tempoRoute = new ArrayList<Point>();
-			tempoRoute.add(closestGuard.getHuidigepositie());
-			tempoRoute.addAll(patrolCoordinaten);
-			patrolCoordinaten = tempoRoute;
 			closestGuard.setCoordinaten(patrolCoordinaten);
+			closestGuard.setStartpositie(patrolCoordinaten.get(0));
 			closestGuard.setFinishpositie(patrolCoordinaten
 					.get(patrolCoordinaten.size() - 1));
 			closestGuard.setStartpositie(patrolCoordinaten.get(0));
 			closestGuard.setRichting(true);
 			closestGuard.setTeller(1);
+			closestGuard.goedeKijkNaCam();
+			
 		}
 	}
 
@@ -491,18 +492,16 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		if (closestGuard.isResettingPatrol()) {
 			ArrayList<Point> resetRoute = new RouteAlgoritme(maze).algorithm(
 					closestGuard.getPatrolStartPositie(),
-					closestGuard.getEindpositie());
-			ArrayList<Point> tempoRoute = new ArrayList<Point>();
-			tempoRoute.add(closestGuard.getHuidigepositie());
-			tempoRoute.addAll(resetRoute);
-			resetRoute = tempoRoute;
+					closestGuard.getHuidigepositie());
 			closestGuard.setCoordinaten(resetRoute);
 			ArrayList<Point> resetCoordinates = closestGuard.getCoordinaten();
+			closestGuard.setStartpositie(resetCoordinates.get(0));
 			closestGuard.setFinishpositie(resetCoordinates.get(resetCoordinates
 					.size() - 1));
 			closestGuard.setRichting(true);
 			closestGuard.setTeller(1);
 			resettingRoute = true;
+			closestGuard.goedeKijkNaCam();
 
 		}
 	}

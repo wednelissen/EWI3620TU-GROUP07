@@ -81,7 +81,7 @@ public class Guard extends GameObject implements VisibleObject {
 		startHoek();
 	}
 
-	private void startHoek() {
+	public void startHoek() {
 		Point secondPosition = coordinaten.get(1);
 		int diffX = (int) (secondPosition.getX() - startpositie.getX());
 		int diffZ = (int) (secondPosition.getY() - startpositie.getY());
@@ -683,5 +683,12 @@ public class Guard extends GameObject implements VisibleObject {
 
 	public Point getEindPositie() {
 		return eindpositie;
+	}
+	
+	public void goedeKijkNaCam(){
+		startHoek();
+		horAngle = 0;
+		startCheck = true;
+		resetRichtingDraaier(true);
 	}
 }
