@@ -66,8 +66,8 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		return guardSend;
 	}
 
-	public void guardSended() {
-		guardSend = true;
+	public void guardSended(boolean bool) {
+		this.guardSend = bool;
 	}
 
 	/**

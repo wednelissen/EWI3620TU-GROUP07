@@ -1,7 +1,3 @@
-/**
- * DIJKSTRA MOET NOG WORDEN GEIMPLEMENTEERD!
- */
-
 package MazeRunner;
 
 import java.awt.AWTException;
@@ -84,6 +80,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private Gun gun;
 	private int closestGuardNumber;
 	private Guard closestGuard;
+	private boolean resettingRoute = false;
+	private boolean resettedRoute = false;
 
 	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
@@ -377,68 +375,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		playerWallChecker(checkdistance);
 		playerItemCheck();
 
-		for (Guard temp : guards) {
-
-			if (!temp.isAttack() && temp.isPatrol()) {
-				temp.update(deltaTime);
-			}
-			if (!GOD_MODE) {
-				temp.playerDetectie(player.locationX, player.locationZ);
-				temp.aanvallen(player.locationX, player.locationZ, deltaTime);
-			}
-			if (temp.isAlarmed() && !temp.isAttack()) {
-				closestGuard.setCoordinaten(closestGuardRoute);
-				ArrayList<Point> alarmedCoordinates = temp.getCoordinaten();
-				// temp.setTeller(1);
-				temp.setFinishpositie(alarmedCoordinates.get(alarmedCoordinates
-						.size() - 1));
-				temp.update(deltaTime);
-				if (temp.getHuidigepositie().equals(temp.getFinishpositie())) {
-
-					temp.setResettingPatrol(true);
-					temp.setAlarmed(false);
-				}
-				if (temp.isResettingPatrol() && !temp.isAttack()) {
-					ArrayList<Point> resetRoute = new RouteAlgoritme(maze)
-							.algorithm(temp.getPatrolStartPositie(),
-									temp.getHuidigepositie());
-					System.out.println(resetRoute);
-					temp.setCoordinaten(resetRoute);
-					ArrayList<Point> resetCoordinates = temp.getCoordinaten();
-
-					temp.setStartpositie(resetCoordinates.get(0));
-					temp.setFinishpositie(resetCoordinates.get(resetCoordinates
-							.size() - 1));
-
-					temp.setTeller(1);
-					temp.setRichting(true);
-					System.out.println(temp.getTeller());
-					System.out.println(temp.isRichting());
-					temp.update(deltaTime);
-
-					if (temp.getHuidigepositie()
-							.equals(temp.getFinishpositie())) {
-						temp.setResettingPatrol(false);
-						temp.setPatrol(true);
-						ArrayList<Point> patrolCoordinaten = temp
-								.getPatrolCoordinaten();
-						temp.setCoordinaten(patrolCoordinaten);
-						temp.setFinishpositie(patrolCoordinaten
-								.get(patrolCoordinaten.size() - 1));
-						temp.setStartpositie(patrolCoordinaten.get(0));
-					}
-
-				}
-
-			}
-
-			// System.out.println("x: "+player.locationX +
-			// " z: "+player.locationZ+" EDITOR--- x: "
-			// +(int)Math.floor( player.locationX / SQUARE_SIZE
-			// )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
-
-		}
-
 		for (GuardCamera cam : cameras) {
 			cam.updatePositie(player.locationX, player.locationZ);
 			if (cam.alarm() && !cam.getGuardSend()) {
@@ -448,22 +384,117 @@ public class MazeRunner implements GLEventListener, MouseListener {
 					i++;
 					route = new RouteAlgoritme(maze);
 					ArrayList<Point> guardRoute = route.algorithm(
-							cam.getHuidigepositie(), guard.getHuidigepositie());
+							cam.getHuidigepositie(), guard.getEindPositie());
 					if (guardRoute.size() < j) {
+						// closestGuardRoute.add(guard.getHuidigepositie());
+						// closestGuardRoute.addAll(guardRoute);
 						closestGuardRoute = guardRoute;
 						closestGuardNumber = i;
-
+						closestGuard = guard;
 					}
 
 				}
-				System.out.println(closestGuardRoute);
-				System.out.println(closestGuardNumber);
-				closestGuard = guards.get(closestGuardNumber - 1);
+
+				ArrayList<Point> tempRoute = new ArrayList<Point>();
+				tempRoute.add(closestGuard.getHuidigepositie());
+				tempRoute.addAll(closestGuardRoute);
+				closestGuardRoute = tempRoute;
 				closestGuard.setPatrol(false);
 				closestGuard.setAlarmed(true);
+				cam.guardSended(true);
+				if (closestGuard.isAlarmed()) {
+					closestGuard.setCoordinaten(closestGuardRoute);
+					ArrayList<Point> alarmedCoordinates = closestGuard
+							.getCoordinaten();
+					closestGuard.setFinishpositie(alarmedCoordinates
+							.get(alarmedCoordinates.size() - 1));
+					closestGuard.setRichting(true);
+					closestGuard.setTeller(1);
+
+				}
 			}
 		}
 
+		for (Guard temp : guards) {
+
+			if (!temp.isAttack() && temp.isPatrol()) {
+				temp.update(deltaTime);
+
+			}
+			if (!GOD_MODE) {
+				temp.playerDetectie(player.locationX, player.locationZ);
+				temp.aanvallen(player.locationX, player.locationZ, deltaTime);
+			}
+			if (temp.isAlarmed() && !temp.isAttack()) {
+				temp.update(deltaTime);
+				if (temp.getHuidigepositie().equals(temp.getFinishpositie())) {
+					System.out.println("zeg het eens");
+					temp.setResettingPatrol(true);
+					temp.setAlarmed(false);
+				}
+
+			}
+			if (temp.isResettingPatrol() && !temp.isAttack()) {
+				if (!resettingRoute) {
+					resetPatrol();
+				}
+				System.out.println("reset mofo");
+				temp.update(deltaTime);
+
+				if (temp.getHuidigepositie().equals(temp.getFinishpositie())) {
+					System.out.println("ja toch arrivatie");
+					temp.setResettingPatrol(false);
+					temp.setPatrol(true);
+					setPatrol();
+				}
+
+			}
+
+		}
+
+		// System.out.println("x: "+player.locationX +
+		// " z: "+player.locationZ+" EDITOR--- x: "
+		// +(int)Math.floor( player.locationX / SQUARE_SIZE
+		// )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
+
+	}
+
+	private void setPatrol() {
+		if (closestGuard.isPatrol()) {
+			ArrayList<Point> patrolCoordinaten = closestGuard
+					.getPatrolCoordinaten();
+			System.out.println("print hij deze" + patrolCoordinaten);
+			ArrayList<Point> tempoRoute = new ArrayList<Point>();
+			tempoRoute.add(closestGuard.getHuidigepositie());
+			tempoRoute.addAll(patrolCoordinaten);
+			patrolCoordinaten = tempoRoute;
+			closestGuard.setCoordinaten(patrolCoordinaten);
+			closestGuard.setFinishpositie(patrolCoordinaten
+					.get(patrolCoordinaten.size() - 1));
+			closestGuard.setStartpositie(patrolCoordinaten.get(0));
+			closestGuard.setRichting(true);
+			closestGuard.setTeller(1);
+		}
+	}
+
+	private void resetPatrol() {
+		if (closestGuard.isResettingPatrol()) {
+			ArrayList<Point> resetRoute = new RouteAlgoritme(maze).algorithm(
+					closestGuard.getPatrolStartPositie(),
+					closestGuard.getEindpositie());
+			ArrayList<Point> tempoRoute = new ArrayList<Point>();
+			tempoRoute.add(closestGuard.getHuidigepositie());
+			tempoRoute.addAll(resetRoute);
+			resetRoute = tempoRoute;
+			closestGuard.setCoordinaten(resetRoute);
+			ArrayList<Point> resetCoordinates = closestGuard.getCoordinaten();
+			closestGuard.setFinishpositie(resetCoordinates.get(resetCoordinates
+					.size() - 1));
+			closestGuard.setRichting(true);
+			closestGuard.setTeller(1);
+			resettingRoute = true;
+
+		}
 	}
 
 	/*

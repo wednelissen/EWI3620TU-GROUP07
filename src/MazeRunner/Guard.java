@@ -672,4 +672,7 @@ public class Guard extends GameObject implements VisibleObject {
 		this.patrol = patrol;
 	}
 
+	public Point getEindPositie() {
+		return eindpositie;
+	}
 }
