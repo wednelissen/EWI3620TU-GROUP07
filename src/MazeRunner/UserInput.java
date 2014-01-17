@@ -45,10 +45,11 @@ public class UserInput extends Control implements MouseListener,
 	 * @param canvas The GLCanvas to which to add the listeners.
 	 */
 	public UserInput(GLCanvas canvas) {
-		canvas.addMouseListener(this);
-		canvas.addMouseMotionListener(this);
-		canvas.addKeyListener(this);
 		this.canvas = canvas;
+		this.canvas.addMouseListener(this);
+		this.canvas.addMouseMotionListener(this);
+		this.canvas.addKeyListener(this);
+		
 	}
 	
 	
@@ -71,6 +72,15 @@ public class UserInput extends Control implements MouseListener,
 		dx = 0;
 		dy = 0;
 
+	}
+	
+	private void restPLayer(){
+		Control.forward = false;
+		Control.back = false;
+		Control.left = false;
+		Control.right = false;
+		//Stop sprinting
+		mazerunner.setWalkingSpeed(0.01);
 	}
 
 	/*
@@ -102,21 +112,17 @@ public class UserInput extends Control implements MouseListener,
 			if (key == KeyEvent.VK_D) {
 				Control.right = true;
 			}
-			if (key == KeyEvent.VK_E) {
-				mazerunner.openDoor();
-			}
-	
 			//Sprinting
 			if (key == KeyEvent.VK_SHIFT){
 				mazerunner.setWalkingSpeed(0.02);
 			}
 		
 		}
-		
-		
-		if (key == KeyEvent.VK_I){
+		if (key == KeyEvent.VK_E) {
+			mazerunner.openDoor();
 			freeze = mazerunner.watchFromCamera();
 		}
+
 
 		
 		// turn on or of GOD mode
@@ -129,11 +135,16 @@ public class UserInput extends Control implements MouseListener,
 
 		// open pause menu
 		if (key == KeyEvent.VK_ESCAPE) {
-
+			this.restPLayer();
 			mazerunner.pauseSwitch();
 			System.out.println("Open Pause menu");
-			canvas.removeKeyListener(this);
+//			canvas.removeKeyListener(this);
+//			canvas.removeMouseListener(this);
+//			canvas.removeMouseMotionListener(this);
 
+		}
+		if (key == KeyEvent.VK_NUMPAD5){
+			mazerunner.endGame();
 		}
 
 	}
@@ -165,36 +176,32 @@ public class UserInput extends Control implements MouseListener,
 	@Override
 	public void mouseMoved(MouseEvent event) {
 
-		boolean roboMouse = false;
-		// System.out.println(Xbegin + "," + Ybegin);
-
 		Xdragged = event.getX();
 		Ydragged = event.getY();
-		if (!roboMouse) {
-			dx = Xbegin - Xdragged;
-			dy = Ybegin - Ydragged;
 
-		}
-		try {
-			Robot robot = new Robot();
-			roboMouse = true;
-			robot.mouseMove(Xbegin, Ybegin);
-			roboMouse = false;
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		dx = Xbegin - Xdragged;
+		dy = Ybegin - Ydragged;
+
+		resetMousePosition();
 
 	}
-	
-
-
 	
 	@Override
 	public void mouseDragged(MouseEvent event){
 		mouseMoved(event);
 	}
 	
+	public void resetMousePosition() {
+		try {
+			Robot robot = new Robot();
+
+			robot.mouseMove(Xbegin, Ybegin);
+
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/*
 	 * **********************************************
 	 * *		Unused event handlers				*

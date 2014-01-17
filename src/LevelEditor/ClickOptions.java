@@ -19,6 +19,8 @@ public enum ClickOptions {
 	setKeyDoor,
 	setCamera,
 	removeCamera,
+	setControlCenter,
+	removeControlCenter,
 	placedItems,
 	placedItemsProperties,
 	setStart,

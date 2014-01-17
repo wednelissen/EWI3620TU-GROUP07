@@ -32,11 +32,12 @@ public class GuardCamera extends GameObject implements VisibleObject {
 
 	private Point playerPositie;
 	private ThreadLoop thread = new ThreadLoop();
+	private MazeRunner mazerunner;
 
-	public GuardCamera(double x, int y, double z) {
+	public GuardCamera(double x, int y, double z, MazeRunner mazerunner) {
 		super((x * SQUARE_SIZE) + (SQUARE_SIZE / 2), y, (z * SQUARE_SIZE)
 				+ (SQUARE_SIZE / 2));
-
+		this.mazerunner = mazerunner;
 		huidigepositie();
 
 		thread.start();
@@ -51,6 +52,7 @@ public class GuardCamera extends GameObject implements VisibleObject {
 			System.out.println("Camera ALARM");
 			alarm = true;
 			thread.setSleepTime(400);
+			mazerunner.updateHighScoreCamera();
 			return true;
 		}
 		return false;
@@ -88,17 +90,10 @@ public class GuardCamera extends GameObject implements VisibleObject {
 			gl.glPushMatrix();
 			gl.glTranslated(locationX, -SQUARE_SIZE * 3, locationZ);
 
-			// DIT MOET WEG
-			gl.glColor3f(1, 0, 0);
-
 			gl.glRotatef(-90, 1, 0, 0);
 			glut.glutWireCone(SQUARE_SIZE * 2, SQUARE_SIZE * 4, 50, 50);
 			gl.glPopMatrix();
 		}
-
-		// DIT MOET WEG
-		gl.glColor3f(1, 1, 1);
-
 	}
 
 	/**

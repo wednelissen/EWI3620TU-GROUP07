@@ -23,7 +23,7 @@ import javax.media.opengl.GLEventListener;
 
 import MazeRunner.Control;
 import MazeRunner.MazeRunner;
-
+import MazeRunner.GameDriver;
 import com.sun.opengl.util.Animator;
 
 import java.awt.*;
@@ -82,6 +82,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private float[] itemGuardianCoords = new float[] { 5, 105, 48.75f, 100 };
 	private float[] itemKeyCoords = new float[] { 5+48.75f, 105, 48.75f, 100 };
 	private float[] itemCameraCoords = new float[] { 5+2*48.75f, 105, 48.75f, 100 };
+	private float[] itemControlCenterCoords = new float[] { 5+3*48.75f, 105, 48.75f, 100 };
 	
 	private float[] placedItemsCoords = new float[] { 5, 235, 195, 200 };
 	
@@ -98,11 +99,17 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private float[] saveCoords = new float[] { 640, 565, 75, 20 };
 	private float[] loadCoords = new float[] { 720, 565, 75, 20 };
 	
+	private float[] MeldingCoords = new float[] { 330, 280, 75, 20 };
+	private float[] Melding2Coords = new float[] { 290, 565, 75, 20 };
+	
 	//define the windows
 	private MapMenu map = new MapMenu(mapCoords, screenWidth, screenHeight);
 	private Window items = new Window(itemCoords, screenWidth, screenHeight);
 	private PlacedItemsMenu placedItems = new PlacedItemsMenu(placedItemsCoords, screenWidth, screenHeight);
 	private Window placedItemsProperties = new Window(placedItemsPropertiesCoords, screenWidth, screenHeight);
+	private Window Melding = new Window(MeldingCoords, screenWidth, screenHeight);
+	private Window Melding2 = new Window(Melding2Coords, screenWidth, screenHeight);
+	
 	
 	//define the buttons
 	private Button setStart = new Button(setStartCoords, screenWidth, screenHeight);
@@ -118,6 +125,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Button itemGuardian = new Button(itemGuardianCoords, screenWidth, screenHeight);
 	private Button itemKey = new Button(itemKeyCoords, screenWidth, screenHeight);
 	private Button itemCamera = new Button(itemCameraCoords, screenWidth, screenHeight);
+	private Button itemControlCenter = new Button(itemControlCenterCoords, screenWidth, screenHeight);
+	
 	
 	private Button addGuardKeySpotCamera = new Button(addGuardKeySpotCameraCoords, screenWidth, screenHeight);
 	private Button removeGuardKeySpotCamera = new Button(removeGuardKeySpotCameraCoords, screenWidth, screenHeight);
@@ -130,10 +139,12 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private Key key = new Key(itemCoords, screenWidth, screenHeight);
 	private Spot spot = new Spot();
 	private Camera camera = new Camera();
+	private ControlCenterEditor controlCenter = new ControlCenterEditor();
 	
 	//Arraylists, de Key en Guard worden in placedItems opgeslagen, op deze wijze kun je ze nog selecteren en veranderen.
 	private SpotList spotList = new SpotList();
 	private CameraList cameraList = new CameraList();
+	private ControlCenterList controlCenterList = new ControlCenterList();
 	
 	private StartAndEndPosition StartEnd = new StartAndEndPosition();
 	private LoadTexturesEditor loadedTexturesEditor;
@@ -148,13 +159,14 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		// Set the desired size and background color of the frame
 		setSize(screenWidth, screenHeight);
 		// setBackground(Color.white);
-		setBackground(new Color(0.95f, 0.95f, 0.95f));
+//		setBackground(new Color(0.95f, 0.95f, 0.95f));
 
 		// When the "X" close button is called, the application should exit.
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.exit(0);
+				dispose();
+				GameDriver.main(new String[] {});
 			}
 		});
 
@@ -270,35 +282,33 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		//als de breedte en lengte zijn ingegeven mogen de buildingBlocks worden getekent in de map.
 		//alle items in de map worden ook getekent indien aan de if is voldaan.
 		if(mapCreated){
-			map.drawBlocks(gl, loadedTexturesEditor);
+			map.drawBlocks(gl);
 			
 			//startpunt wordt getekent
 			if(StartEnd.hasStart()){
 				Point a = StartEnd.getStart();
-				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("startPos"));
+				map.getBuildingBlockByPosition(a).drawBlock(gl, LoadTexturesEditor.getTexture("editorStartPos"));
 			}
 			
 			//eindpunt wordt getekent
 			if(StartEnd.hasEnd()){
 				Point a = StartEnd.getEnd();
-				map.getBuildingBlockByPosition(a).drawBlock(gl, loadedTexturesEditor.getTexture("endPos"));
+				map.getBuildingBlockByPosition(a).drawBlock(gl, LoadTexturesEditor.getTexture("editorEndPos"));
 			}
 			
 			//alle guards zullen worden getekent met blauwe blokjes. 
 			//indien je 1 specifieke guard hebt geselecteerd word deze met rode blokjes getekent
 			if(AllGuardsOnOff){
-//				gl.glColor3f(0f, 0f, 0.5f);
 				for(Guardian g: placedItems.getAllGuards()){
 					for(int i = 0; i <g.routeSize(); i++){
 						Point a = g.getRoute(i);
-						map.getBuildingBlockByPosition(a).drawGuardianPath(gl, loadedTexturesEditor.getTexture("guardianStepsBlue"));			
+						map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardianStepsBlue"));			
 					}
 				}
 			}
 			
 			//alle sleutels die zijn geplaatst worden getekent.
 			if(AllKeysOnOff){
-//				gl.glColor3f(0.1f, 0.3f, 0.5f);
 				for(Key k: placedItems.getAllKeys()){
 					Point a = k.getKey();
 					map.getBuildingBlockByPosition(a).drawKey(gl);			
@@ -309,89 +319,121 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			//er worden rode kruisjes getekend in de blokjes waar de guard loopt. 
 			//dit geld alleen voor deze ene geselecteerde guard.
 			if(guard.routeSize()>0 && Mode == ClickOptions.guardian){
-//				gl.glColor3f(0.5f, 0, 0f);
 				for(int i = 0; i <guard.routeSize(); i++){
 					Point a = guard.getRoute(i);
-					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, loadedTexturesEditor.getTexture("guardianStepsRed"));			
+					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardianStepsRed"));			
 				}
 				
 			}
 			
 			//tijdelijke sleutel die is geselecteerd wordt getekent
 			if(key.hasPosition() && (Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor) ){
-//				gl.glColor3f(0.1f, 0.3f, 0.5f);
 				Point a = key.getKey();
 				map.getBuildingBlockByPosition(a).drawKey(gl);	
 			}
 			
 			//alle geplaatste camara's worden getekent
 			if(cameraList.getCameras().size()>0){
-//				gl.glColor3f(0.2f, 1f, 0.6f);
 				for(Camera s: cameraList.getCameras()){
 					Point a = s.getPosition();
-					map.getBuildingBlockByPosition(a).drawCameras(gl, loadedTexturesEditor.getTexture("cameraEditor"));
+					map.getBuildingBlockByPosition(a).drawCameras(gl, LoadTexturesEditor.getTexture("editorCamera"));
+				}
+			}
+			
+			//alle geplaatste control centers worden getekent
+			if(controlCenterList.getControlCenters().size()>0){
+				for(ControlCenterEditor s: controlCenterList.getControlCenters()){
+					Point a = s.getPosition();
+					map.getBuildingBlockByPosition(a).drawControlCenter(gl, LoadTexturesEditor.getTexture("controlCenterEditor"));
 				}
 			}
 			
 			//alle geplaatste spots, maximaal 8, worden getekent
 			if(spotList.getSpots().size()>0){
-//				gl.glColor3f(1f, 1f, 0f);
 				for(Spot s: spotList.getSpots()){
 					Point a = s.getPosition();
-					map.getBuildingBlockByPosition(a).drawSpot(gl, loadedTexturesEditor.getTexture("spotEditor"));
+					map.getBuildingBlockByPosition(a).drawSpot(gl, LoadTexturesEditor.getTexture("editorSpot"));
 				}
 			}
 			
-//			gl.glColor3f(0f, 0f, 0f);
+			//geeft een melding als begin en eind punt nog niet geset zijn.
+			if(!StartEnd.hasStart() && !StartEnd.hasEnd()){
+				gl.glColor3f(0, 0, 0);
+				Melding2.renderString(gl, "can't save: Begin and End are not set.");
+				gl.glColor3f(1, 1, 1);
+			}
+			else if(!StartEnd.hasStart()){
+					gl.glColor3f(0, 0, 0);
+					Melding2.renderString(gl, "can't save: Begin point is not set.");
+					gl.glColor3f(1, 1, 1);
+			}
+			else if(!StartEnd.hasEnd()){
+				gl.glColor3f(0, 0, 0);
+				Melding2.renderString(gl, "can't save: End point is not set.");
+				gl.glColor3f(1, 1, 1);
+		}
 		}
 		else{
 			map.draw(gl, null);
+			gl.glColor3f(0, 0, 0);
+			Melding.renderString(gl, "You need to set the maze sizes at 'Size',\n\tbefore you can add items.");
+			gl.glColor3f(1, 1, 1);
+
 		}
 
 		//het item Menu word getekent met de items waarop geklikt kan worden
 		items.draw(gl, null);
-		itemFloor.draw(gl, loadedTexturesEditor.getTexture("floorEditor"));
-		itemWall.draw(gl, loadedTexturesEditor.getTexture("wallEditor"));
-		itemDoor.draw(gl, loadedTexturesEditor.getTexture("doorEditor"));
-		itemSpot.draw(gl, loadedTexturesEditor.getTexture("spotEditor"));
-		itemGuardian.draw(gl, loadedTexturesEditor.getTexture("guardianEditor"));
-		itemKey.draw(gl, loadedTexturesEditor.getTexture("keyEditor"));
-		itemCamera.draw(gl, loadedTexturesEditor.getTexture("cameraEditor"));
+
+		itemFloor.draw(gl, LoadTexturesEditor.getTexture("editorFloor"));
+		itemWall.draw(gl, LoadTexturesEditor.getTexture("editorWall"));
+		itemDoor.draw(gl, LoadTexturesEditor.getTexture("editorDoor"));
+		itemSpot.draw(gl, LoadTexturesEditor.getTexture("editorSpot"));
+		itemGuardian.draw(gl, LoadTexturesEditor.getTexture("editorGuardian"));
+		itemKey.draw(gl, LoadTexturesEditor.getTexture("editorKey"));
+		itemCamera.draw(gl, LoadTexturesEditor.getTexture("editorCamera"));
+		itemControlCenter.draw(gl, LoadTexturesEditor.getTexture("controlCenterEditor"));
+
 		//de items met speciale eigenschappen zoals Key en Guard worden hier getekent.
 		//dit zijn de items die al met een positie in de map zijn geplaatst.
 		placedItems.draw(gl, null);
-		placedItems.drawItems(gl, loadedTexturesEditor);
+		placedItems.drawItems(gl);
 		
 		//de extra menu's indien op een  speciale item is gedrukt
 		if(Mode == ClickOptions.guardian){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
-			removeLastPointGuardOrSetDoorKey.draw(gl, loadedTexturesEditor.getTexture("deleteLastPoint")); 
-			showAllGuardsKeys.draw(gl, loadedTexturesEditor.getTexture("showAll")); 
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
+			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorDeleteLastPoint")); 
+			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAll")); 
 		}
 		
 		if(Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
-			removeLastPointGuardOrSetDoorKey.draw(gl, loadedTexturesEditor.getTexture("deleteDoor")); 
-			showAllGuardsKeys.draw(gl, loadedTexturesEditor.getTexture("showAll")); 
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
+			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorDeleteDoor")); 
+			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAll")); 
 		}
 		
 		if(Mode == ClickOptions.key){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		if(Mode == ClickOptions.setSpot || Mode == ClickOptions.removeSpot){
 			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		if(Mode == ClickOptions.setCamera || Mode == ClickOptions.removeCamera){
+			placedItemsProperties.draw(gl, null);
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
+		}
+		
+		if(Mode == ClickOptions.setControlCenter || Mode == ClickOptions.removeControlCenter){
 			placedItemsProperties.draw(gl, null);
 			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
 			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
@@ -399,11 +441,11 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		
 		//draw the clickable boxes
-		setSizes.draw(gl, loadedTexturesEditor.getTexture("sizeButton"));
-		setStart.draw(gl, loadedTexturesEditor.getTexture("setStartButton"));
-		setEnd.draw(gl, loadedTexturesEditor.getTexture("setEndButton"));
-		save.draw(gl, loadedTexturesEditor.getTexture("saveButton"));
-		load.draw(gl, loadedTexturesEditor.getTexture("loadButton"));
+		setSizes.draw(gl, LoadTexturesEditor.getTexture("editorSizeButton"));
+		setStart.draw(gl, LoadTexturesEditor.getTexture("editorSetStartButton"));
+		setEnd.draw(gl, LoadTexturesEditor.getTexture("editorSetEndButton"));
+		save.draw(gl, LoadTexturesEditor.getTexture("editorSaveButton"));
+		load.draw(gl, LoadTexturesEditor.getTexture("editorLoadButton"));
 	}
 
 	@Override
@@ -435,6 +477,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		
 		//update the windows and button sizes
 		map.update(screenWidth, screenHeight);
+		Melding.update(screenWidth, screenHeight);
+		Melding2.update(screenWidth, screenHeight);
 		map.updateBlocks(screenWidth, screenHeight);
 		items.update(screenWidth, screenHeight);
 		placedItems.update(screenWidth, screenHeight);
@@ -451,7 +495,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		itemSpot.update(screenWidth, screenHeight);
 		itemGuardian.update(screenWidth, screenHeight);
 		itemKey.update(screenWidth, screenHeight);
-		itemCamera.update(screenWidth, screenHeight);		
+		itemCamera.update(screenWidth, screenHeight);
+		itemControlCenter.update(screenWidth, screenHeight);
 		addGuardKeySpotCamera.update(screenWidth, screenHeight);
 		removeGuardKeySpotCamera.update(screenWidth, screenHeight); 
 		removeLastPointGuardOrSetDoorKey.update(screenWidth, screenHeight);
@@ -506,6 +551,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			System.out.println("camera");
 			camera = new Camera();
 			Mode = ClickOptions.setCamera;	
+		}else if(itemControlCenter.clickedOnIt(me.getX(), me.getY())){				//Control Center
+			System.out.println("control center");
+			controlCenter = new ControlCenterEditor();
+			Mode = ClickOptions.setControlCenter;	
 		}else if(placedItems.clickedOnIt(me.getX(), me.getY())){			//placed Items (kunnen Guard of Keys zijn)
 			Mode = ClickOptions.placedItems;
 			if(placedItems.typeIsGuardian(me.getX(), me.getY())){
@@ -531,7 +580,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			System.out.println(SaveLevel);
 			if(SaveLevel != null){
 				//de gegenereerde map wordt opgeslagen
-				StoreMaze = new SaveInput(map, placedItems, StartEnd, spotList, cameraList, SaveLevel); 
+				StoreMaze = new SaveInput(map, placedItems, StartEnd, spotList, cameraList, controlCenterList, SaveLevel); 
 			}	
 		}else if(load.clickedOnIt(me.getX(), me.getY())){					//Load Window
 			//het level moet ingeladen worden en nog gedisplayd
@@ -560,6 +609,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		StartEnd.setStart(newlevel.getStartPosition());
 		StartEnd.setEnd(newlevel.getEndPosition());
 		cameraList.loadCameras(newlevel.getCameras());
+		controlCenterList.loadControlCenters(newlevel.getControlCenters());
 		spotList.loadSpots(newlevel.getSpots());
 	}
 
@@ -635,6 +685,26 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				camera.setCamera(tempPositie);
 				cameraList.removeCamera(camera);
 				camera = new Camera();
+			}	
+			
+			//Control Centers
+			if(Mode == ClickOptions.setControlCenter){											//place ControlCenter
+				System.out.println("addControlCenter");
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				if(!temp.getWall() && !temp.getDoor()){
+					Point tempPositie = temp.getPosition();
+					controlCenter.setControlCenter(tempPositie);
+					controlCenterList.addControlCenter(controlCenter);
+					controlCenter = new ControlCenterEditor();
+				}
+			}
+			if(Mode == ClickOptions.removeControlCenter){										//Remove ControlCenter
+				System.out.println("removeControlCenter");
+				BuildingBlock temp = map.getClickedBuildingBlock(me.getX(), me.getY());
+				Point tempPositie = temp.getPosition();
+				controlCenter.setControlCenter(tempPositie);
+				controlCenterList.removeControlCenter(controlCenter);
+				controlCenter = new ControlCenterEditor();
 			}	
 			
 			if(Mode == ClickOptions.guardian){													//Guard
@@ -762,6 +832,14 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}
 		}
 		
+		//mag niet wanneer er een controlCenter staat.
+		for(ControlCenterEditor s: controlCenterList.getControlCenters()){
+			if(s.getPosition().equals(a)){
+				possible = false;
+				break;
+			}
+		}
+		
 		//mag ook niet wanneer er een sleutel staat.
 		for(Key k: placedItems.getAllKeys()){
 			Point p = k.getKey();
@@ -800,6 +878,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	 * voor Camera:
 	 * - toevoegen van een Camera
 	 * - verwijderen van een Camera 
+	 * 
+	 * voor Control Center:
+	 * - toevoegen van een Control Center
+	 * - verwijderen van een Control Center 
 	 * 
 	 * @param me
 	 */
@@ -879,6 +961,15 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				Mode = ClickOptions.removeCamera;
 			}	
 		}
+		
+		else if(Mode == ClickOptions.setControlCenter || Mode == ClickOptions.removeControlCenter){			//Control Center
+			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){	
+				Mode = ClickOptions.setControlCenter;
+			}
+			if(removeGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
+				Mode = ClickOptions.removeControlCenter;
+			}	
+		}
 	}	
 	
 	@Override
@@ -948,6 +1039,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		spotList = new SpotList();
 		camera = new Camera();
 		cameraList = new CameraList();
+		controlCenter = new ControlCenterEditor();
+		controlCenterList = new ControlCenterList();
 		StartEnd = new StartAndEndPosition();
 		
 		placedItems = new PlacedItemsMenu(placedItemsCoords, screenWidth, screenHeight);

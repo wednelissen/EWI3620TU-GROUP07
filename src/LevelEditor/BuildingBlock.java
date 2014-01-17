@@ -105,29 +105,31 @@ public class BuildingBlock extends Window{
 		myTexture.disable();
 	}	
 	
+	public void drawControlCenter(GL gl, Texture myTexture) {
+		float ControlCenterColor[] = { 1.0f, 1.0f, 1.0f, 0f };
+		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, ControlCenterColor, 0);		
+		if (myTexture != null){
+			myTexture.enable();
+			myTexture.bind();
+		}
+		gl.glBegin(GL.GL_QUADS);
+		gl.glTexCoord2d(0, 1);
+		gl.glVertex2f(x, y);
+		gl.glTexCoord2d(1, 1);
+		gl.glVertex2f(x + sizeX, y);
+		gl.glTexCoord2d(1, 0);
+		gl.glVertex2f(x + sizeX, y - sizeY);
+		gl.glTexCoord2d(0, 0);
+		gl.glVertex2f(x, y - sizeY);
+		gl.glEnd();
+		myTexture.disable();
+	}
+	
 	
 	//aangepaste methode van http://www.java-gaming.org/index.php/topic,4140. van user: overnhet
  
 	public void drawSpot(GL gl, Texture myTexture)
     {
-//		float spotColor[] = { 1.0f, 1.0f, 1.0f, 0f };
-//		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, spotColor, 0);
-//		if (myTexture != null){
-//			myTexture.enable();
-//			myTexture.bind();
-//		}
-//		gl.glBegin(GL.GL_QUADS);
-//		gl.glTexCoord2d(0, 1);
-//		gl.glVertex2f(x, y);
-//		gl.glTexCoord2d(1, 1);
-//		gl.glVertex2f(x + sizeX, y);
-//		gl.glTexCoord2d(1, 0);
-//		gl.glVertex2f(x + sizeX, y - sizeY);
-//		gl.glTexCoord2d(0, 0);
-//		gl.glVertex2f(x, y - sizeY);
-//		gl.glEnd();
-//		myTexture.disable();
-		
     	float radius = sizeX/4;
     	float slices = 20;
           float incr = (float) (2 * Math.PI / slices);

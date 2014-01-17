@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
-import com.sun.opengl.util.GLUT;
-
 /**
  * Deze klasse maakt een guard object aan, deze heeft een functie voor
  * patrouille en gebruikt het A* algoritme voor het lopen naar een kortste
@@ -57,6 +55,9 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean canMoveForward;
 	private boolean canMoveLeft;
 	private boolean canMoveRight;
+
+	private Model modelGuard;
+
 	private boolean overRuleLeft;
 	private boolean overRuleRight;
 	private int deltaTimeSum = 0;
@@ -64,8 +65,10 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean resettingPatrol = false;
 
 	public Guard(double x, double y, double z, ArrayList<Point> points) {
+
 		super(x * SQUARE_SIZE + (0.5 * SQUARE_SIZE), y, z * SQUARE_SIZE
 				+ (0.5 * SQUARE_SIZE));
+		modelGuard = LoadTexturesMaze.getModel("modelGuard");
 
 		speed = 0.005;
 		coordinaten = points;
@@ -246,45 +249,53 @@ public class Guard extends GameObject implements VisibleObject {
 			if (xmin) {
 				horAngle = horAngle - 90;
 				xminPrev = true;
+				zplusPrev = false;
 			}
 			if (xplus) {
 				horAngle = horAngle + 90;
 				xplusPrev = true;
+				zplusPrev = false;
 			}
-			zplusPrev = false;
+
 		}
 		if (zmin != zminPrev) {
 			if (xmin) {
 				horAngle = horAngle + 90;
 				xminPrev = true;
+				zminPrev = false;
 			}
 			if (xplus) {
 				horAngle = horAngle - 90;
 				xplusPrev = true;
+				zminPrev = false;
 			}
-			zminPrev = false;
+
 		}
 		if (xmin != xminPrev) {
 			if (zmin) {
 				horAngle = horAngle - 90;
 				zminPrev = true;
+				xminPrev = false;
 			}
 			if (zplus) {
 				horAngle = horAngle + 90;
 				zplusPrev = true;
+				xminPrev = false;
 			}
-			xminPrev = false;
+
 		}
 		if (xplus != xplusPrev) {
 			if (zmin) {
 				horAngle = horAngle + 90;
 				zminPrev = true;
+				xplusPrev = false;
 			}
 			if (zplus) {
 				horAngle = horAngle - 90;
 				zplusPrev = true;
+				xplusPrev = false;
 			}
-			xplusPrev = false;
+
 		}
 	}
 
@@ -309,19 +320,17 @@ public class Guard extends GameObject implements VisibleObject {
 	 * Display het object dat de guard is
 	 */
 	public void display(GL gl) {
-		GLUT glut = new GLUT();
-
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 
-		gl.glTranslated(locationX, SQUARE_SIZE / 4, locationZ);
+		gl.glTranslated(locationX, 0, locationZ);
 
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
+		gl.glScaled(0.50, 0.50, 0.50);
 
 		gl.glDisable(GL.GL_CULL_FACE);// zorgt dat de achterkant zichtbaar is
-		glut.glutSolidCone(SQUARE_SIZE / 2, SQUARE_SIZE / 2, 20, 20);
-
+		modelGuard.draw(gl);
 		gl.glPopMatrix();
 
 		gl.glEnable(GL.GL_CULL_FACE); // zet de instellingen weer terug zoals ze

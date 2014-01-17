@@ -1,10 +1,13 @@
 package MazeRunner;
 
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
+
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
+
+import com.sun.opengl.util.Animator;
+
 import java.awt.Toolkit;
 
 /**
@@ -14,20 +17,23 @@ import java.awt.Toolkit;
  * @author Wiebe
  *
  */
-public class GameDriver implements KeyListener{
-	
+public class GameDriver{
+	public static StateMainMenu mainMenu;
 	private static GLCanvas canvas;
 	private static int screenWidth = 600, screenHeight = 600;		// Default screen size (not used).
 	public static LoadTexturesMaze loadedTexturesMaze;
-		
+	private static Animator anim;	
+	private static GameWindow window;
+	
 	public static void main(String[] args){
-		
 		//Initialize Window
 		initWindow();
 		//Initialize Sounds
 		Sound.SoundEffect.init();
 		//Show Main Menu
-		new StateMainMenu(canvas, true);
+		mainMenu = new StateMainMenu(canvas, true);
+		anim = new Animator(canvas);
+		anim.start();
 	}
 	
 	/**
@@ -36,12 +42,12 @@ public class GameDriver implements KeyListener{
 	 */
 	private static void initWindow(){
 		//Automatically detect screen resolution
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		//screenWidth = (int) screenSize.getWidth();
-		//screenHeight = (int) screenSize.getHeight();
+//		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//		screenWidth = (int) screenSize.getWidth();
+//		screenHeight = (int) screenSize.getHeight();
 		
 		//Initializes a window with the specified dimensions
-		GameWindow window = new GameWindow(screenWidth,screenHeight);
+		window = new GameWindow(screenWidth,screenHeight);
 		// First, we set up JOGL. We start with the default settings.
 		GLCapabilities caps = new GLCapabilities();
 		// Then we make sure that JOGL is hardware accelerated and uses double buffering.
@@ -50,41 +56,11 @@ public class GameDriver implements KeyListener{
 		// Now we add the canvas, where OpenGL will actually draw for us. We'll use settings we've just defined. 
 		canvas = new GLCanvas( caps );
 		canvas.setSize(screenWidth,screenHeight);
-		//Add a GameDriver as a KeyListener
-		GameDriver gamedriver = new GameDriver();
-		canvas.addKeyListener(gamedriver);
 		window.add(canvas);
 		canvas.requestFocus();
 	}
 	
-	@Override
-	public void keyPressed(KeyEvent event) {
-		//not used
-		
+	public static GameWindow getGameWindow(){
+		return window;
 	}
-
-	@Override
-	public void keyReleased(KeyEvent event) {
-		//These keyEvents are available at any point in the game.
-		int code = event.getKeyCode();
-		
-		switch(code){
-		
-		}
-	}	
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// not used
-		
-	}
-	
-	/**
-	 * Returns the canvas on which the game is displayed.
-	 * @return
-	 */
-	public static GLCanvas getCanvas(){
-		return GameDriver.canvas;
-	}
-	
 }
