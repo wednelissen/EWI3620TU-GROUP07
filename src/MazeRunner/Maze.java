@@ -38,10 +38,11 @@ public class Maze implements VisibleObject {
 	// public final double MAZE_SIZE = 10;
 	public double MAZE_SIZE_X;
 	public double MAZE_SIZE_Z;
-	public final double SQUARE_SIZE = 5;
+	public static final double SQUARE_SIZE = 5;
 	public Point startPoint;
 	public Point endPoint;
 	private ArrayList<Keys> doorKeys;
+
 	private int[][] maze;
 
 	public Maze() {
