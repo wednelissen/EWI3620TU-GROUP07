@@ -260,6 +260,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		canvas.addKeyListener(this);
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
+		canvas.setCursor(null);
 		startup = true;
 	}
 

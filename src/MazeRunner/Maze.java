@@ -186,10 +186,15 @@ public class Maze implements VisibleObject {
 							LoadTexturesMaze.getTexture("floorTexture"));
 				}
 				if (isClosedDoor(i, j)) {
+					boolean possibleKey = false;
 					for (Keys k : doorKeys) {
 						if (k.getDoor().equals(new Point(i, j))) {
+							possibleKey = true;
 							drawClosedDoor(gl, SQUARE_SIZE, k.getKeyColor());
 						}
+					}
+					if(!possibleKey){
+						drawClosedDoor(gl, SQUARE_SIZE, null);
 					}
 				}
 				if (isOpeningDoor(i, j)) {
@@ -405,50 +410,54 @@ public class Maze implements VisibleObject {
 
 		// Sleutel gat
 
-		// DIT MOET WEG
-		gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
-				keyCardHoleColor[2]);
-
-		gl.glBegin(GL.GL_QUADS);
-
-		// HIER KUNNEN DE MATEN WORDEN OPGEGEVEN. GEDEELD DOOR WORDT NIET
-		// ONDERSTEUND
-		// JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven aan
-		// is 0,0
-		// double x_links = 239/298, x_rechts = 267/298, y_laag = 211/424,
-		// y_hoog = 240/424;
-		double x_links = 0.8, x_rechts = 0.895, y_laag = 0.428, y_hoog = 0.497;// 0.566;
-
-		gl.glVertex3d((1 - x_links) * size, y_hoog * size, -0.01); // rechtsboven
-		gl.glVertex3d((1 - x_links) * size, y_laag * size, -0.01); // links
-																	// onder
-		gl.glVertex3d((1 - x_rechts) * size, y_laag * size, -0.01); // rechts
-																	// onder
-		gl.glVertex3d((1 - x_rechts) * size, y_hoog * size, -0.01); // linksboven
-
-		// Achterzijde muur
-		gl.glVertex3d(x_links * size, y_hoog * size, size + 0.01); // linksboven
-		gl.glVertex3d(x_links * size, y_laag * size, size + 0.01); // linksonder
-		gl.glVertex3d(x_rechts * size, y_laag * size, size + 0.01); // rechtsonder
-		gl.glVertex3d(x_rechts * size, y_hoog * size, size + 0.01); // rechtsboven
-
-		// Bovenzijde muur, y,x
-		gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_links) * size); // linksonder
-		gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_rechts) * size); // rechtonder
-		gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_rechts) * size); // rechtsboven
-		gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_links) * size); // linksboven
-
-		// Onderzijde muur y,x
-		gl.glVertex3d(0 - 0.01, y_laag * size, x_links * size); // linksonder
-		gl.glVertex3d(0 - 0.01, y_laag * size, x_rechts * size);
-		gl.glVertex3d(0 - 0.01, y_hoog * size, x_rechts * size);
-		gl.glVertex3d(0 - 0.01, y_hoog * size, x_links * size); // linksboven
-
-		gl.glEnd();
-
-		// DIT MOET WEG
-		gl.glColor3f(1, 1, 1);
-
+		if(keyCardHoleColor != null){
+			// DIT MOET WEG
+			gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
+					keyCardHoleColor[2]);
+			gl.glEnable(GL.GL_COLOR_MATERIAL);
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, keyCardHoleColor,0);
+			gl.glBegin(GL.GL_QUADS);
+	
+			// HIER KUNNEN DE MATEN WORDEN OPGEGEVEN. GEDEELD DOOR WORDT NIET
+			// ONDERSTEUND
+			// JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven aan
+			// is 0,0
+			// double x_links = 239/298, x_rechts = 267/298, y_laag = 211/424,
+			// y_hoog = 240/424;
+			double x_links = 0.8, x_rechts = 0.895, y_laag = 0.428, y_hoog = 0.497;// 0.566;
+	
+			gl.glVertex3d((1 - x_links) * size, y_hoog * size, -0.01); // rechtsboven
+			gl.glVertex3d((1 - x_links) * size, y_laag * size, -0.01); // links
+																		// onder
+			gl.glVertex3d((1 - x_rechts) * size, y_laag * size, -0.01); // rechts
+																		// onder
+			gl.glVertex3d((1 - x_rechts) * size, y_hoog * size, -0.01); // linksboven
+	
+			// Achterzijde muur
+			gl.glVertex3d(x_links * size, y_hoog * size, size + 0.01); // linksboven
+			gl.glVertex3d(x_links * size, y_laag * size, size + 0.01); // linksonder
+			gl.glVertex3d(x_rechts * size, y_laag * size, size + 0.01); // rechtsonder
+			gl.glVertex3d(x_rechts * size, y_hoog * size, size + 0.01); // rechtsboven
+	
+			// Bovenzijde muur, y,x
+			gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_links) * size); // linksonder
+			gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_rechts) * size); // rechtonder
+			gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_rechts) * size); // rechtsboven
+			gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_links) * size); // linksboven
+	
+			// Onderzijde muur y,x
+			gl.glVertex3d(0 - 0.01, y_laag * size, x_links * size); // linksonder
+			gl.glVertex3d(0 - 0.01, y_laag * size, x_rechts * size);
+			gl.glVertex3d(0 - 0.01, y_hoog * size, x_rechts * size);
+			gl.glVertex3d(0 - 0.01, y_hoog * size, x_links * size); // linksboven
+			
+			gl.glEnd();
+			
+			// DIT MOET WEG
+			gl.glColor3f(1, 1, 1);
+			gl.glDisable(GL.GL_COLOR_MATERIAL);
+		}
+		
 		if (myTexture2 != null) {
 			// Eerst de texture aanzetten
 			myTexture2.enable();
@@ -470,6 +479,8 @@ public class Maze implements VisibleObject {
 		if (myTexture2 != null) {
 			myTexture2.disable();
 		}
+		
+		
 	}
 
 	private void drawOpeningDoor(GL gl, double size, double opening,
