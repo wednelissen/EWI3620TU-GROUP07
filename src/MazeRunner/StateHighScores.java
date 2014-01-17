@@ -83,9 +83,7 @@ public class StateHighScores implements GLEventListener, KeyListener, MouseListe
 		// Draw the buttons.
 		//gl.glColor3f(0, 0.5f, 0f);
 		
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].draw(gl, null);
-		}
+		buttonBack.draw(gl, LoadTexturesMaze.getTexture("buttonBack"));
 		
 //		nameWindow.draw(gl, null);
 //		scoreWindow.draw(gl, null);

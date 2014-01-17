@@ -80,16 +80,10 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 
 		GL gl = drawable.getGL();
 
-		// Set the clear color and clear the screen.
-//		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-		// Draw the buttons.
-//		gl.glColor3f(0, 0.5f, 0f);
-
-		for (int i = 0; i < buttonList.length; i++) {
-			buttonList[i].draw(gl, null);
-		}
+		buttonBack.draw(gl, LoadTexturesMaze.getTexture("buttonBack"));
+		wasdImage.draw(gl, LoadTexturesMaze.getTexture("wasdImage"));
 
 //		instructionWindow.draw(gl, null);
 

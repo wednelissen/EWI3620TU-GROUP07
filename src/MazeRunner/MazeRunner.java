@@ -68,14 +68,15 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	private ArrayList<Point> tempCamera = newMaze.getCameras();
 	private ArrayList<Point> tempSpots = newMaze.getSpots();
-
+	
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
 	private ArrayList<Spotlight> spotlights = new ArrayList<Spotlight>();
+	
+	private static int amountSpots;
 
 	private ArrayList<Point> tempControlCenter = newMaze.getControlCenters();
 	private ArrayList<ControlCenter> controlCenters = new ArrayList<ControlCenter>();
 	
-
 	private int checkdistance = 2;
 
 	private ArrayList<Key> tempKey = newMaze.getKeys();
@@ -284,11 +285,12 @@ public class MazeRunner implements GLEventListener, MouseListener {
 					camera.getVrpZ(), camera.getVuvX(), camera.getVuvY(),
 					camera.getVuvZ());
 
-			// Display all the visible objects of MazeRunner.
+			// Display all the spotslights of MazeRunner.
 			for (VisibleObject obj : visibleObjects)
 				if (obj instanceof Spotlight)
 					obj.display(gl);
-
+			
+			// Displays the rest of the visiblObjects
 			for (VisibleObject obj : visibleObjects)
 				if (!(obj instanceof Spotlight))
 					obj.display(gl);
@@ -564,6 +566,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 				pausemenu.resume();
 			}
 		} else if (gamepaused && gameinitialized) {
+			turnLightsOn();
 			System.out.println("Mazerunner resume called");
 			input.resetMousePosition();
 			canvas.addMouseListener(input);
@@ -575,6 +578,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			previousTime = Calendar.getInstance().getTimeInMillis();
 		}
 	}
+	
 
 	/**
 	 * Maakt een arraylist van guardobjecten
@@ -589,7 +593,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			guards.add(res);
 		}
 	}
-
+	
 	/**
 	 * Maakt een arraylist van cameraobjecten
 	 */
@@ -597,6 +601,15 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (Point temp : tempCamera) {
 			GuardCamera res = new GuardCamera(temp.getX(), 6, temp.getY());
 			cameras.add(res);
+		}
+	}
+	
+	public void turnLightsOn () {
+		for (VisibleObject temp: visibleObjects) {
+			if (temp instanceof Spotlight) {
+				Spotlight spot = (Spotlight) temp;
+				spot.lightsOn();
+			}
 		}
 	}
 
@@ -611,6 +624,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			spotlights.add(res);
 			i++;
 		}
+		amountSpots = i;
 	}
 
 	public void createKeys() {
@@ -671,6 +685,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 				break;
 			}
 		}
+	}
+	
+	public static int amountofSpots() {
+		return amountSpots;
 	}
 	
 	/**

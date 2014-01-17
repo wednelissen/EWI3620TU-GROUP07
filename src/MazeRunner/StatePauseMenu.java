@@ -3,7 +3,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import LevelEditor.Button;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -64,16 +66,12 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		
 		GL gl = drawable.getGL();
 
-		// Set the clear color and clear the screen.
-//		gl.glClearColor(0.5f, 0.2f, 0.5f, 1);
-//		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-
-		// Draw the buttons.
-//		gl.glColor3f(0, 0.5f, 0f);
-		
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].draw(gl, null);
-		};
+		buttonResumeGame.draw(gl,
+				LoadTexturesMaze.getTexture("buttonResume"));
+		buttonMainMenu.draw(gl,
+				LoadTexturesMaze.getTexture("buttonMainMenu"));
+		buttonQuit.draw(gl,
+				LoadTexturesMaze.getTexture("buttonQuit"));
 		
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
@@ -125,9 +123,12 @@ public class StatePauseMenu implements GLEventListener, KeyListener, MouseListen
 		for(int i = 0; i< buttonList.length; i++){
 			buttonList[i].update(screenWidth,screenHeight);
 		};
+		
+		for (int i = 0; i < MazeRunner.amountofSpots(); i++) {
+			gl.glDisable(GL.GL_LIGHTING) ;
+		}
+			
 	}
-
-
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,

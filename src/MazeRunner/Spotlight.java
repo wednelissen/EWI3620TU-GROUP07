@@ -9,6 +9,7 @@ public class Spotlight extends GameObject implements VisibleObject {
 
 	private Texture spotTexture;
 	private int spotNumber;
+	private boolean lightStatus = true;
 
 	public Spotlight(GL gl, double size, Texture myTexture, double xCoord,
 			double yCoord, double zCoord, int number) {
@@ -43,6 +44,10 @@ public class Spotlight extends GameObject implements VisibleObject {
 		gl.glRotated(90, 0, 1, 0);
 		glut.glutSolidCylinder(lightBulbRadius, lightBulbSize, 20, 20);
 		gl.glPopMatrix();
+		if (!lightStatus) {
+			turnLightsOn(gl);
+			lightStatus = true;
+		}
 	}
 
 	public void initLights(GL gl) {
@@ -58,8 +63,16 @@ public class Spotlight extends GameObject implements VisibleObject {
 		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_DIFFUSE, lightColor, 0);
 		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_DIRECTION, lightDirection, 0);
 		gl.glLightf(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_CUTOFF, 60);
-		
 		gl.glEnable(GL.GL_LIGHT0 + spotNumber);
+
+		turnLightsOn(gl);
+	}
+	
+	public void turnLightsOn(GL gl) {
 		gl.glEnable(GL.GL_LIGHTING);
+	}
+	
+	public void lightsOn () {
+		lightStatus = false;
 	}
 }

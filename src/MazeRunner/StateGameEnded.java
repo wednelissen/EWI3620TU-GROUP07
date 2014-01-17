@@ -3,7 +3,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import LevelEditor.Button;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -62,9 +64,10 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		
 		GL gl = drawable.getGL();
 		
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].draw(gl, null);
-		};
+		buttonMainMenu.draw(gl,
+				LoadTexturesMaze.getTexture("buttonMainMenu"));
+		buttonQuit.draw(gl,
+				LoadTexturesMaze.getTexture("buttonQuit"));
 		
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
@@ -113,9 +116,14 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
 		startup = false;
-		for(int i = 0; i< buttonList.length; i++){
-			buttonList[i].update(screenWidth,screenHeight);
-		};
+		buttonQuit.draw(gl,
+				LoadTexturesMaze.getTexture("buttonQuit"));
+		buttonMainMenu.draw(gl,
+				LoadTexturesMaze.getTexture("buttonMainMenu"));
+		
+		for (int i = 0; i < MazeRunner.amountofSpots(); i++) {
+			gl.glDisable(GL.GL_LIGHTING) ;
+		}
 	}
 
 	@Override

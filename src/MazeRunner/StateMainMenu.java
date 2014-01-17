@@ -31,8 +31,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	private float[] buttonHowToPlayCoords = new float[] { 200, 325, 400, 75 };
 	private float[] buttonQuitCoords = new float[] { 200, 425, 400, 75 };
-
-
+	
 	// define buttons
 	private Button buttonStartGame = new Button(buttonStartGameCoords,
 			screenWidth, screenHeight);
@@ -44,17 +43,17 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords, screenWidth,
 			screenHeight);
-	
+
 	private Button[] buttonList = new Button[] { buttonStartGame,
 			buttonHighScores, buttonLevelEditor, buttonHowToPlay, buttonQuit };
 	private boolean texturesLoaded = false;
-
+	
 	/**
 	 * Constructor Also calls init(), initializing the main menu on the given
 	 * canvas (when first = false).
 	 * 
 	 * @param canvas
-
+	 * 
 	 * @param first
 	 *            : only set true if StateMainMenu is the first state to be
 	 *            called, directly after the canvas is created
@@ -76,8 +75,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		
-		if(!texturesLoaded){
+		if (!texturesLoaded) {
 			init(drawable);
 		}
 		if (startup) {
@@ -87,20 +85,24 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		}
 
 		GL gl = drawable.getGL();
-		
-		// Set the clear color and clear the screen.
-		// gl.glClearColor(0.2f, 0.2f, 0.5f, 1);
-		 gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
+		// *************************HUIB***************************************
 		// Draw the buttons.
-		for (int i = 0; i < buttonList.length; i++) {
-			buttonList[i].draw(gl, LoadTexturesMaze.getTexture("default"));
-		}
-		;
-		
-		//gl.glLoadIdentity(); //Wanneer je deze inschakeld begint hij te knipperen bij het reshapen van het window??????
-		
+		buttonStartGame.draw(gl,
+				LoadTexturesMaze.getTexture("buttonStart"));
+		buttonHighScores.draw(gl,
+				LoadTexturesMaze.getTexture("buttonHighScore"));
+		buttonLevelEditor.draw(gl,
+				LoadTexturesMaze.getTexture("buttonLevelEditor"));
+		buttonHowToPlay.draw(gl,
+				LoadTexturesMaze.getTexture("buttonHowToPlay"));
+		buttonQuit.draw(gl, LoadTexturesMaze.getTexture("buttonQuit"));
+
+		// gl.glLoadIdentity(); //Wanneer je deze inschakeld begint hij te
+		// knipperen bij het reshapen van het window??????
+
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
 
@@ -113,7 +115,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		}
 
 	}
-
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -164,10 +165,10 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		GL gl = drawable.getGL();
 
 		// Set the new screen size and adjusting the viewport
-		
+
 		screenWidth = width;
 		screenHeight = height;
-		System.out.println(screenWidth+" "+ screenHeight);
+		System.out.println(screenWidth + " " + screenHeight);
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 
 		for (int i = 0; i < buttonList.length; i++) {
@@ -217,7 +218,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			GameDriver.getGameWindow().dispose();
 			LevelEditor.RunLevelEditor.main(new String[] {});
 		}
-		
+
 		if (buttonHowToPlay.clickedOnIt(xclick, yclick)) {
 			canvas.removeGLEventListener(this);
 			canvas.removeMouseListener(this);

@@ -197,7 +197,7 @@ public class PlacedItemsMenu extends Window{
 		int TotalGuards = Guards.size();
 		int TotalKeys= Keys.size();
 		for(int i=0; i<TotalGuards; i++){
-			Guards.get(i).draw(gl, LoadTexturesEditor.getTexture("editorGuard"));
+			Guards.get(i).draw(gl, LoadTexturesEditor.getTexture("editorGuardian"));
 		}	
 		
 		for(int i=0; i<TotalKeys; i++){

@@ -41,11 +41,21 @@ public class LoadTexturesMaze {
 	public void loadTextures () {
 		defaultTexture = loadingTexture("default.png");
 		addTextureToList(loadingTexture("default.png"), "default");
-		addTextureToList(loadingTexture("wallTexture.png"), "wallTexture");
-		addTextureToList(loadingTexture("floorTexture.png"), "floorTexture");
-		addTextureToList(loadingTexture("doorMazerunner.png"), "doorTexture");
-		addTextureToList(loadingTexture("doorMazerunBottom.png"), "doorBottomTexture");
-		addTextureToList(loadingTexture("modelGuard.png"), "modelGuardTexture");
+		addTextureToList(loadingTexture("mazeWall.png"), "wallTexture");
+		addTextureToList(loadingTexture("mazeFloor.png"), "floorTexture");
+		addTextureToList(loadingTexture("mazeDoor.png"), "doorTexture");
+		addTextureToList(loadingTexture("mazeDoorBottom.png"), "doorBottomTexture");
+		addTextureToList(loadingTexture("mazeModelGuard.png"), "modelGuardTexture");
+		addTextureToList(loadingTexture("mazeButtonHighScore.png"), "buttonHighScore");
+		addTextureToList(loadingTexture("mazeButtonHowToPlay.png"), "buttonHowToPlay");
+		addTextureToList(loadingTexture("mazeButtonLevelEditor.png"), "buttonLevelEditor");
+		addTextureToList(loadingTexture("mazeButtonMainMenu.png"), "buttonMainMenu");
+		addTextureToList(loadingTexture("mazeButtonQuit.png"), "buttonQuit");
+		addTextureToList(loadingTexture("mazeButtonResume.png"), "buttonResume");
+		addTextureToList(loadingTexture("mazeButtonStartGame.png"), "buttonStart");
+		addTextureToList(loadingTexture("mazeMenuBackground.png"), "menuBackground");
+		addTextureToList(loadingTexture("mazeButtonBack.png"), "buttonBack");
+		addTextureToList(loadingTexture("mazeWASD.png"), "wasdImage");
 	}
 	
 	public void loadModels () {
