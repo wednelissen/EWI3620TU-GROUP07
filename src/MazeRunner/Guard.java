@@ -244,45 +244,53 @@ public class Guard extends GameObject implements VisibleObject {
 			if (xmin) {
 				horAngle = horAngle - 90;
 				xminPrev = true;
+				zplusPrev = false;
 			}
 			if (xplus) {
 				horAngle = horAngle + 90;
 				xplusPrev = true;
+				zplusPrev = false;
 			}
-			zplusPrev = false;
+			
 		}
 		if (zmin != zminPrev) {
 			if (xmin) {
 				horAngle = horAngle + 90;
 				xminPrev = true;
+				zminPrev = false;
 			}
 			if (xplus) {
 				horAngle = horAngle - 90;
 				xplusPrev = true;
+				zminPrev = false;
 			}
-			zminPrev = false;
+
 		}
 		if (xmin != xminPrev) {
 			if (zmin) {
 				horAngle = horAngle - 90;
 				zminPrev = true;
+				xminPrev = false;
 			}
 			if (zplus) {
 				horAngle = horAngle + 90;
 				zplusPrev = true;
+				xminPrev = false;
 			}
-			xminPrev = false;
+
 		}
 		if (xplus != xplusPrev) {
 			if (zmin) {
 				horAngle = horAngle + 90;
 				zminPrev = true;
+				xplusPrev = false;
 			}
 			if (zplus) {
 				horAngle = horAngle - 90;
 				zplusPrev = true;
+				xplusPrev = false;
 			}
-			xplusPrev = false;
+
 		}
 	}
 
@@ -305,16 +313,14 @@ public class Guard extends GameObject implements VisibleObject {
 	 * Display het object dat de guard is
 	 */
 	public void display(GL gl) {
-		
-
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 
-		gl.glTranslated(locationX, SQUARE_SIZE/4, locationZ);
+		gl.glTranslated(locationX, 0, locationZ);
 		
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
-		gl.glScaled(0.60, 0.60, 0.60);
+		gl.glScaled(0.50, 0.50, 0.50);
 		
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
 		modelGuard.draw(gl);

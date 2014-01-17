@@ -65,8 +65,8 @@ public class LoadTexturesEditor {
 	 * Laad een plaatje in een bufferedImage reader and schrijft deze dan uit
 	 * naar een Texture
 	 * 
-	 * @param fileName
-	 * @return
+	 * @param fileName De naam van de file met het plaatje wat een texture moet worden
+	 * @return Het plaatje als texture
 	 */
 	public Texture loadingTexture(String fileName) {
 		// Nieuwe texture aanmaken
@@ -96,10 +96,10 @@ public class LoadTexturesEditor {
 	/**
 	 * Een getter voor de Textures. Deze is gelinkt aan een String "TextureNaam"
 	 * die hierboven wordt opgegeven. Hij zoekt door de twee arraylijsten om de
-	 * goede texture te vinden.
+	 * goede texture te vinden. Wanneer niet de goede texture is gevonden returned deze een default texture
 	 * 
-	 * @param textureName
-	 * @return
+	 * @param textureName De naam van de texture zoals deze is opgeslagen in de class LoadTexturesEditor
+	 * @return De texture die opgevraagd is of een default texture wanneer de naam niet bekend is
 	 */
 	public static Texture getTexture(String textureName) {
 		for (int i = 0; i < textureListNames.size(); i++) {
@@ -117,8 +117,8 @@ public class LoadTexturesEditor {
 	 * arraylijsten. Anders werd dit 3/4 regels per inladen van een texture. Nu
 	 * is het maar één regel
 	 * 
-	 * @param myTexture
-	 * @param textureName
+	 * @param myTexture De texture die in de texturelijst moet staan
+	 * @param textureName De naam van de opgegeven texture
 	 */
 	public void addTextureToList(Texture myTexture, String textureName) {
 		textureList.add(myTexture);

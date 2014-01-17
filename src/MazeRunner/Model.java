@@ -3,7 +3,6 @@ package MazeRunner;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
-
 import com.sun.opengl.util.texture.Texture;
 
 public class Model {

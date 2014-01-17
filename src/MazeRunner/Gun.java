@@ -23,15 +23,12 @@ public class Gun extends GameObject implements VisibleObject{
 		
 		GLUT glut = new GLUT();
 		
-		//gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE);
 		float keyColour[] = { 0.0f, 0.0f, 1.0f, 1f };
 		gl.glEnable(GL.GL_COLOR_MATERIAL);
 		
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, keyColour,0);
-
 		//DIT MOET WEG
-		gl.glColor3f(0, 0, 1);
-		//System.out.println(verAngle);
+//		gl.glColor3f(0, 0, 1);
 		
 		gl.glPushMatrix();
 		gl.glTranslated(locationX, 0.5*locationY, locationZ);
@@ -60,8 +57,6 @@ public class Gun extends GameObject implements VisibleObject{
 			gl.glRotatef((float)(-(verthoek)), 1, 0, 0);
 			
 		}
-		//gl.glTranslated(0.5*SQUARE_SIZE, 0, 0.5*SQUARE_SIZE); //zorgt dat de sleutel in het midden van het blok komt.
-		//gl.glRotatef(0, 1, 0, 0);
 		
 		glut.glutSolidCylinder(0.2, 3, 40, 10);
 		gl.glPopMatrix();
@@ -69,7 +64,7 @@ public class Gun extends GameObject implements VisibleObject{
 		gl.glDisable(GL.GL_COLOR_MATERIAL);
 		
 		//DIT MOET WEG
-		gl.glColor3f(1, 1, 1);
+//		gl.glColor3f(1, 1, 1);
 		
 		
 	}

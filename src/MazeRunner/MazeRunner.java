@@ -3,13 +3,11 @@ package MazeRunner;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
@@ -21,7 +19,6 @@ import javax.media.opengl.glu.GLU;
 import LevelEditor.Guardian;
 import LevelEditor.Key;
 import LevelEditor.LoadLevel;
-import LevelEditor.Spot;
 
 /**
  * MazeRunner is the base class of the game, functioning as the view controller
@@ -42,7 +39,6 @@ import LevelEditor.Spot;
 public class MazeRunner implements GLEventListener, MouseListener {
 	static final long serialVersionUID = 7526471155622776147L;
 	public static boolean GOD_MODE = false;
-//	private static final double SQUARE_SIZE = 5;
 
 	/*
 	 * **********************************************
@@ -50,8 +46,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * **********************************************
 	 */
 	private GLCanvas canvas;
-	private LoadLevel newMaze = new LoadLevel("level1");
 	private Maze maze;
+
+
 	private int screenWidth, screenHeight;
 	private ArrayList<VisibleObject> visibleObjects;
 	static Player player;
@@ -59,25 +56,23 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private UserInput input;
 	private long previousTime = Calendar.getInstance().getTimeInMillis();
 	private int deltaTime = 0;
-	private ArrayList<Guardian> tempGuard = newMaze.getGuardians();
-	private ArrayList<Guard> guards = new ArrayList<Guard>();
-	private ArrayList<Point> tempCamera = newMaze.getCameras();
-	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
-	private ArrayList<Spot> spots = new ArrayList<Spot>();
-	private ArrayList<Point> tempSpot = newMaze.getSpots();
-	private ArrayList<Point> tempControlCenter = newMaze.getControlCenters();
-	private ArrayList<ControlCenter> controlCenters = new ArrayList<ControlCenter>();
 	
+	private ArrayList<Guard> guards = new ArrayList<Guard>();
+	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
+	private ArrayList<Spotlight> spotlights = new ArrayList<Spotlight>();
+	private ArrayList<ControlCenter> controlCenters = new ArrayList<ControlCenter>();
+	private ArrayList<Keys> keys = new ArrayList<Keys>();
 
 	private int checkdistance = 2;
 
+
 	private WallChecker playerwallchecker;
-	private ArrayList<Key> tempKey = newMaze.getKeys();
-	private ArrayList<Keys> keys = new ArrayList<Keys>();
+
+
+	
 	private Inventory inventory = new Inventory();
 	private Gun gun;
 
-//	private Animator anim;
 	private boolean gameinitialized = false, gamepaused = false;
 
 	private boolean startup = true;
@@ -128,40 +123,51 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * be added to the visualObjects list of MazeRunner through the add method,
 	 * so it will be displayed automatically.
 	 */
-	private void initObjects() {
+	private void initObjects(GL gl) {
 		// We define an ArrayList of VisibleObjects to store all the objects
 		// that need to be displayed by MazeRunner.
 		visibleObjects = new ArrayList<VisibleObject>();
-
-		// Add the maze that we will be using.
-
 		
+
+
+		// Add the maze that we will be using.	
 		maze = new Maze();
+		LoadLevel loadLevelMaze = maze.getLoadLevel();
 		score = new HighScore(playerName, 0, maze.getLevelName());
+		
+		ArrayList<Guardian> tempGuard = loadLevelMaze.getGuardians();
+		ArrayList<Point> tempCamera = loadLevelMaze.getCameras();
+		ArrayList<Point> tempSpots = loadLevelMaze.getSpots();
+		ArrayList<Point> tempControlCenter = loadLevelMaze.getControlCenters();
+		ArrayList<Key> tempKey = loadLevelMaze.getKeys();
 		
 		visibleObjects.add(maze);
 
-		createKeys();
+		createSpots(gl, tempSpots);
+		for (Spotlight temp: spotlights) {
+			visibleObjects.add(temp);
+		}
+		
+		createKeys(tempKey);
 		maze.setKeys(keys);
 		for (Keys temp : keys) {
 			visibleObjects.add(temp);
 		}
 
-		gun = new Gun(2, 0, 1, 5);
+		gun = new Gun(6, 0, 1, 5);
 		visibleObjects.add(gun);
 
-		createGuards();
-		createCameras();
-
+		createCameras(tempCamera);
 		for (GuardCamera temp : cameras) {
 			visibleObjects.add(temp);
 		}
-
+		
+		createGuards(tempGuard);
 		for (Guard temp : guards) {
 			visibleObjects.add(temp);
 		}
 		
-		createControlCenter();
+		createControlCenter(tempControlCenter);
 		for (ControlCenter temp : controlCenters) {
 			visibleObjects.add(temp);
 		}
@@ -178,8 +184,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
 				player.getLocationZ(), player.getHorAngle(),
 				player.getVerAngle());
-		// guardcamera = new GuardCamera(15, 15, 15, player.locationX,
-		// player.locationZ, previousTime);
 
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
@@ -205,18 +209,21 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * all in this method.
 	 */
 	public void init(GLAutoDrawable drawable) {
+
+
+		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL pipeline to Debugging mode.
+		GL gl = drawable.getGL();
+		GLU glu = new GLU();
 		if (initialize) {
 			System.out.println("Creatie objects");
-			initObjects(); // Initialize all the objects!
+			initObjects(gl); // Initialize all the objects!
 			playerwallchecker = new WallChecker(player,checkdistance, maze); // must be done after the maze has been created
 			initialize = false;
 		}
 		System.out.println("Mazerunner init");
-		drawable.setGL(new DebugGL(drawable.getGL())); // We set the OpenGL pipeline to Debugging mode.
-		GL gl = drawable.getGL();
-		GLU glu = new GLU();
+		
+		gl.glClearColor(0, 0, 0, 0); // Set the background color.
 
-//		gl.glClearColor(0, 0, 0, 0); // Set the background color.
 		// Now we set up our viewpoint.
 		gl.glMatrixMode(GL.GL_PROJECTION); // We'll use orthogonal projection.
 		gl.glLoadIdentity(); // Reset the current matrix.
@@ -260,9 +267,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			GL gl = drawable.getGL();
 			GLU glu = new GLU();
 
-			// ALLES IS WIT HIERDOOR, TIJDELIJKE OPLOSSING
-//			gl.glColor3f(1, 1, 1);
-
 			// Calculating time since last frame.
 			Calendar now = Calendar.getInstance();
 			long currentTime = now.getTimeInMillis();
@@ -284,19 +288,29 @@ public class MazeRunner implements GLEventListener, MouseListener {
 					camera.getVuvZ());
 
 			// Display all the visible objects of MazeRunner.
-			for (Iterator<VisibleObject> it = visibleObjects.iterator(); it
-					.hasNext();) {
-				it.next().display(gl);
-			}
+			for (VisibleObject obj : visibleObjects)
+				if (obj instanceof Spotlight)
+					obj.display(gl);
+
+			for (VisibleObject obj : visibleObjects)
+				if (!(obj instanceof Spotlight))
+					obj.display(gl);
+
+			// for (VisibleObject obj : visibleObjects
+			// obj.display(gl);
 
 			gl.glLoadIdentity();
 			// Flush the OpenGL buffer.
-			gl.glFlush();
+			// gl.glFlush();
 		}
 	}
 
 	private void updateHighscore(int deltaTime) {
 		score.update(deltaTime);
+	}
+	
+	public void updateHighScoreCamera(){
+		score.alarmedCameraUpdate();
 	}
 
 	/**
@@ -484,9 +498,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	/**
 	 * Maakt een arraylist van guardobjecten
+	 * @param tempGuard 
 	 */
 
-	public void createGuards() {
+	public void createGuards(ArrayList<Guardian> tempGuard) {
 		for (Guardian temp : tempGuard) {
 			ArrayList<Point> temproute = temp.getCopyRoutes();
 			Point a = temp.getRoute(0);
@@ -498,22 +513,29 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	/**
 	 * Maakt een arraylist van cameraobjecten
+	 * @param tempCamera 
 	 */
-	public void createCameras() {
+	public void createCameras(ArrayList<Point> tempCamera) {
 		for (Point temp : tempCamera) {
-			GuardCamera res = new GuardCamera(temp.getX(), 6, temp.getY());
+			GuardCamera res = new GuardCamera(temp.getX(), 6, temp.getY(),this);
 			cameras.add(res);
 		}
 	}
 
-	public void createSpots() {
-		for (Point temp : tempSpot) {
-			Spot res = new Spot();
-			spots.add(res);
+	public void createSpots(GL gl, ArrayList<Point> tempSpots) {
+		// Hoogte van de spot, moet nog veranderen
+		double spotHeight = 5;
+		int i = 0;
+		for (Point temp : tempSpots) {
+			Spotlight res = new Spotlight(gl, 5,
+					LoadTexturesMaze.getTexture("spotlight"), temp.getX(),
+					spotHeight, temp.getY(), i);
+			spotlights.add(res);
+			i++;
 		}
 	}
-	
-	public void createKeys() {
+
+	public void createKeys(ArrayList<Key> tempKey) {
 		for (Key temp : tempKey) {
 			Point a = temp.getKey();
 			Point b = temp.getDoor();
@@ -522,7 +544,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 	}
 	
-	public void createControlCenter(){
+	public void createControlCenter(ArrayList<Point> tempControlCenter){
 		for (Point temp : tempControlCenter) {
 			ControlCenter res = new ControlCenter(temp.getX(), 0, temp.getY(), Maze.SQUARE_SIZE);
 			controlCenters.add(res);
@@ -584,11 +606,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		System.out.println("kom je hier wel");
 		// visibleObjects.add(kogel);
 	}
-	
-	/**
-	 * 
-	 * MENNO EIND
-	 */
+
 
 	public void setWalkingSpeed(double speed) {
 		player.setSpeed(speed);
