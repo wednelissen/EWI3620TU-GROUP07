@@ -470,41 +470,36 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	}
 
 	private void setPatrol() {
-		if (closestGuard.isPatrol()) {
-			ArrayList<Point> patrolCoordinaten = closestGuard
-					.getPatrolCoordinaten();
-			System.out.println("print hij deze" + patrolCoordinaten);
-			ArrayList<Point> tempoRoute = new ArrayList<Point>();
-			tempoRoute.add(closestGuard.getHuidigepositie());
-			tempoRoute.addAll(patrolCoordinaten);
-			patrolCoordinaten = tempoRoute;
-			closestGuard.setCoordinaten(patrolCoordinaten);
-			closestGuard.setFinishpositie(patrolCoordinaten
-					.get(patrolCoordinaten.size() - 1));
-			closestGuard.setStartpositie(patrolCoordinaten.get(0));
-			closestGuard.setRichting(true);
-			closestGuard.setTeller(1);
-		}
+		for (Guard guard : guards)
+			if (guard.isPatrol()) {
+				ArrayList<Point> patrolCoordinaten = guard
+						.getPatrolCoordinaten();
+
+				guard.setCoordinaten(patrolCoordinaten);
+				guard.setFinishpositie(patrolCoordinaten.get(patrolCoordinaten
+						.size() - 1));
+				guard.setStartpositie(patrolCoordinaten.get(0));
+				guard.setRichting(true);
+				guard.setTeller(1);
+			}
 	}
 
 	private void resetPatrol() {
-		if (closestGuard.isResettingPatrol()) {
-			ArrayList<Point> resetRoute = new RouteAlgoritme(maze).algorithm(
-					closestGuard.getPatrolStartPositie(),
-					closestGuard.getEindpositie());
-			ArrayList<Point> tempoRoute = new ArrayList<Point>();
-			tempoRoute.add(closestGuard.getHuidigepositie());
-			tempoRoute.addAll(resetRoute);
-			resetRoute = tempoRoute;
-			closestGuard.setCoordinaten(resetRoute);
-			ArrayList<Point> resetCoordinates = closestGuard.getCoordinaten();
-			closestGuard.setFinishpositie(resetCoordinates.get(resetCoordinates
-					.size() - 1));
-			closestGuard.setRichting(true);
-			closestGuard.setTeller(1);
-			resettingRoute = true;
+		for (Guard guard : guards)
+			if (guard.isResettingPatrol()) {
+				ArrayList<Point> resetRoute = new RouteAlgoritme(maze)
+						.algorithm(guard.getPatrolStartPositie(),
+								guard.getEindpositie());
 
-		}
+				guard.setCoordinaten(resetRoute);
+				ArrayList<Point> resetCoordinates = guard.getCoordinaten();
+				guard.setFinishpositie(resetCoordinates.get(resetCoordinates
+						.size() - 1));
+				guard.setRichting(true);
+				guard.setTeller(1);
+				resettingRoute = true;
+
+			}
 	}
 
 	/**
