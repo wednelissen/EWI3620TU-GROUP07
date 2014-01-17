@@ -21,6 +21,7 @@ import LevelEditor.Key;
 import LevelEditor.LoadLevel;
 import LevelEditor.Spot;
 import ShortestRoute.RouteAlgoritme;
+import Sound.SoundEffect;
 
 /**
  * MazeRunner is the base class of the game, functioning as the view controller
@@ -459,7 +460,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 				}
 
 			}
-
+			if (temp.isBusted()) {
+				System.out.println("Busted");
+				SoundEffect.SHOT.play();
+				toStateBusted();
+			}
 		}
 
 		// System.out.println("x: "+player.locationX +
@@ -521,6 +526,15 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	public static Player getPlayer() {
 		return player;
+	}
+
+	public void toStateBusted() {
+		canvas.removeMouseListener(input);
+		canvas.removeMouseMotionListener(input);
+		canvas.removeKeyListener(input);
+		gamepaused = true;
+		canvas.removeGLEventListener(this);
+		new StateBusted(canvas);
 	}
 
 	/**
@@ -766,30 +780,30 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-
+		// NOT USED
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// NOT USED
 
 	}
 
