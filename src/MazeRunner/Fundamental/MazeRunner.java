@@ -24,7 +24,7 @@ import MazeRunner.Opponents.*;
 import MazeRunner.Player.*;
 import MazeRunner.GameStates.*;
 import MazeRunner.Opponents.RouteAlgoritme;
-import Sound.SoundEffect;
+import MazeRunner.Sound.SoundEffect;
 
 /**
  * MazeRunner is the base class of the game, functioning as the view controller
@@ -98,15 +98,11 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private boolean watchFromCamera = false;
 	private int watchCameraNumber = 0;
 
-	/*
-	 * **********************************************
-	 * * Initialization methods **********************************************
-	 */
+
 	/**
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
 	 * defined by GameDriver. It adds itself as a GLEventListener.
 	 */
-
 	public MazeRunner(GLCanvas canvas, String playerName) {
 
 		GOD_MODE = false;
@@ -750,7 +746,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 				maze.openDoor(door);
 				inventory.removeKey(k);
-				Sound.SoundEffect.DOORSLIDE.play();
+				SoundEffect.DOORSLIDE.play();
 				break;
 			}
 		}

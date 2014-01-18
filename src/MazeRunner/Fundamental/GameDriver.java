@@ -3,7 +3,7 @@ package MazeRunner.Fundamental;
 import java.awt.Dimension;
 
 
-
+import MazeRunner.Sound.SoundEffect;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 
@@ -32,7 +32,7 @@ public class GameDriver{
 		//Initialize Window
 		initWindow();
 		//Initialize Sounds
-		Sound.SoundEffect.init();
+		SoundEffect.init();
 		//Show Main Menu
 		mainMenu = new StateMainMenu(canvas, true);
 		anim = new Animator(canvas);

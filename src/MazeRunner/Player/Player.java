@@ -9,7 +9,7 @@ import MazeRunner.Fundamental.MazeRunner;
 import MazeRunner.Objects.Maze;
 import MazeRunner.Objects.GameObject;
 import MazeRunner.Objects.VisibleObject;
-import Sound.*;
+import MazeRunner.Sound.SoundEffect;
 
 /**
  * Player represents the actual player in MazeRunner.

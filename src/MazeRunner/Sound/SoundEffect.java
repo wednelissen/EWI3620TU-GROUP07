@@ -1,4 +1,4 @@
-package Sound;
+package MazeRunner.Sound;
 
 import java.io.*;
 import javax.sound.sampled.*;

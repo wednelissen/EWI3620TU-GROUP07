@@ -19,7 +19,6 @@ import com.sun.opengl.util.GLUT;
  * @author Stijn
  * 
  */
-
 public class GuardCamera extends GameObject implements VisibleObject {
 
 	private boolean alarm = false;
