@@ -1,13 +1,9 @@
 package MazeRunner;
 
 import java.awt.Point;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
-
-import com.sun.opengl.util.GLUT;
 
 /**
  * Deze klasse maakt een guard object aan, deze heeft een functie voor
@@ -22,21 +18,25 @@ import com.sun.opengl.util.GLUT;
 public class Guard extends GameObject implements VisibleObject {
 
 	private ArrayList<Point> coordinaten;
-
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
 	public Maze maze;
 	private double speed;
 	private boolean richting = true;
+
 	private Point startpositie;
+
 	private Point eindpositie;
 	private Point huidigepositie;
+
 	private Point finishpositie;
+
 	private int teller = 1;
-	private boolean zplus = false;	//loopt naar beneden
-	private boolean zmin = false;	//loopt naar boven
-	private boolean xplus = false; 	//loopt naar rechts
-	private boolean xmin = false;	// loopt naar links
+
+	private boolean zplus = false; // loopt naar beneden
+	private boolean zmin = false; // loopt naar boven
+	private boolean xplus = false; // loopt naar rechts
+	private boolean xmin = false; // loopt naar links
 	private boolean zplusPrev = false;
 	private boolean zminPrev = false;
 	private boolean xplusPrev = false;
@@ -46,30 +46,42 @@ public class Guard extends GameObject implements VisibleObject {
 	private double startAngle;
 	private boolean startCheck = true;
 	private boolean finishCheck = false;
+	private boolean busted;
+	private boolean alarmed = false;
+
+	private boolean patrol = true;
+	private ArrayList<Point> patrolCoordinaten;
 
 	private boolean canMoveForward;
 	private boolean canMoveLeft;
 	private boolean canMoveRight;
-	
+
 	private Model modelGuard;
 
 	private boolean overRuleLeft;
 	private boolean overRuleRight;
 	private int deltaTimeSum = 0;
+	private Point patrolStartPositie;
+	private boolean resettingPatrol = false;
 
 	public Guard(double x, double y, double z, ArrayList<Point> points) {
-		super(x * SQUARE_SIZE+(0.5*SQUARE_SIZE), y, z * SQUARE_SIZE+(0.5*SQUARE_SIZE));
+
+		super(x * SQUARE_SIZE + (0.5 * SQUARE_SIZE), y, z * SQUARE_SIZE
+				+ (0.5 * SQUARE_SIZE));
 		modelGuard = LoadTexturesMaze.getModel("modelGuard");
+
 		speed = 0.005;
 		coordinaten = points;
+		patrolCoordinaten = points;
 
 		startpositie = coordinaten.get(0);
+		patrolStartPositie = coordinaten.get(0);
 		finishpositie = coordinaten.get(coordinaten.size() - 1);
 		huidigepositie = startpositie;
 		startHoek();
 	}
 
-	private void startHoek() {
+	public void startHoek() {
 		Point secondPosition = coordinaten.get(1);
 		int diffX = (int) (secondPosition.getX() - startpositie.getX());
 		int diffZ = (int) (secondPosition.getY() - startpositie.getY());
@@ -86,14 +98,6 @@ public class Guard extends GameObject implements VisibleObject {
 			startAngle = 180;
 			zminPrev = true;
 		}
-	}
-
-	public void setCanMoveForward(boolean b) {
-		this.canMoveForward = b;
-	}
-
-	public void setSpeed(double speed) {
-		this.speed = speed;
 	}
 
 	/**
@@ -148,7 +152,7 @@ public class Guard extends GameObject implements VisibleObject {
 					} else {
 						System.out.println("Fucking grote error biatch");
 					}
-				
+
 					richtingDraaier();
 
 				} else if (huidigepositie.equals(eindpositie)) {
@@ -193,37 +197,38 @@ public class Guard extends GameObject implements VisibleObject {
 	}
 
 	private void resetWalkingDirection() {
-			xmin = false;
-			xplus = false;
-			zmin = false;
-			zplus = false;	
+		xmin = false;
+		xplus = false;
+		zmin = false;
+		zplus = false;
 	}
 
-
 	/**
-	 * afhankelijk of je van het begin of het einde komt zorgt deze functie dat de richting waar je vandaag komt wanneer
-	 * de guard zich omdraaid, goed wordt geset.
+	 * afhankelijk of je van het begin of het einde komt zorgt deze functie dat
+	 * de richting waar je vandaag komt wanneer de guard zich omdraaid, goed
+	 * wordt geset.
+	 * 
 	 * @param fromBegin
 	 */
-	private void resetRichtingDraaier(boolean fromBegin){
+	private void resetRichtingDraaier(boolean fromBegin) {
 		int diffX;
 		int diffZ;
-		
+
 		xplusPrev = false;
 		xminPrev = false;
 		zplusPrev = false;
 		zminPrev = false;
-		
-		if(fromBegin){
+
+		if (fromBegin) {
 			Point secondPosition = coordinaten.get(1);
 			diffX = (int) (secondPosition.getX() - startpositie.getX());
 			diffZ = (int) (secondPosition.getY() - startpositie.getY());
-		}else{			
+		} else {
 			Point secondPosition = coordinaten.get(coordinaten.size() - 2);
 			diffX = (int) (secondPosition.getX() - finishpositie.getX());
 			diffZ = (int) (secondPosition.getY() - finishpositie.getY());
 		}
-		
+
 		if (diffX > 0) {
 			xplusPrev = true;
 		} else if (diffX < 0) {
@@ -234,7 +239,7 @@ public class Guard extends GameObject implements VisibleObject {
 			zminPrev = true;
 		}
 	}
-	
+
 	/**
 	 * Deze methode controleert de patrouillerichting aan de hand daarvan de
 	 * angle van de guard.
@@ -244,45 +249,53 @@ public class Guard extends GameObject implements VisibleObject {
 			if (xmin) {
 				horAngle = horAngle - 90;
 				xminPrev = true;
+				zplusPrev = false;
 			}
 			if (xplus) {
 				horAngle = horAngle + 90;
 				xplusPrev = true;
+				zplusPrev = false;
 			}
-			zplusPrev = false;
+
 		}
 		if (zmin != zminPrev) {
 			if (xmin) {
 				horAngle = horAngle + 90;
 				xminPrev = true;
+				zminPrev = false;
 			}
 			if (xplus) {
 				horAngle = horAngle - 90;
 				xplusPrev = true;
+				zminPrev = false;
 			}
-			zminPrev = false;
+
 		}
 		if (xmin != xminPrev) {
 			if (zmin) {
 				horAngle = horAngle - 90;
 				zminPrev = true;
+				xminPrev = false;
 			}
 			if (zplus) {
 				horAngle = horAngle + 90;
 				zplusPrev = true;
+				xminPrev = false;
 			}
-			xminPrev = false;
+
 		}
 		if (xplus != xplusPrev) {
 			if (zmin) {
 				horAngle = horAngle + 90;
 				zminPrev = true;
+				xplusPrev = false;
 			}
 			if (zplus) {
 				horAngle = horAngle - 90;
 				zplusPrev = true;
+				xplusPrev = false;
 			}
-			xplusPrev = false;
+
 		}
 	}
 
@@ -292,11 +305,13 @@ public class Guard extends GameObject implements VisibleObject {
 	public void huidigepositie() {
 		int xTemp = (int) Math.floor(locationX / SQUARE_SIZE);
 		int zTemp = (int) Math.floor(locationZ / SQUARE_SIZE);
-		
-		double diffx = Math.abs(xTemp*SQUARE_SIZE+0.5*SQUARE_SIZE - locationX);
-		double diffz = Math.abs(zTemp*SQUARE_SIZE+0.5*SQUARE_SIZE - locationZ);
-		
-		if(diffx<0.1 && diffz<0.1){
+
+		double diffx = Math.abs(xTemp * SQUARE_SIZE + 0.5 * SQUARE_SIZE
+				- locationX);
+		double diffz = Math.abs(zTemp * SQUARE_SIZE + 0.5 * SQUARE_SIZE
+				- locationZ);
+
+		if (diffx < 0.1 && diffz < 0.1) {
 			huidigepositie = new Point(xTemp, zTemp);
 		}
 	}
@@ -310,15 +325,16 @@ public class Guard extends GameObject implements VisibleObject {
 		gl.glPushMatrix();
 
 		gl.glTranslated(locationX, 0, locationZ);
-		
+
 		gl.glRotatef((float) (startAngle + horAngle), 0f, 1f, 0f);
 		gl.glScaled(0.50, 0.50, 0.50);
-		
-		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
+
+		gl.glDisable(GL.GL_CULL_FACE);// zorgt dat de achterkant zichtbaar is
 		modelGuard.draw(gl);
 		gl.glPopMatrix();
 
-		gl.glEnable(GL.GL_CULL_FACE); // zet de instellingen weer terug zoals ze stonden
+		gl.glEnable(GL.GL_CULL_FACE); // zet de instellingen weer terug zoals ze
+										// stonden
 	}
 
 	/**
@@ -329,43 +345,48 @@ public class Guard extends GameObject implements VisibleObject {
 	 * @param z
 	 */
 	public void playerDetectie(double xPlayer, double zPlayer) {
-		if(!attack){
+		if (!attack) {
 			double afstandzicht = 13;
 			double zijzicht = 13;
-			
+
 			double diffX = locationX - xPlayer;
-			double diffZ = locationZ - zPlayer;		
-			
+			double diffZ = locationZ - zPlayer;
+
 			if (xplus) {
-				if(Math.abs(diffZ) < zijzicht && diffX > -afstandzicht && diffX < 0){			
-					if(!wallInBetween(diffX, diffZ)){
+				if (Math.abs(diffZ) < zijzicht && diffX > -afstandzicht
+						&& diffX < 0) {
+					if (!wallInBetween(diffX, diffZ)) {
 						setAttack(true);
 					}
 				}
 			} else if (xmin) {
-				if(Math.abs(diffZ) < zijzicht && diffX < afstandzicht && diffX > 0){
-					if(!wallInBetween(diffX, diffZ)){
+				if (Math.abs(diffZ) < zijzicht && diffX < afstandzicht
+						&& diffX > 0) {
+					if (!wallInBetween(diffX, diffZ)) {
 						setAttack(true);
 					}
 				}
 			} else if (zmin) {
-				if(Math.abs(diffX) < zijzicht && diffZ < afstandzicht && diffZ > 0){
-					if(!wallInBetween(diffX, diffZ)){
+				if (Math.abs(diffX) < zijzicht && diffZ < afstandzicht
+						&& diffZ > 0) {
+					if (!wallInBetween(diffX, diffZ)) {
 						setAttack(true);
 					}
 				}
 			} else if (zplus) {
-				if(Math.abs(diffX) < zijzicht && diffZ > -afstandzicht && diffZ < 0){
-					if(!wallInBetween(diffX, diffZ)){
+				if (Math.abs(diffX) < zijzicht && diffZ > -afstandzicht
+						&& diffZ < 0) {
+					if (!wallInBetween(diffX, diffZ)) {
 						setAttack(true);
 					}
 				}
-			} 
+			}
 		}
 	}
 
 	/**
-	 * trekt een lijn tussen de player en de guard en geeft true wanneer hier een wall tussen zit. 
+	 * trekt een lijn tussen de player en de guard en geeft true wanneer hier
+	 * een wall tussen zit.
 	 * 
 	 * @param diffX
 	 * @param diffZ
@@ -373,43 +394,43 @@ public class Guard extends GameObject implements VisibleObject {
 	 */
 	private boolean wallInBetween(double diffX, double diffZ) {
 		boolean wall = false;
-		if(Math.abs(diffX)>Math.abs(diffZ)){
-			for(double i = 0;i<Math.abs(diffX);i+=0.5){
+		if (Math.abs(diffX) > Math.abs(diffZ)) {
+			for (double i = 0; i < Math.abs(diffX); i += 0.5) {
 				int teken = 1;
-				if(diffX>0){
+				if (diffX > 0) {
 					teken = -1;
 				}
-				double lijnFormuleZ = diffZ/diffX*teken*i+locationZ;
-				double lijnFormuleX = teken*i + locationX;
-				//DEBUG
-//				int x = (int) Math.floor(lijnFormuleX / SQUARE_SIZE);
-//				int z = (int) Math.floor(lijnFormuleZ / SQUARE_SIZE);
-				//System.out.println(x+","+z);
-					if(maze.isWall(lijnFormuleX, lijnFormuleZ)){
-						wall = true;
-						break;
-					}
+				double lijnFormuleZ = diffZ / diffX * teken * i + locationZ;
+				double lijnFormuleX = teken * i + locationX;
+				// DEBUG
+				// int x = (int) Math.floor(lijnFormuleX / SQUARE_SIZE);
+				// int z = (int) Math.floor(lijnFormuleZ / SQUARE_SIZE);
+				// System.out.println(x+","+z);
+				if (maze.isWall(lijnFormuleX, lijnFormuleZ)) {
+					wall = true;
+					break;
+				}
 			}
-		}else{
-			for(double i = 0;i<Math.abs(diffZ);i+=0.5){
+		} else {
+			for (double i = 0; i < Math.abs(diffZ); i += 0.5) {
 				int teken = 1;
-				if(diffZ>0){
+				if (diffZ > 0) {
 					teken = -1;
 				}
-				double lijnFormuleX = diffX/diffZ*teken*i+locationX;
-				double lijnFormuleZ = teken*i + locationZ;
-				//DEBUG
-//				int x = (int) Math.floor(lijnFormuleX / SQUARE_SIZE);
-//				int z = (int) Math.floor(lijnFormuleZ / SQUARE_SIZE);
-				//System.out.println(x+","+z);
-				if(maze.isWall(lijnFormuleX, lijnFormuleZ)){
+				double lijnFormuleX = diffX / diffZ * teken * i + locationX;
+				double lijnFormuleZ = teken * i + locationZ;
+				// DEBUG
+				// int x = (int) Math.floor(lijnFormuleX / SQUARE_SIZE);
+				// int z = (int) Math.floor(lijnFormuleZ / SQUARE_SIZE);
+				// System.out.println(x+","+z);
+				if (maze.isWall(lijnFormuleX, lijnFormuleZ)) {
 					wall = true;
 					break;
 				}
 			}
 		}
-		
-		if(wall){
+
+		if (wall) {
 			System.out.println("er staat een muur of deur tussen");
 		}
 		return wall;
@@ -421,7 +442,7 @@ public class Guard extends GameObject implements VisibleObject {
 
 	public void setAttack(boolean attack) {
 		this.attack = attack;
-		if(attack){
+		if (attack) {
 			startAngle = -90;
 		}
 	}
@@ -438,105 +459,113 @@ public class Guard extends GameObject implements VisibleObject {
 		if (attack == true) {
 			double diffX = xPlayer - locationX;
 			double diffZ = zPlayer - locationZ;
-			horAngle = -Math.toDegrees(Math.atan2(diffZ, diffX))+180;
-			//DIT IS STANDAARD
-//			locationX -= Math.cos(Math.PI*horAngle/180) * speed * deltaTime;
-//			locationZ += Math.sin(Math.PI*horAngle/180) * speed * deltaTime;
-				
+			horAngle = -Math.toDegrees(Math.atan2(diffZ, diffX)) + 180;
+			// DIT IS STANDAARD
+			// locationX -= Math.cos(Math.PI*horAngle/180) * speed * deltaTime;
+			// locationZ += Math.sin(Math.PI*horAngle/180) * speed * deltaTime;
+
 			wallChecker();
 			updateAttackPosition(deltaTime);
 
-						
-			
 			if (Math.abs(diffX) < 2.5 && Math.abs(diffZ) < 2.5) {
-				System.out.println("busted!!!");
+				busted = true;
 			}
-			
+
 		}
 
 	}
 
 	private void updateAttackPosition(int deltaTime) {
-		if(!canMoveForward && !canMoveRight){
+		if (!canMoveForward && !canMoveRight) {
 			overRuleLeft = true;
 		}
-		
-		if(!canMoveForward && !canMoveLeft){
+
+		if (!canMoveForward && !canMoveLeft) {
 			overRuleRight = true;
 		}
-		
-		if(canMoveForward){
+
+		if (canMoveForward) {
 			stepForward(deltaTime);
 		}
-		
-		if(canMoveLeft){
+
+		if (canMoveLeft) {
 			stepLeft(deltaTime);
 		}
-		
-		if(canMoveRight){
+
+		if (canMoveRight) {
 			stepRight(deltaTime);
 		}
-		
-		if(overRuleLeft){
+
+		if (overRuleLeft) {
 			stepLeft(deltaTime); // Math.min(absCos,absSin) * speed
-			deltaTimeSum  = deltaTimeSum + deltaTime;
-//				System.out.println(deltaTimeSum);
-			if(deltaTimeSum >= 100){
+			deltaTimeSum = deltaTimeSum + deltaTime;
+			// System.out.println(deltaTimeSum);
+			if (deltaTimeSum >= 100) {
 				overRuleLeft = false;
 				deltaTimeSum = 0;
 			}
 		}
-		
-		if(overRuleRight){
+
+		if (overRuleRight) {
 			stepRight(deltaTime); // , Math.min(absCos, absSin) * speed
 			deltaTimeSum = deltaTimeSum + deltaTime;
-//				System.out.println(deltaTimeSum);
-			if(deltaTimeSum >= 100 ){
+			// System.out.println(deltaTimeSum);
+			if (deltaTimeSum >= 100) {
 				overRuleRight = false;
 				deltaTimeSum = 0;
 			}
 		}
-		//Reset collision detectors
+		// Reset collision detectors
 		canMoveForward = true;
 		canMoveLeft = true;
 		canMoveRight = true;
 	}
 
 	private void wallChecker() {
-		double checkdistance = SQUARE_SIZE/2;
-		//check forward
+		double checkdistance = SQUARE_SIZE / 2;
+		// check forward
 		if (maze.isWall(
-				locationX - checkdistance/2 * Math.cos(Math.PI * horAngle / 180),
-				locationZ + checkdistance/2 *  Math.sin(Math.PI* horAngle / 180))){ 
-					canMoveForward = false;
+				locationX - checkdistance / 2
+						* Math.cos(Math.PI * horAngle / 180),
+				locationZ + checkdistance / 2
+						* Math.sin(Math.PI * horAngle / 180))) {
+			canMoveForward = false;
 		}
 		// Check left direction for obstacles
 		if (maze.isWall(
-				locationX - checkdistance * Math.cos(Math.PI * (horAngle+90) / 180),
-				locationZ + checkdistance *  Math.sin(Math.PI* (horAngle+90) / 180))){ 
-					canMoveLeft = false;
+				locationX - checkdistance
+						* Math.cos(Math.PI * (horAngle + 90) / 180),
+				locationZ + checkdistance
+						* Math.sin(Math.PI * (horAngle + 90) / 180))) {
+			canMoveLeft = false;
 		}
 		// Check right direction for obstacles
 		if (maze.isWall(
-				locationX - checkdistance * Math.cos(Math.PI * (horAngle-90) / 180),
-				locationZ + checkdistance *  Math.sin(Math.PI* (horAngle-90) / 180))){ 
-					canMoveRight = false;
+				locationX - checkdistance
+						* Math.cos(Math.PI * (horAngle - 90) / 180),
+				locationZ + checkdistance
+						* Math.sin(Math.PI * (horAngle - 90) / 180))) {
+			canMoveRight = false;
 		}
 	}
 
 	private void stepForward(int deltatime) {
-		locationX -= Math.cos(Math.PI*horAngle/180) * speed * deltatime;
-		locationZ += Math.sin(Math.PI*horAngle/180) * speed * deltatime;
+		locationX -= Math.cos(Math.PI * horAngle / 180) * speed * deltatime;
+		locationZ += Math.sin(Math.PI * horAngle / 180) * speed * deltatime;
 	}
-	
+
 	private void stepLeft(int deltatime) {
-		locationX -= Math.cos(Math.PI*horAngle/180 + Math.PI * 0.5) * speed * deltatime;
-		locationZ += Math.sin(Math.PI*horAngle/180 + Math.PI * 0.5) * speed * deltatime;
+		locationX -= Math.cos(Math.PI * horAngle / 180 + Math.PI * 0.5) * speed
+				* deltatime;
+		locationZ += Math.sin(Math.PI * horAngle / 180 + Math.PI * 0.5) * speed
+				* deltatime;
 	}
-	
+
 	private void stepRight(int deltatime) {
-		locationX -= Math.cos(Math.PI*horAngle/180 - Math.PI * 0.5) * speed * deltatime;
-		locationZ += Math.sin(Math.PI*horAngle/180 - Math.PI * 0.5) * speed * deltatime;
+		locationX -= Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5) * speed
+				* deltatime;
+		locationZ += Math.sin(Math.PI * horAngle / 180 - Math.PI * 0.5) * speed
+				* deltatime;
 	}
 
 	public void setCanMoveRight(boolean b) {
@@ -548,4 +577,118 @@ public class Guard extends GameObject implements VisibleObject {
 
 	}
 
+	public ArrayList<Point> getCoordinaten() {
+		return coordinaten;
+	}
+
+	public void setCoordinaten(ArrayList<Point> coordinaten) {
+		this.coordinaten = coordinaten;
+	}
+
+	public Point getStartpositie() {
+		return startpositie;
+	}
+
+	public void setStartpositie(Point startpositie) {
+		this.startpositie = startpositie;
+	}
+
+	public Point getEindpositie() {
+		return eindpositie;
+	}
+
+	public void setEindpositie(Point eindpositie) {
+		this.eindpositie = eindpositie;
+	}
+
+	public Point getHuidigepositie() {
+		return huidigepositie;
+	}
+
+	public Point getFinishpositie() {
+		return finishpositie;
+	}
+
+	public void setFinishpositie(Point finishpositie) {
+		this.finishpositie = finishpositie;
+	}
+
+	public Point getPatrolStartPositie() {
+		return patrolStartPositie;
+	}
+
+	public void setPatrolStartPositie(Point patrolStartPositie) {
+		this.patrolStartPositie = patrolStartPositie;
+	}
+
+	public boolean isResettingPatrol() {
+		return resettingPatrol;
+	}
+
+	public void setResettingPatrol(boolean resettingPatrol) {
+		this.resettingPatrol = resettingPatrol;
+	}
+
+	public ArrayList<Point> getPatrolCoordinaten() {
+		return patrolCoordinaten;
+	}
+
+	public void setPatrolCoordinaten(ArrayList<Point> patrolCoordinaten) {
+		this.patrolCoordinaten = patrolCoordinaten;
+	}
+
+	public int getTeller() {
+		return teller;
+	}
+
+	public void setTeller(int teller) {
+		this.teller = teller;
+	}
+
+	public boolean isRichting() {
+		return richting;
+	}
+
+	public void setRichting(boolean richting) {
+		this.richting = richting;
+	}
+
+	public void setCanMoveForward(boolean b) {
+		this.canMoveForward = b;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public boolean isBusted() {
+		return busted;
+	}
+
+	public boolean isAlarmed() {
+		return alarmed;
+	}
+
+	public void setAlarmed(boolean alarmed) {
+		this.alarmed = alarmed;
+	}
+
+	public boolean isPatrol() {
+		return patrol;
+	}
+
+	public void setPatrol(boolean patrol) {
+		this.patrol = patrol;
+	}
+
+	public Point getEindPositie() {
+		return eindpositie;
+	}
+	
+	public void goedeKijkNaCam(){
+		startHoek();
+		horAngle = 0;
+		startCheck = true;
+		resetRichtingDraaier(true);
+	}
 }

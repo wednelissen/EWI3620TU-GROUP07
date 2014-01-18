@@ -1,5 +1,6 @@
 package MazeRunner;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -38,7 +39,8 @@ public class HighScore {
 	public HighScore(String playername, int score, String levelname) {
 		this.playerName = playername;
 		this.score = score;
-		this.levelName = levelname;
+		File tempfile = new File(levelname);
+		this.levelName = tempfile.getName();
 	}
 
 	/**
@@ -49,6 +51,10 @@ public class HighScore {
 	 */
 	public void update(int deltaTime) {
 		this.score += deltaTime;
+	}
+	
+	public void alarmedCameraUpdate(){
+		this.score += 10000;
 	}
 
 	public int getScore() {
@@ -79,39 +85,44 @@ public class HighScore {
 			System.out.println("Connecting database...");
 			connection = DriverManager.getConnection(url, username, password);
 			System.out.println("Database connected!");
+			try {
+				java.util.Date utilDate = new java.util.Date();
+				java.sql.Timestamp unformattedTimestamp = new java.sql.Timestamp(
+						utilDate.getTime());
+				String timestamp = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss")
+						.format(unformattedTimestamp);
+				stmt = connection.createStatement(
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+				rs = stmt.executeQuery("SELECT COUNT(*)" + "FROM highScores ");
+				stmt.executeUpdate("INSERT INTO highScores(playerName, score, levelName, timestamp) VALUES(\""
+						+ this.playerName
+						+ "\", "
+						+ this.score
+						+ ", \""
+						+ this.levelName + "\", \"" + timestamp + "\");");
+				System.out.println("High score saved succesfully!");
+				// System.out
+				// .println("INSERT INTO minorprojectSOT.highScores(playerName, score, levelName, timestamp) VALUES(\""
+				// + this.playerName
+				// + "\", "
+				// + this.score
+				// + ", \""
+				// + this.levelName
+				// + "\", \""
+				// + timestamp + "\");");
 
+			}
+
+			catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
 		} catch (SQLException e) {
-			throw new RuntimeException("Cannot connect the database!", e);
-		}
-		try {
-			java.util.Date utilDate = new java.util.Date();
-			java.sql.Timestamp unformattedTimestamp = new java.sql.Timestamp(
-					utilDate.getTime());
-			String timestamp = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss")
-					.format(unformattedTimestamp);
-			stmt = connection.createStatement(
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery("SELECT COUNT(*)" + "FROM highScores ");
-			stmt.executeUpdate("INSERT INTO highScores(playerName, score, levelName, timestamp) VALUES(\""
-					+ this.playerName
-					+ "\", "
-					+ this.score
-					+ ", \""
-					+ this.levelName + "\", \"" + timestamp + "\");");
+			// throw new RuntimeException("Cannot connect the database!", e);
 			System.out
-					.println("INSERT INTO minorprojectSOT.highScores(playerName, score, levelName, timestamp) VALUES(\""
-							+ this.playerName
-							+ "\", "
-							+ this.score
-							+ ", \""
-							+ this.levelName + "\", \"" + timestamp + "\");");
-		}
-
-		catch (SQLException e) {
-			throw new RuntimeException(e);
+					.println("CANNOT CONNECT TO THE DATABASE, high score was not saved.");
 		} finally {
-			System.out.println("Closing the connection.");
+			// System.out.println("Closing the connection.");
 			if (connection != null)
 				try {
 					connection.close();
@@ -140,26 +151,27 @@ public class HighScore {
 			System.out.println("Connecting database...");
 			connection = DriverManager.getConnection(url, username, password);
 			System.out.println("Database connected!");
-		} catch (SQLException e) {
-			throw new RuntimeException("Cannot connect the database!", e);
-		}
-		try {
-			stmt = connection.createStatement(
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
+			try {
+				stmt = connection.createStatement(
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
 
-			rs = stmt.executeQuery("SELECT * "
-					+ "from highScores ORDER BY score");
-			int i = 0;
-			while (rs.next() && i < 10) {
-				i += 1;
-				String playerDB = rs.getString("playerName");
-				int scoreDB = rs.getInt("score");
-				String levelDB = rs.getString("levelName");
-				res += playerDB + "\t" + scoreDB + " " + levelDB + "\n";
+				rs = stmt.executeQuery("SELECT * "
+						+ "from highScores ORDER BY score");
+				int i = 0;
+				while (rs.next() && i < 10) {
+					i += 1;
+					String playerDB = rs.getString("playerName");
+					int scoreDB = rs.getInt("score");
+					String levelDB = rs.getString("levelName");
+					res += playerDB + "\t" + scoreDB + " " + levelDB + "\n";
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// throw new RuntimeException("Cannot connect the database!", e);
+			System.out.println("Cannot connect to database");
 		} finally {
 			System.out.println("Closing the connection.");
 			if (connection != null)
@@ -170,14 +182,17 @@ public class HighScore {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Connects to the database to retrieve the saved high scores. Returns an
-	 * ArrayList containing the 10 best highscores
+	 * ArrayList containing the j best high scores
 	 * 
 	 * Used source:
-	 * http://www.developer.com/java/data/jdbc-and-mysql-discussion-and-sample-code-for-jdbc-programs.html
+	 * http://www.developer.com/java/data/jdbc-and-mysql-discussion-
+	 * and-sample-code-for-jdbc-programs.html
 	 * 
+	 * @param j
+	 *            amount of high scores to be retrieved
 	 * @return
 	 */
 	public static ArrayList<HighScore> getHighScores(int j) {
@@ -194,28 +209,31 @@ public class HighScore {
 			System.out.println("Connecting database...");
 			connection = DriverManager.getConnection(url, username, password);
 			System.out.println("Database connected!");
-		} catch (SQLException e) {
-			throw new RuntimeException("Cannot connect the database!", e);
-		}
-		try {
-			stmt = connection.createStatement(
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
 
-			rs = stmt.executeQuery("SELECT * "
-					+ "from highScores ORDER BY score");
-			int i = 0;
-			while (rs.next() && i < j) {
-				i += 1;
-				String playerDB = rs.getString("playerName");
-				int scoreDB = rs.getInt("score");
-				String levelDB = rs.getString("levelName");
-				res.add(new HighScore(playerDB,scoreDB, levelDB));
+			try {
+				stmt = connection.createStatement(
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+
+				rs = stmt.executeQuery("SELECT * "
+						+ "from highScores ORDER BY score");
+				int i = 0;
+				while (rs.next() && i < j) {
+					i += 1;
+					String playerDB = rs.getString("playerName");
+					int scoreDB = rs.getInt("score");
+					String levelDB = rs.getString("levelName");
+					res.add(new HighScore(playerDB, scoreDB, levelDB));
+				}
+				System.out.println("Highscores retrieved succesfully!");
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// throw new RuntimeException("Cannot connect the database!", e);
+			System.out.println("Cannot connect to database");
 		} finally {
-			System.out.println("Closing the connection.");
+			System.out.println("Closing the connection");
 			if (connection != null)
 				try {
 					connection.close();

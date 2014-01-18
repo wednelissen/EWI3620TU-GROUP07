@@ -25,45 +25,52 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	double playerLocatieX;
 	double playerLocatieZ;
 	private Point huidigepositie;
+
+	public Point getHuidigepositie() {
+		return huidigepositie;
+	}
+
 	private Point playerPositie;
 	private ThreadLoop thread = new ThreadLoop();
+	private MazeRunner mazerunner;
 
-	public GuardCamera(double x, int y, double z) {
+	public GuardCamera(double x, int y, double z, MazeRunner mazerunner) {
 		super((x * SQUARE_SIZE) + (SQUARE_SIZE / 2), y, (z * SQUARE_SIZE)
 				+ (SQUARE_SIZE / 2));
-
+		this.mazerunner = mazerunner;
 		huidigepositie();
 
 		thread.start();
 	}
 
 	/**
-	 * De functie die registreert of de speler gezien wordt door de camera wanneer deze aan staat.
+	 * De functie die registreert of de speler gezien wordt door de camera
+	 * wanneer deze aan staat.
 	 */
 	public boolean alarm() {
-		if(thread.visible && playerPositie.equals(huidigepositie) &&!alarm){
+		if (thread.visible && playerPositie.equals(huidigepositie) && !alarm) {
 			System.out.println("Camera ALARM");
 			alarm = true;
 			thread.setSleepTime(400);
+			mazerunner.updateHighScoreCamera();
 			return true;
 		}
 		return false;
 	}
-	
-	public void resetAlarm(){
+
+	public void resetAlarm() {
 		alarm = false;
-		
+
 		thread.setSleepTime(4000);
 	}
-	
-	public boolean getGuardSend(){
+
+	public boolean getGuardSend() {
 		return guardSend;
 	}
-	
-	public void guardSended(){
-		guardSend = true;
+
+	public void guardSended(boolean bool) {
+		this.guardSend = bool;
 	}
-	
 
 	/**
 	 * Dit weergeeft de camera in het spel om de zoveel seconden

@@ -26,7 +26,7 @@ import Sound.*;
  *
  */
 public class Player extends GameObject implements VisibleObject {	
-	protected double horAngle, verAngle;
+	protected double verAngle;
 	private boolean canMoveForward,canMoveBack,canMoveLeft,canMoveRight;
 	private boolean leftForwardWall, rightForwardWall;
 	private double speed;
@@ -37,7 +37,7 @@ public class Player extends GameObject implements VisibleObject {
 	private boolean overRuleRight;
 	private boolean reachedEndOfLevel = false;
 	private Point endPoint;
-	private double checkarea = 0.5*5; // should be 0.5*MAZE_SQUARE_SIZE
+	private double checkarea = 0.5*Maze.SQUARE_SIZE; // should be 0.5*MAZE_SQUARE_SIZE
 	
 	/**
 	 * The Player constructor.
@@ -88,22 +88,6 @@ public class Player extends GameObject implements VisibleObject {
 	public Control getControl()
 	{
 		return control;
-	}
-
-	/**
-	 * Returns the horizontal angle of the orientation.
-	 * @return the horAngle
-	 */
-	public double getHorAngle() {
-		return horAngle;
-	}
-
-	/**
-	 * Sets the horizontal angle of the orientation.
-	 * @param horAngle the horAngle to set
-	 */
-	public void setHorAngle(double horAngle) {
-		this.horAngle = horAngle;
 	}
 
 	/**
@@ -291,7 +275,7 @@ public class Player extends GameObject implements VisibleObject {
 			
 			//detect end of level
 			//COORDINATES SHOULD BE SCALED BY MAZE_SQUARE_SIZE
-			if((Math.abs(locationX-(endPoint.getX()+0.5)*5) < checkarea) && (Math.abs(locationZ-(endPoint.getY()+0.5)*5) < checkarea)){
+			if((Math.abs(locationX-(endPoint.getX()+0.5)*Maze.SQUARE_SIZE) < checkarea) && (Math.abs(locationZ-(endPoint.getY()+0.5)*Maze.SQUARE_SIZE) < checkarea)){
 				reachedEndOfLevel  = true;
 				SoundEffect.WALK.stop();
 				System.out.println("Reached end of level");

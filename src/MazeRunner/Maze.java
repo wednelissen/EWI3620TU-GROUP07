@@ -1,24 +1,14 @@
 package MazeRunner;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
-import LevelEditor.LoadLevel;
-import LevelEditor.Key;
-
-import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 
 import LevelEditor.LoadLevel;
-
-import com.sun.opengl.util.GLUT;
-import com.sun.opengl.util.ImageUtil;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
 import LevelEditor.OpenLevelFrame;
+
+import com.sun.opengl.util.texture.Texture;
 
 /**
  * Maze represents the maze used by MazeRunner.
@@ -48,10 +38,11 @@ public class Maze implements VisibleObject {
 	// public final double MAZE_SIZE = 10;
 	public double MAZE_SIZE_X;
 	public double MAZE_SIZE_Z;
-	public final double SQUARE_SIZE = 5;
+	public static final double SQUARE_SIZE = 5;
 	public Point startPoint;
 	public Point endPoint;
 	private ArrayList<Keys> doorKeys;
+
 	private int[][] maze;
 
 	public Maze() {
@@ -63,7 +54,7 @@ public class Maze implements VisibleObject {
 		newMaze = new LoadLevel(levelName);
 		MAZE_SIZE_X = newMaze.getWidth();
 		MAZE_SIZE_Z = newMaze.getHeight();
-		startPoint =  newMaze.getStartPosition();
+		startPoint = newMaze.getStartPosition();
 		endPoint = newMaze.getEndPosition();
 
 		maze = newMaze.outputForMazeRunner();
@@ -189,15 +180,21 @@ public class Maze implements VisibleObject {
 							LoadTexturesMaze.getTexture("wallTexture"));
 				}
 				if (!isWall(i, j)) {
-					drawFloor(gl, SQUARE_SIZE, LoadTexturesMaze.getTexture("floorTexture"));
+					drawFloor(gl, SQUARE_SIZE,
+							LoadTexturesMaze.getTexture("floorTexture"));
 					drawRoof(gl, SQUARE_SIZE,
 							LoadTexturesMaze.getTexture("floorTexture"));
 				}
 				if (isClosedDoor(i, j)) {
+					boolean possibleKey = false;
 					for (Keys k : doorKeys) {
 						if (k.getDoor().equals(new Point(i, j))) {
+							possibleKey = true;
 							drawClosedDoor(gl, SQUARE_SIZE, k.getKeyColor());
 						}
+					}
+					if(!possibleKey){
+						drawClosedDoor(gl, SQUARE_SIZE, null);
 					}
 				}
 				if (isOpeningDoor(i, j)) {
@@ -294,7 +291,7 @@ public class Maze implements VisibleObject {
 		gl.glTexCoord2d(1, 1);
 		gl.glVertex3d(size, size, size);
 
-		// Bovenzijde muur 
+		// Bovenzijde muur
 		gl.glNormal3d(1, 0, 0);
 		gl.glTexCoord2d(0, 0);
 		gl.glVertex3d(size, 0, size);
@@ -326,7 +323,7 @@ public class Maze implements VisibleObject {
 		float roofColor[] = { 1.0f, 1.0f, 1.0f, 0.0f }; // The floor is blue.
 		// Set the materials used by the floor.
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, roofColor, 0);
-		
+
 		// Sets the current normal vector
 		gl.glNormal3d(0, 1, 0);
 		if (myTexture != null) {
@@ -413,50 +410,54 @@ public class Maze implements VisibleObject {
 
 		// Sleutel gat
 
-		// DIT MOET WEG
-		 gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
-		 keyCardHoleColor[2]);
-
-		gl.glBegin(GL.GL_QUADS);
-
-		// HIER KUNNEN DE MATEN WORDEN OPGEGEVEN. GEDEELD DOOR WORDT NIET
-		// ONDERSTEUND
-		// JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven aan
-		// is 0,0
-		// double x_links = 239/298, x_rechts = 267/298, y_laag = 211/424,
-		// y_hoog = 240/424;
-		double x_links = 0.8, x_rechts = 0.895, y_laag = 0.428, y_hoog = 0.497;// 0.566;
-
-		gl.glVertex3d((1 - x_links) * size, y_hoog * size, -0.01); // rechtsboven
-		gl.glVertex3d((1 - x_links) * size, y_laag * size, -0.01); // links
-																	// onder
-		gl.glVertex3d((1 - x_rechts) * size, y_laag * size, -0.01); // rechts
-																	// onder
-		gl.glVertex3d((1 - x_rechts) * size, y_hoog * size, -0.01); // linksboven
-
-		// Achterzijde muur
-		gl.glVertex3d(x_links * size, y_hoog * size, size + 0.01); // linksboven
-		gl.glVertex3d(x_links * size, y_laag * size, size + 0.01); // linksonder
-		gl.glVertex3d(x_rechts * size, y_laag * size, size + 0.01); // rechtsonder
-		gl.glVertex3d(x_rechts * size, y_hoog * size, size + 0.01); // rechtsboven
-
-		// Bovenzijde muur, y,x
-		gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_links) * size); // linksonder
-		gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_rechts) * size); // rechtonder
-		gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_rechts) * size); // rechtsboven
-		gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_links) * size); // linksboven
-
-		// Onderzijde muur y,x
-		gl.glVertex3d(0 - 0.01, y_laag * size, x_links * size); // linksonder
-		gl.glVertex3d(0 - 0.01, y_laag * size, x_rechts * size);
-		gl.glVertex3d(0 - 0.01, y_hoog * size, x_rechts * size);
-		gl.glVertex3d(0 - 0.01, y_hoog * size, x_links * size); // linksboven
-
-		gl.glEnd();
-
-		// DIT MOET WEG
-		 gl.glColor3f(1, 1, 1);
-
+		if(keyCardHoleColor != null){
+			// DIT MOET WEG
+			gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
+					keyCardHoleColor[2]);
+			gl.glEnable(GL.GL_COLOR_MATERIAL);
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, keyCardHoleColor,0);
+			gl.glBegin(GL.GL_QUADS);
+	
+			// HIER KUNNEN DE MATEN WORDEN OPGEGEVEN. GEDEELD DOOR WORDT NIET
+			// ONDERSTEUND
+			// JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven aan
+			// is 0,0
+			// double x_links = 239/298, x_rechts = 267/298, y_laag = 211/424,
+			// y_hoog = 240/424;
+			double x_links = 0.8, x_rechts = 0.895, y_laag = 0.428, y_hoog = 0.497;// 0.566;
+	
+			gl.glVertex3d((1 - x_links) * size, y_hoog * size, -0.01); // rechtsboven
+			gl.glVertex3d((1 - x_links) * size, y_laag * size, -0.01); // links
+																		// onder
+			gl.glVertex3d((1 - x_rechts) * size, y_laag * size, -0.01); // rechts
+																		// onder
+			gl.glVertex3d((1 - x_rechts) * size, y_hoog * size, -0.01); // linksboven
+	
+			// Achterzijde muur
+			gl.glVertex3d(x_links * size, y_hoog * size, size + 0.01); // linksboven
+			gl.glVertex3d(x_links * size, y_laag * size, size + 0.01); // linksonder
+			gl.glVertex3d(x_rechts * size, y_laag * size, size + 0.01); // rechtsonder
+			gl.glVertex3d(x_rechts * size, y_hoog * size, size + 0.01); // rechtsboven
+	
+			// Bovenzijde muur, y,x
+			gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_links) * size); // linksonder
+			gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_rechts) * size); // rechtonder
+			gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_rechts) * size); // rechtsboven
+			gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_links) * size); // linksboven
+	
+			// Onderzijde muur y,x
+			gl.glVertex3d(0 - 0.01, y_laag * size, x_links * size); // linksonder
+			gl.glVertex3d(0 - 0.01, y_laag * size, x_rechts * size);
+			gl.glVertex3d(0 - 0.01, y_hoog * size, x_rechts * size);
+			gl.glVertex3d(0 - 0.01, y_hoog * size, x_links * size); // linksboven
+			
+			gl.glEnd();
+			
+			// DIT MOET WEG
+			gl.glColor3f(1, 1, 1);
+			gl.glDisable(GL.GL_COLOR_MATERIAL);
+		}
+		
 		if (myTexture2 != null) {
 			// Eerst de texture aanzetten
 			myTexture2.enable();
@@ -478,6 +479,8 @@ public class Maze implements VisibleObject {
 		if (myTexture2 != null) {
 			myTexture2.disable();
 		}
+		
+		
 	}
 
 	private void drawOpeningDoor(GL gl, double size, double opening,
@@ -486,11 +489,26 @@ public class Maze implements VisibleObject {
 		drawClosedDoor(gl, SQUARE_SIZE, keyCardHoleColor);
 	}
 
-	
-	public String getLevelName(){
+	public String getLevelName() {
 		return levelName;
 	}
 
+	/**
+	 * Returns the LoadLevel-representation of the Maze. Used to import all
+	 * objects such as cameras into MazeRunner.
+	 * 
+	 * @return
+	 */
+	public LoadLevel getLoadLevel() {
+		return this.newMaze;
+	}
 
+	public int[][] getMaze() {
+		return maze;
+	}
+
+	public void setMaze(int[][] maze) {
+		this.maze = maze;
+	}
 
 }
