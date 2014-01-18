@@ -1,5 +1,5 @@
 package test;
-import MazeRunner.HighScore;
+import MazeRunner.Fundamental.HighScore;
 
 public class WriteToDBTest {
 

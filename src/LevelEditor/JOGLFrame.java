@@ -21,9 +21,8 @@ import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 
-import MazeRunner.Control;
-import MazeRunner.MazeRunner;
-import MazeRunner.GameDriver;
+
+import MazeRunner.Fundamental.GameDriver;
 
 import com.sun.opengl.util.Animator;
 
