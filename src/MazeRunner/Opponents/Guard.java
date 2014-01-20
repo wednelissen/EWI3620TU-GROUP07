@@ -104,62 +104,6 @@ public class Guard extends GameObject implements VisibleObject {
 					setDefaultPatrolPath();
 				}
 			}
-			
-			
-			
-			//hier komt de camera detectie shit.
-			
-			
-//			if (guard.isResettingPatrol() && !guard.isAttack()) {
-//				if (!resettingRoute) {
-//					resetPatrol();
-//				}
-//				System.out.println("reset mofo");
-//				guard.update(deltaTime);
-//
-//				if (guard.getHuidigepositie().equals(guard.getFinishpositie())) {
-//					System.out.println("ja toch arrivatie");
-//					guard.setResettingPatrol(false);
-//					guard.setPatrol(true);
-//					setPatrol();
-//					resettingRoute = false;
-//				}
-//
-//			}
-			
-			
-			
-			
-//			private void setPatrol() {
-//
-//				for (Guard guard : guards)
-//					if (guard.isPatrol()) {
-//						ArrayList<Point> patrolCoordinaten = guard.getPatrolCoordinaten();
-//
-//						guard.setCoordinaten(patrolCoordinaten);
-//						guard.setFinishpositie(patrolCoordinaten.get(patrolCoordinaten.size() - 1));
-//						guard.setStartpositie(patrolCoordinaten.get(0));
-//						guard.setRichting(true);
-//						guard.setTeller(1);
-//					}
-//			}
-//
-//			private void resetPatrol() {
-//				for (Guard guard : guards)
-//					if (guard.isResettingPatrol()) {
-//						ArrayList<Point> resetRoute = new RouteAlgoritme(maze).algorithm(guard.getPatrolStartPositie(),guard.getEindpositie());
-//
-//						guard.setCoordinaten(resetRoute);
-//						ArrayList<Point> resetCoordinates = guard.getCoordinaten();
-//						guard.setFinishpositie(resetCoordinates.get(resetCoordinates.size() - 1));
-//						guard.setRichting(true);
-//						guard.setTeller(1);
-//						resettingRoute = true;
-//					}
-//			}
-			
-			
-			
 		}
 		
 		if(!MazeRunner.GOD_MODE){
@@ -238,8 +182,6 @@ public class Guard extends GameObject implements VisibleObject {
 						System.out.println("Fucking grote error biatch");
 					}
 
-//					richtingDraaier();
-
 				} else if (huidigepositie.equals(eindpositie)) {
 					teller++;
 				}
@@ -269,8 +211,6 @@ public class Guard extends GameObject implements VisibleObject {
 					} else {
 						System.out.println("Fucking grote error biatch");
 					}
-
-//					richtingDraaier();
 				} else if (huidigepositie.equals(eindpositie)) {
 					teller--;
 				}
@@ -512,7 +452,6 @@ public class Guard extends GameObject implements VisibleObject {
 		if (overRuleLeft) {
 			stepLeft(deltaTime); // Math.min(absCos,absSin) * speed
 			deltaTimeSum = deltaTimeSum + deltaTime;
-			// System.out.println(deltaTimeSum);
 			if (deltaTimeSum >= 100) {
 				overRuleLeft = false;
 				deltaTimeSum = 0;
@@ -522,7 +461,6 @@ public class Guard extends GameObject implements VisibleObject {
 		if (overRuleRight) {
 			stepRight(deltaTime); // , Math.min(absCos, absSin) * speed
 			deltaTimeSum = deltaTimeSum + deltaTime;
-			// System.out.println(deltaTimeSum);
 			if (deltaTimeSum >= 100) {
 				overRuleRight = false;
 				deltaTimeSum = 0;
@@ -686,24 +624,11 @@ public class Guard extends GameObject implements VisibleObject {
 		this.alarmed = alarmed;
 	}
 
-//	public boolean isPatrol() {
-//		return patrol;
-//	}
-//
-//	public void setPatrol(boolean patrol) {
-//		this.patrol = patrol;
-//	}
 
 	public Point getEindPositie() {
 		return eindpositie;
 	}
 	
-	public void goedeKijkNaCam(){
-//		startHoek();
-//		horAngle = 0;
-		startCheck = true;
-//		resetRichtingDraaier(true);
-	}
 	public void setGuardCamera(GuardCamera cam){
 		guardCamera = cam;
 	}
