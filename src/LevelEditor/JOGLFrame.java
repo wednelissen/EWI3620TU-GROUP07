@@ -21,13 +21,15 @@ import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 
-import MazeRunner.Control;
-import MazeRunner.MazeRunner;
-import MazeRunner.GameDriver;
+
+import MazeRunner.Fundamental.GameDriver;
+
 import com.sun.opengl.util.Animator;
 
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 
 /**
@@ -147,6 +149,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 	private ControlCenterList controlCenterList = new ControlCenterList();
 	
 	private StartAndEndPosition StartEnd = new StartAndEndPosition();
+	@SuppressWarnings("unused")
 	private LoadTexturesEditor loadedTexturesEditor;
 
 	/**
@@ -302,7 +305,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				for(Guardian g: placedItems.getAllGuards()){
 					for(int i = 0; i <g.routeSize(); i++){
 						Point a = g.getRoute(i);
-						map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardianStepsBlue"));			
+						map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardStepsBlue"));			
 					}
 				}
 			}
@@ -321,7 +324,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			if(guard.routeSize()>0 && Mode == ClickOptions.guardian){
 				for(int i = 0; i <guard.routeSize(); i++){
 					Point a = guard.getRoute(i);
-					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardianStepsRed"));			
+					map.getBuildingBlockByPosition(a).drawGuardianPath(gl, LoadTexturesEditor.getTexture("editorGuardStepsRed"));			
 				}
 				
 			}
@@ -336,7 +339,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			if(cameraList.getCameras().size()>0){
 				for(Camera s: cameraList.getCameras()){
 					Point a = s.getPosition();
-					map.getBuildingBlockByPosition(a).drawCameras(gl, LoadTexturesEditor.getTexture("editorCamera"));
+					map.getBuildingBlockByPosition(a).drawCameras(gl, LoadTexturesEditor.getTexture("editorCameraInMaze"));
 				}
 			}
 			
@@ -344,7 +347,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			if(controlCenterList.getControlCenters().size()>0){
 				for(ControlCenterEditor s: controlCenterList.getControlCenters()){
 					Point a = s.getPosition();
-					map.getBuildingBlockByPosition(a).drawControlCenter(gl, LoadTexturesEditor.getTexture("controlCenterEditor"));
+					map.getBuildingBlockByPosition(a).drawControlCenter(gl, LoadTexturesEditor.getTexture("editorControlCentreInMaze"));
 				}
 			}
 			
@@ -374,7 +377,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		}
 		}
 		else{
-			map.draw(gl, null);
+			map.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
 			gl.glColor3f(0, 0, 0);
 			Melding.renderString(gl, "You need to set the maze sizes at 'Size',\n\tbefore you can add items.");
 			gl.glColor3f(1, 1, 1);
@@ -395,48 +398,47 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 
 		//de items met speciale eigenschappen zoals Key en Guard worden hier getekent.
 		//dit zijn de items die al met een positie in de map zijn geplaatst.
-		placedItems.draw(gl, null);
+		placedItems.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
 		placedItems.drawItems(gl);
 		
 		//de extra menu's indien op een  speciale item is gedrukt
 		if(Mode == ClickOptions.guardian){
-			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			placedItemsProperties.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddGuardButton")); 
 			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
-			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorDeleteLastPoint")); 
-			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAll")); 
+			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorRemoveLastPoint")); 
+			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAllGuardsButton")); 
 		}
 		
 		if(Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor){
-			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			placedItemsProperties.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
+			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddKeyButton")); 
 			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
-			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorDeleteDoor")); 
-			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAll")); 
+			showAllGuardsKeys.draw(gl, LoadTexturesEditor.getTexture("editorShowAllKeysButton")); 
 		}
 		
 		if(Mode == ClickOptions.key){
-			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			placedItemsProperties.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
+			removeLastPointGuardOrSetDoorKey.draw(gl, LoadTexturesEditor.getTexture("editorSetDoor")); 
 			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		if(Mode == ClickOptions.setSpot || Mode == ClickOptions.removeSpot){
-			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			placedItemsProperties.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
+//			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddSpotButton")); 
 			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		if(Mode == ClickOptions.setCamera || Mode == ClickOptions.removeCamera){
-			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddButton")); 
+			placedItemsProperties.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
+//			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddCameraButton")); 
 			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		if(Mode == ClickOptions.setControlCenter || Mode == ClickOptions.removeControlCenter){
-			placedItemsProperties.draw(gl, null);
-			addGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("addButton")); 
-			removeGuardKeySpotCamera.draw(gl, loadedTexturesEditor.getTexture("removeButton"));  
+			placedItemsProperties.draw(gl, LoadTexturesEditor.getTexture("editorMenuBackground"));
+//			addGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorAddControlCentreButton")); 
+			removeGuardKeySpotCamera.draw(gl, LoadTexturesEditor.getTexture("editorRemoveButton"));  
 		}
 		
 		

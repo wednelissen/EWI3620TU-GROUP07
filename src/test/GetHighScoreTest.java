@@ -1,7 +1,7 @@
 package test;
 
 import java.text.SimpleDateFormat;
-import MazeRunner.HighScore;
+import MazeRunner.Fundamental.HighScore;
 public class GetHighScoreTest {
 
 	public static void main(String[] args) {
