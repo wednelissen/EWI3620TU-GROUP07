@@ -180,14 +180,14 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 
 		// Initialize the player.
-
+		double startHorAnglePlayer = calculateBestStartAngle();
 		player = new Player(maze.startPoint.getX() * Maze.SQUARE_SIZE
 				+ Maze.SQUARE_SIZE / 2, // x-position
 				Maze.SQUARE_SIZE / 2, // y-position
 				maze.startPoint.getY() * Maze.SQUARE_SIZE + Maze.SQUARE_SIZE
 
 				/ 2, // z-position
-				90, 0); // horizontal and vertical angle
+				startHorAnglePlayer, 0); // horizontal and vertical angle
 
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
 				player.getLocationZ(), player.getHorAngle(),
@@ -196,8 +196,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
 		player.setControl(input);
-
 		player.setEndPoint(maze.endPoint);
+		input.restPLayer(); //zorgt dat de player altijd start in rust toestand.
 		System.out.println("Klaar met creatie objecten");
 
 	}
@@ -372,6 +372,31 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * * Methods **********************************************
 	 */
 
+	/**
+	 * kijkt om het begin punt waar geen muur is en zal dat de starthoek maken. 
+	 * een deur is ook geen muur dus de player kan ook beginnen met het zicht op een deur.
+	 * @return nieuwe hoek van de player
+	 */
+	private double calculateBestStartAngle(){
+		Point begin = maze.startPoint;
+		int x = (int)begin.getX(); 
+		int z = (int)begin.getY(); 
+		
+		if(!maze.isWall(x, z+1)){	//boven v/h startpunt 
+			return 0;
+		}
+		else if(!maze.isWall(x, z-1)){ //onder v/h startpunt 
+			return 180;
+		}
+		else if(!maze.isWall(x+1, z)){ //rechts v/h startpunt 
+			return -90;
+		}
+		else if(!maze.isWall(x-1, z)){ //links v/h startpunt 
+			return 90;
+		}
+		else return 0;
+	}
+	
 	/**
 	 * updateMovement(int) updates the position of all objects that need moving.
 	 * This includes rudimentary collision checking and collision reaction.

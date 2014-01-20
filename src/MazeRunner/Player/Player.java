@@ -82,6 +82,9 @@ public class Player extends GameObject implements VisibleObject {
 	public void setControl(Control control)
 	{
 		this.control = control;
+		
+
+		//restPLayer(); //zorgt dat de player stil staat wanneer de game wordt geladen
 	}
 	
 	/**
@@ -358,7 +361,7 @@ public class Player extends GameObject implements VisibleObject {
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
-		gl.glTranslated(locationX, 0, locationZ);
+		gl.glTranslated(locationX, locationY, locationZ);
 		
 		
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
