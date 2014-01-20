@@ -142,8 +142,11 @@ public class RouteAlgoritme {
 				route.add(p);
 
 			}
-
+			return route;
 		}
-		return route;
+		else{
+			return null;
+		}
+		
 	}
 }
