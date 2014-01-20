@@ -404,15 +404,12 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		playerItemCheck();
 
 		
-		boolean mazeChange = maze.mazeChanged();
-		
-		//check het verschil met de maze met de vorige keer. kan ook buiten Guard cam gedaan worden. moet dan onder weer op false gezet of beginnen met false
-		//nee dat hoeft niet. gewoon buiten de functie altijd 1 keer chekken of de maze is veranderd met zijn oude maze. meer niet. dit kan het makkelijkst
-		//in de classe maze worden gemaakt.
+		boolean mazeChange = maze.mazeChanged(); //check het verschil met de maze met de vorige keer.
+												// alleen als de maze veranderd zullen camera's waar eerst geen guard bij kon 
+												// kijken of er nu wel een guard bij kan komen.
 		
 		for (GuardCamera cam : cameras) {													//GuardCameras
 			cam.updatePositie(player.locationX, player.locationZ);
-			//if (cam.alarm() || cam.getNeedGuard()) {
 			if (cam.alarm() || (mazeChange && cam.getNeedGuard()) ) {
 				System.out.println("mazeChange: "+ mazeChange);
 				System.out.println("checken nu de maze veranderd is");
@@ -456,48 +453,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		
 		
 		for (Guard guard : guards) {														//Guards
-
 			guard.run(deltaTime, player.locationX, player.locationZ);
-			
-//			if (!guard.isAttack() && guard.isPatrol()) {
-//				guard.update(deltaTime);
-//
-//			}
-//			if (!GOD_MODE) {
-//				guard.playerDetectie(player.locationX, player.locationZ);
-//				guard.aanvallen(player.locationX, player.locationZ, deltaTime);
-//			}
-			
-			
-			
-			//DIT IS CAMERA SHIT
-//			if (guard.isAlarmed() && !guard.isAttack()) {
-//				guard.update(deltaTime);
-//				if (guard.getHuidigepositie().equals(guard.getFinishpositie())) {
-//					System.out.println("zeg het eens");
-//					guard.setResettingPatrol(true);
-//					guard.setAlarmed(false);
-//				}
-//
-//			}
-//			if (guard.isResettingPatrol() && !guard.isAttack()) {
-//				if (!resettingRoute) {
-//					resetPatrol();
-//				}
-//				System.out.println("reset mofo");
-//				guard.update(deltaTime);
-//
-//				if (guard.getHuidigepositie().equals(guard.getFinishpositie())) {
-//					System.out.println("ja toch arrivatie");
-//					guard.setResettingPatrol(false);
-//					guard.setPatrol(true);
-//					setPatrol();
-//					resettingRoute = false;
-//				}
-//
-//			}
-			
-			//DIT ZOU ER OOK IN KUNNEN
 			if (guard.isBusted()) {
 				System.out.println("Busted");
 				SoundEffect.SHOT.play();
@@ -505,40 +461,13 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			}
 		}
 
+		//DEBUG:
 		// System.out.println("x: "+player.locationX +
 		// " z: "+player.locationZ+" EDITOR--- x: "
 		// +(int)Math.floor( player.locationX / SQUARE_SIZE
 		// )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
 
 	}
-
-//	private void setPatrol() {
-//
-//		for (Guard guard : guards)
-//			if (guard.isPatrol()) {
-//				ArrayList<Point> patrolCoordinaten = guard.getPatrolCoordinaten();
-//
-//				guard.setCoordinaten(patrolCoordinaten);
-//				guard.setFinishpositie(patrolCoordinaten.get(patrolCoordinaten.size() - 1));
-//				guard.setStartpositie(patrolCoordinaten.get(0));
-//				guard.setRichting(true);
-//				guard.setTeller(1);
-//			}
-//	}
-//
-//	private void resetPatrol() {
-//		for (Guard guard : guards)
-//			if (guard.isResettingPatrol()) {
-//				ArrayList<Point> resetRoute = new RouteAlgoritme(maze).algorithm(guard.getPatrolStartPositie(),guard.getEindpositie());
-//
-//				guard.setCoordinaten(resetRoute);
-//				ArrayList<Point> resetCoordinates = guard.getCoordinaten();
-//				guard.setFinishpositie(resetCoordinates.get(resetCoordinates.size() - 1));
-//				guard.setRichting(true);
-//				guard.setTeller(1);
-//				resettingRoute = true;
-//			}
-//	}
 
 	/**
 	 * Stops the game and initializes the game ended state.

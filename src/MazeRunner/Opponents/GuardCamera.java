@@ -1,6 +1,7 @@
 package MazeRunner.Opponents;
 
 import java.awt.Point;
+import java.util.Calendar;
 
 import javax.media.opengl.GL;
 
@@ -28,6 +29,9 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	double playerLocatieX;
 	double playerLocatieZ;
 	private Point huidigepositie;
+	private long alarmOnTime;
+	private long currentTime;
+	private long resetTime = 60; // in seconden wordt het alarm automatisch uit gezet.
 
 	public Point getHuidigepositie() {
 		return huidigepositie;
@@ -54,7 +58,8 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		if (thread.visible && playerPositie.equals(huidigepositie) && !alarm) {
 			System.out.println("Camera ALARM");
 			alarm = true;
-			thread.setSleepTime(400);
+			alarmOnTime = Calendar.getInstance().getTimeInMillis();
+			thread.setAlarmOn();
 			mazerunner.updateHighScoreCamera();
 			return true;
 		}
@@ -64,7 +69,7 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	public void resetAlarm() {
 		alarm = false;
 
-		thread.setSleepTime(4000);
+		thread.setAlarmOff();
 	}
 
 	public boolean getNeedGuard() {
@@ -79,7 +84,13 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	 * Dit weergeeft de camera in het spel om de zoveel seconden
 	 */
 	public void display(final GL gl) {
-
+		if(alarm){
+			currentTime = Calendar.getInstance().getTimeInMillis();
+			if(currentTime - alarmOnTime > resetTime*1000){ //na 30 seconden gaat het alarm uit.
+				resetAlarm();
+				setNeedGuard(false);
+			}
+		}
 		GLUT glut = new GLUT();
 
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
