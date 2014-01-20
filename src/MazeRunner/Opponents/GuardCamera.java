@@ -22,7 +22,7 @@ import com.sun.opengl.util.GLUT;
 public class GuardCamera extends GameObject implements VisibleObject {
 
 	private boolean alarm = false;
-	private boolean guardSend = false;
+	private boolean needGuardSend = false;
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
 	double playerLocatieX;
@@ -67,12 +67,12 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		thread.setSleepTime(4000);
 	}
 
-	public boolean getGuardSend() {
-		return guardSend;
+	public boolean getNeedGuard() {
+		return needGuardSend;
 	}
 
-	public void guardSended(boolean bool) {
-		this.guardSend = bool;
+	public void setNeedGuard(boolean bool) {
+		this.needGuardSend = bool;
 	}
 
 	/**
@@ -122,5 +122,9 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		huidigepositie = new Point(x, z);
 		System.out.println(huidigepositie);
 
+	}
+	
+	public Point getPositie(){
+		return huidigepositie;
 	}
 }

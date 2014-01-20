@@ -29,7 +29,7 @@ public class ThreadLoop extends Thread {
 				offset = false;
 			}
 
-			Thread.sleep((long) (Math.random() * 8000));
+			Thread.sleep(sleepTime);
 
 			// System.out.println(visible + " -> " + !visible);
 			visible = !visible;

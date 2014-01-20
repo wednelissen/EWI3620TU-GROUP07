@@ -45,6 +45,7 @@ public class Maze implements VisibleObject {
 	private ArrayList<Keys> doorKeys;
 
 	private int[][] maze;
+	private int[][] oldMaze; //deze wordt gebruikt om te kijken of de maze is veranderd in de loop van het spel.
 
 	public Maze() {
 		levelName = levelPicker.getFilePath();
@@ -59,9 +60,10 @@ public class Maze implements VisibleObject {
 		endPoint = newMaze.getEndPosition();
 
 		maze = newMaze.outputForMazeRunner();
-
+		oldMaze = new int[(int)MAZE_SIZE_X][(int)MAZE_SIZE_Z]; 
+		copyMazeToOldMaze();
 	}
-
+	
 	/**
 	 * isWall(int x, int z) checks for a wall.
 	 * <p>
@@ -510,6 +512,34 @@ public class Maze implements VisibleObject {
 
 	public void setMaze(int[][] maze) {
 		this.maze = maze;
+	}
+	
+	private void copyMazeToOldMaze(){
+		for (int i = 0; i < MAZE_SIZE_X; i++) {
+			for (int j = 0; j < MAZE_SIZE_Z; j++) {
+				oldMaze[i][j] = maze[i][j];
+			}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return of de maze is veranderd na de vorige aanroep van deze functie.
+	 */
+	public boolean mazeChanged() {
+		boolean change = false;
+		outerloop:
+		for (int i = 0; i < MAZE_SIZE_X; i++) {
+			for (int j = 0; j < MAZE_SIZE_Z; j++) {
+				if(oldMaze[i][j] != maze[i][j]){
+					change = true;
+					copyMazeToOldMaze();
+					break outerloop;					
+				}
+			}
+		}
+		return change;
 	}
 
 }

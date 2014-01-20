@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.media.opengl.GL;
 
 import MazeRunner.Fundamental.LoadTexturesMaze;
+import MazeRunner.Fundamental.MazeRunner;
 import MazeRunner.Objects.GameObject;
 import MazeRunner.Objects.Maze;
 import MazeRunner.Objects.Model;
@@ -27,6 +28,7 @@ public class Guard extends GameObject implements VisibleObject {
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
 	public Maze maze;
+	private GuardCamera guardCamera = null;
 	private double speed;
 	private boolean richting = true;
 
@@ -50,8 +52,9 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean finishCheck = false;
 	private boolean busted = false;
 	private boolean alarmed = false;
-
-	private boolean patrol = true;
+	private boolean resettingPatrol = false;
+	//private boolean patrol = true;
+	
 	private ArrayList<Point> patrolCoordinaten;
 
 	private boolean canMoveForward;
@@ -64,7 +67,7 @@ public class Guard extends GameObject implements VisibleObject {
 	private boolean overRuleRight;
 	private int deltaTimeSum = 0;
 	private Point patrolStartPositie;
-	private boolean resettingPatrol = false;
+	
 
 	public Guard(double x, double y, double z, ArrayList<Point> points) {
 
@@ -82,6 +85,110 @@ public class Guard extends GameObject implements VisibleObject {
 		huidigepositie = startpositie;
 	}
 
+	public void run(int deltaTime, double xPlayer, double zPlayer ){
+		if(!attack){
+			update(deltaTime);	
+			
+			if(alarmed){
+				if(huidigepositie.equals(finishpositie)){
+					resettingPatrol = true;
+					alarmed = false;
+					guardCamera.resetAlarm();
+					guardCamera = null;
+					setPatrolPathToBegin();
+				}
+			}
+			if(resettingPatrol){
+				if(huidigepositie.equals(finishpositie)){
+					resettingPatrol = false;
+					setDefaultPatrolPath();
+				}
+			}
+			
+			
+			
+			//hier komt de camera detectie shit.
+			
+			
+//			if (guard.isResettingPatrol() && !guard.isAttack()) {
+//				if (!resettingRoute) {
+//					resetPatrol();
+//				}
+//				System.out.println("reset mofo");
+//				guard.update(deltaTime);
+//
+//				if (guard.getHuidigepositie().equals(guard.getFinishpositie())) {
+//					System.out.println("ja toch arrivatie");
+//					guard.setResettingPatrol(false);
+//					guard.setPatrol(true);
+//					setPatrol();
+//					resettingRoute = false;
+//				}
+//
+//			}
+			
+			
+			
+			
+//			private void setPatrol() {
+//
+//				for (Guard guard : guards)
+//					if (guard.isPatrol()) {
+//						ArrayList<Point> patrolCoordinaten = guard.getPatrolCoordinaten();
+//
+//						guard.setCoordinaten(patrolCoordinaten);
+//						guard.setFinishpositie(patrolCoordinaten.get(patrolCoordinaten.size() - 1));
+//						guard.setStartpositie(patrolCoordinaten.get(0));
+//						guard.setRichting(true);
+//						guard.setTeller(1);
+//					}
+//			}
+//
+//			private void resetPatrol() {
+//				for (Guard guard : guards)
+//					if (guard.isResettingPatrol()) {
+//						ArrayList<Point> resetRoute = new RouteAlgoritme(maze).algorithm(guard.getPatrolStartPositie(),guard.getEindpositie());
+//
+//						guard.setCoordinaten(resetRoute);
+//						ArrayList<Point> resetCoordinates = guard.getCoordinaten();
+//						guard.setFinishpositie(resetCoordinates.get(resetCoordinates.size() - 1));
+//						guard.setRichting(true);
+//						guard.setTeller(1);
+//						resettingRoute = true;
+//					}
+//			}
+			
+			
+			
+		}
+		
+		if(!MazeRunner.GOD_MODE){
+			playerDetectie(xPlayer, zPlayer); 		//if attack==false zit in de functie.
+			aanvallen(xPlayer, zPlayer, deltaTime); //if attack==true  zit in de functie.
+		}
+		
+	}
+	
+	private void setPatrolPathToBegin(){
+		ArrayList<Point> resetRoute = new RouteAlgoritme(maze).algorithm(patrolStartPositie,huidigepositie);
+		setNewPatrolPath(resetRoute);
+	}
+	
+	private void setDefaultPatrolPath(){
+		setNewPatrolPath(patrolCoordinaten);
+	}
+	
+	
+	public void setNewPatrolPath(ArrayList<Point> newRoute){
+		startCheck = true;
+		finishCheck = false;
+		teller = 1;
+		richting = true;
+		this.coordinaten = newRoute;
+		startpositie = coordinaten.get(0); 
+		finishpositie = coordinaten.get(coordinaten.size() - 1);
+	}
+	
 	/**
 	 * Deze functie laat de guard patrouilleren over een route die meegegeven
 	 * wordt uit de leveleditor.
@@ -92,16 +199,12 @@ public class Guard extends GameObject implements VisibleObject {
 		huidigepositie();
 		if (huidigepositie.equals(finishpositie) && !finishCheck) {
 			richting = false;
-//			startAngle += 180;
 			startCheck = false;
 			finishCheck = true;
-//			resetRichtingDraaier(false);
 		} else if (huidigepositie.equals(startpositie) && !startCheck) {
 			richting = true;
 			startCheck = true;
 			finishCheck = false;
-//			startAngle -= 180;
-//			resetRichtingDraaier(true);
 		}
 		if (!attack) {
 			resetWalkingDirection();
@@ -366,7 +469,7 @@ public class Guard extends GameObject implements VisibleObject {
 	 */
 	public void aanvallen(double xPlayer, double zPlayer, int deltaTime) {
 		huidigepositie();
-		if (attack == true) {
+		if (attack) {
 			double diffX = xPlayer - locationX;
 			double diffZ = zPlayer - locationZ;
 			horAngle = -Math.toDegrees(Math.atan2(diffZ, diffX)) + 180;
@@ -583,13 +686,13 @@ public class Guard extends GameObject implements VisibleObject {
 		this.alarmed = alarmed;
 	}
 
-	public boolean isPatrol() {
-		return patrol;
-	}
-
-	public void setPatrol(boolean patrol) {
-		this.patrol = patrol;
-	}
+//	public boolean isPatrol() {
+//		return patrol;
+//	}
+//
+//	public void setPatrol(boolean patrol) {
+//		this.patrol = patrol;
+//	}
 
 	public Point getEindPositie() {
 		return eindpositie;
@@ -601,4 +704,8 @@ public class Guard extends GameObject implements VisibleObject {
 		startCheck = true;
 //		resetRichtingDraaier(true);
 	}
+	public void setGuardCamera(GuardCamera cam){
+		guardCamera = cam;
+	}
+	
 }
