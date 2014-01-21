@@ -561,6 +561,7 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 				Mode = ClickOptions.guardian;
 			}
 			if(placedItems.typeIsKey(me.getX(), me.getY())){
+				removeKeyIfNotInList();
 				key = placedItems.getClickedKey(me.getX(), me.getY());
 				Mode = ClickOptions.key;
 			}	
@@ -590,6 +591,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 					initialiseObjects(newlevel);
 				}
 			}
+		}
+		
+		if(!(Mode == ClickOptions.key) && !(Mode == ClickOptions.setKeyDoor)){
+			removeKeyIfNotInList();
 		}
 	}
 
@@ -914,6 +919,8 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 		else if(Mode == ClickOptions.key || Mode == ClickOptions.setKeyDoor){ 						//Key
 			if(addGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
 				placedItems.addKey(key);
+				key = new Key(itemCoords, screenWidth, screenHeight);
+				Mode = ClickOptions.key;
 				System.out.println("Key is toegevoegd");
 			}
 			if(removeGuardKeySpotCamera.clickedOnIt(me.getX(), me.getY())){
@@ -930,7 +937,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}		
 			if(removeLastPointGuardOrSetDoorKey.clickedOnIt(me.getX(), me.getY())){
 				System.out.println("Door wordt geset");
-				Mode = ClickOptions.setKeyDoor;
+				if(key.hasPosition()){
+					Mode = ClickOptions.setKeyDoor;
+				}
 			}
 			if(showAllGuardsKeys.clickedOnIt(me.getX(), me.getY())){
 				if(!AllKeysOnOff){
@@ -970,6 +979,17 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener, 
 			}	
 		}
 	}	
+	
+	private void removeKeyIfNotInList(){
+		if(!placedItems.getAllKeys().contains(key)){
+			if(key.hasDoor()){
+				Point a = key.getDoor();
+				map.getBuildingBlockByPosition(a).removeKeyRequired();
+				System.out.println(map.getBuildingBlockByPosition(a).getKeyRequired());
+			}			
+		}
+		key = new Key(itemCoords, screenWidth, screenHeight);
+	}
 	
 	@Override
 	public void mouseClicked(MouseEvent me) {
