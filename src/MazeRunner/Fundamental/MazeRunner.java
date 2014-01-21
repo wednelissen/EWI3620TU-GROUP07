@@ -164,6 +164,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		for (ControlCenter temp : controlCenters) {
 			visibleObjects.add(temp);
 		}
+		maze.setControlCenters(controlCenters);
 
 		// Initialize the player.
 		double startHorAnglePlayer = calculateBestStartAngle();
@@ -514,15 +515,17 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	}
 
 	public boolean watchFromCamera() {
-		int gebied = 2;
+		//int gebied = 2;
 		for (ControlCenter c : controlCenters) {
-			if (Math.abs(player.locationX - c.locationX) < gebied
-					&& Math.abs(player.locationZ - c.locationZ) < gebied) {
+			if (Math.abs(player.locationX - c.locationX) < (c.getSizeX() + checkdistance)
+					&& Math.abs(player.locationZ - c.locationZ) < (c.getSizeZ()+checkdistance)) {
 				watchFromCamera = !watchFromCamera;
 				if (watchFromCamera) {
 					visibleObjects.add(player);
+					player.lastKnownHorAngle();
 				} else {
 					visibleObjects.remove(player);
+					player.setLastKnownHorAngle();
 				}
 				return watchFromCamera;
 			}

@@ -7,10 +7,19 @@ import MazeRunner.Fundamental.LoadTexturesMaze;
 public class ControlCenter extends GameObject implements VisibleObject{
 
 	Model modelTable;
+	private double sizeX = 2; //geef hier de maten van de tafel in
+	private double sizeZ = 1; //geef hier de maten van de tafel in
 	
 	public ControlCenter(double xPosition, double yPosition, double zPosition){
 		super(xPosition * Maze.SQUARE_SIZE+(0.5*Maze.SQUARE_SIZE), yPosition, zPosition * Maze.SQUARE_SIZE+(0.5*Maze.SQUARE_SIZE));
 		modelTable = LoadTexturesMaze.getModel("modelTable");
+	}
+	public double getSizeX(){
+		return sizeX;
+	}
+	
+	public double getSizeZ(){
+		return sizeZ;
 	}
 
 	@Override

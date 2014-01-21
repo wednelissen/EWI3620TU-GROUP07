@@ -44,6 +44,7 @@ public class Player extends GameObject implements VisibleObject {
 	private Point endPoint;
 	private double checkarea = 0.5 * Maze.SQUARE_SIZE;
 	private Model modelPlayer;
+	private double displayAngle;
 
 	/**
 	 * The Player constructor.
@@ -72,6 +73,7 @@ public class Player extends GameObject implements VisibleObject {
 		verAngle = v;
 		speed = 0.01;
 		modelPlayer = LoadTexturesMaze.getModel("modelPlayer");
+		displayAngle = 0;
 	}
 
 	/**
@@ -397,18 +399,26 @@ public class Player extends GameObject implements VisibleObject {
 		locationZ = locationZ - speed * deltaTime
 				* Math.cos(Math.PI * horAngle / 180 - Math.PI * 0.5);
 	}
+	
+	public void lastKnownHorAngle(){
+		displayAngle = horAngle;
+	}
+	
+	public void setLastKnownHorAngle(){
+		horAngle = displayAngle; 
+	}
 
 	@Override
 	public void display(GL gl) {
 
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
-		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
+		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 
 		gl.glTranslated(locationX, 0, locationZ);
 		gl.glScaled(0.14, 0.14, 0.14);
-		gl.glRotatef(0, (float) horAngle, 0, 0);
-
+		gl.glRotatef((float) (displayAngle-180), 0, 1, 0);
+		
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
 		
 		modelPlayer.draw(gl, LoadTexturesMaze.getTexture("modelPlayer"));

@@ -43,6 +43,7 @@ public class Maze implements VisibleObject {
 	public Point startPoint;
 	public Point endPoint;
 	private ArrayList<Keys> doorKeys;
+	private ArrayList<ControlCenter> controlCenters = new ArrayList<ControlCenter>();
 
 	private int[][] maze;
 	private int[][] oldMaze; //deze wordt gebruikt om te kijken of de maze is veranderd in de loop van het spel.
@@ -126,7 +127,7 @@ public class Maze implements VisibleObject {
 	public boolean isWall(double x, double z) {
 		int gX = convertToGridX(x);
 		int gZ = convertToGridZ(z);
-		return (isWall(gX, gZ) || isClosedDoor(gX, gZ) || isOpeningDoor(gX, gZ));
+		return (isWall(gX, gZ) || isClosedDoor(gX, gZ) || isOpeningDoor(gX, gZ) || isControlCenter(x,z));
 	}
 
 	public boolean isWallOrClosedDoor(double x, double z) {
@@ -145,6 +146,17 @@ public class Maze implements VisibleObject {
 		int gX = convertToGridX(x);
 		int gZ = convertToGridZ(z);
 		return isOpeningDoor(gX, gZ);
+	}
+	
+	public boolean isControlCenter(double x, double z) {	
+		for (ControlCenter c : controlCenters) {
+			if (Math.abs(x - c.locationX) < c.getSizeX()
+					&& Math.abs(z - c.locationZ) < c.getSizeZ()) {
+				System.out.println("kom je hier wel contrtolcenter");
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void openDoor(Point a) {
@@ -525,6 +537,10 @@ public class Maze implements VisibleObject {
 
 	public void setMaze(int[][] maze) {
 		this.maze = maze;
+	}
+	
+	public void setControlCenters(ArrayList<ControlCenter> controlCentersMazerunner){
+		controlCenters = controlCentersMazerunner;
 	}
 	
 	private void copyMazeToOldMaze(){
