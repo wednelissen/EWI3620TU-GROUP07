@@ -42,10 +42,12 @@ public class Maze implements VisibleObject {
 	public static final double SQUARE_SIZE = 5;
 	public Point startPoint;
 	public Point endPoint;
+
 	private ArrayList<Keys> doorKeys;
 
 	private int[][] maze;
-	private int[][] oldMaze; //deze wordt gebruikt om te kijken of de maze is veranderd in de loop van het spel.
+	private int[][] oldMaze; // deze wordt gebruikt om te kijken of de maze is
+								// veranderd in de loop van het spel.
 
 	public Maze() {
 		levelName = levelPicker.getFilePath();
@@ -60,10 +62,10 @@ public class Maze implements VisibleObject {
 		endPoint = newMaze.getEndPosition();
 
 		maze = newMaze.outputForMazeRunner();
-		oldMaze = new int[(int)MAZE_SIZE_X][(int)MAZE_SIZE_Z]; 
+		oldMaze = new int[(int) MAZE_SIZE_X][(int) MAZE_SIZE_Z];
 		copyMazeToOldMaze();
 	}
-	
+
 	/**
 	 * Constructor with predefined maze. Used for JUnit testing.
 	 * 
@@ -209,7 +211,7 @@ public class Maze implements VisibleObject {
 							drawClosedDoor(gl, SQUARE_SIZE, k.getKeyColor());
 						}
 					}
-					if(!possibleKey){
+					if (!possibleKey) {
 						drawClosedDoor(gl, SQUARE_SIZE, null);
 					}
 				}
@@ -426,54 +428,56 @@ public class Maze implements VisibleObject {
 
 		// Sleutel gat
 
-		if(keyCardHoleColor != null){
+		if (keyCardHoleColor != null) {
 			// DIT MOET WEG
 			gl.glColor3f(keyCardHoleColor[0], keyCardHoleColor[1],
 					keyCardHoleColor[2]);
 			gl.glEnable(GL.GL_COLOR_MATERIAL);
-			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, keyCardHoleColor,0);
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
+					keyCardHoleColor, 0);
 			gl.glBegin(GL.GL_QUADS);
-	
+
 			// HIER KUNNEN DE MATEN WORDEN OPGEGEVEN. GEDEELD DOOR WORDT NIET
 			// ONDERSTEUND
-			// JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven aan
+			// JE MOET HET DUS ZELF EVEN UITREKENEN bedacht vanuit links boven
+			// aan
 			// is 0,0
 			// double x_links = 239/298, x_rechts = 267/298, y_laag = 211/424,
 			// y_hoog = 240/424;
 			double x_links = 0.8, x_rechts = 0.895, y_laag = 0.428, y_hoog = 0.497;// 0.566;
-	
+
 			gl.glVertex3d((1 - x_links) * size, y_hoog * size, -0.01); // rechtsboven
 			gl.glVertex3d((1 - x_links) * size, y_laag * size, -0.01); // links
 																		// onder
 			gl.glVertex3d((1 - x_rechts) * size, y_laag * size, -0.01); // rechts
 																		// onder
 			gl.glVertex3d((1 - x_rechts) * size, y_hoog * size, -0.01); // linksboven
-	
+
 			// Achterzijde muur
 			gl.glVertex3d(x_links * size, y_hoog * size, size + 0.01); // linksboven
 			gl.glVertex3d(x_links * size, y_laag * size, size + 0.01); // linksonder
 			gl.glVertex3d(x_rechts * size, y_laag * size, size + 0.01); // rechtsonder
 			gl.glVertex3d(x_rechts * size, y_hoog * size, size + 0.01); // rechtsboven
-	
+
 			// Bovenzijde muur, y,x
 			gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_links) * size); // linksonder
 			gl.glVertex3d(size + 0.01, y_laag * size, (1 - x_rechts) * size); // rechtonder
 			gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_rechts) * size); // rechtsboven
 			gl.glVertex3d(size + 0.01, y_hoog * size, (1 - x_links) * size); // linksboven
-	
+
 			// Onderzijde muur y,x
 			gl.glVertex3d(0 - 0.01, y_laag * size, x_links * size); // linksonder
 			gl.glVertex3d(0 - 0.01, y_laag * size, x_rechts * size);
 			gl.glVertex3d(0 - 0.01, y_hoog * size, x_rechts * size);
 			gl.glVertex3d(0 - 0.01, y_hoog * size, x_links * size); // linksboven
-			
+
 			gl.glEnd();
-			
+
 			// DIT MOET WEG
 			gl.glColor3f(1, 1, 1);
 			gl.glDisable(GL.GL_COLOR_MATERIAL);
 		}
-		
+
 		if (myTexture2 != null) {
 			// Eerst de texture aanzetten
 			myTexture2.enable();
@@ -495,8 +499,7 @@ public class Maze implements VisibleObject {
 		if (myTexture2 != null) {
 			myTexture2.disable();
 		}
-		
-		
+
 	}
 
 	private void drawOpeningDoor(GL gl, double size, double opening,
@@ -526,33 +529,35 @@ public class Maze implements VisibleObject {
 	public void setMaze(int[][] maze) {
 		this.maze = maze;
 	}
-	
-	private void copyMazeToOldMaze(){
+
+	private void copyMazeToOldMaze() {
 		for (int i = 0; i < MAZE_SIZE_X; i++) {
 			for (int j = 0; j < MAZE_SIZE_Z; j++) {
 				oldMaze[i][j] = maze[i][j];
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 * @return of de maze is veranderd na de vorige aanroep van deze functie.
 	 */
 	public boolean mazeChanged() {
 		boolean change = false;
-		outerloop:
-		for (int i = 0; i < MAZE_SIZE_X; i++) {
+		outerloop: for (int i = 0; i < MAZE_SIZE_X; i++) {
 			for (int j = 0; j < MAZE_SIZE_Z; j++) {
-				if(oldMaze[i][j] != maze[i][j]){
+				if (oldMaze[i][j] != maze[i][j]) {
 					change = true;
 					copyMazeToOldMaze();
-					break outerloop;					
+					break outerloop;
 				}
 			}
 		}
 		return change;
+	}
+
+	public Point getEndPoint() {
+		return endPoint;
 	}
 
 }

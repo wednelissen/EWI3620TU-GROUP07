@@ -29,9 +29,11 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	double playerLocatieX;
 	double playerLocatieZ;
 	private Point huidigepositie;
+
 	private long alarmOnTime;
 	private long currentTime;
-	private long resetTime = 60; // in seconden wordt het alarm automatisch uit gezet.
+	private long resetTime = 60; // in seconden wordt het alarm automatisch uit
+									// gezet.
 
 	private Point playerPositie;
 	private ThreadLoop thread = new ThreadLoop();
@@ -80,9 +82,12 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	 * Dit weergeeft de camera in het spel om de zoveel seconden
 	 */
 	public void display(final GL gl) {
-		if(alarm){
+		if (alarm) {
 			currentTime = Calendar.getInstance().getTimeInMillis();
-			if(currentTime - alarmOnTime > resetTime*1000){ //na 30 seconden gaat het alarm uit.
+			if (currentTime - alarmOnTime > resetTime * 1000) { // na 30
+																// seconden gaat
+																// het alarm
+																// uit.
 				resetAlarm();
 				setNeedGuard(false);
 			}
@@ -132,6 +137,10 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	}
 
 	public Point getPositie() {
+		return huidigepositie;
+	}
+
+	public Point getHuidigepositie() {
 		return huidigepositie;
 	}
 

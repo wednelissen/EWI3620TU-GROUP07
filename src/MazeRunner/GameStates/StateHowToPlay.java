@@ -5,14 +5,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import LevelEditor.Button;
-import LevelEditor.Window;
-import MazeRunner.Fundamental.LoadTexturesMaze;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
+
+import LevelEditor.Button;
+import LevelEditor.Window;
+import MazeRunner.Fundamental.LoadTexturesMaze;
 
 public class StateHowToPlay implements GLEventListener, KeyListener,
 		MouseListener {
@@ -70,7 +70,7 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 		canvas.addKeyListener(this);
 		canvas.addGLEventListener(this);
 		canvas.addMouseListener(this);
-		System.out.println("How To Play loaded");
+
 		startup = true;
 	}
 
@@ -88,7 +88,7 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 		buttonBack.draw(gl, LoadTexturesMaze.getTexture("buttonBack"));
 		wasdImage.draw(gl, LoadTexturesMaze.getTexture("wasdImage"));
 
-//		instructionWindow.draw(gl, null);
+		// instructionWindow.draw(gl, null);
 
 		instructionWindow.renderString(gl, instructionString);
 
@@ -97,11 +97,9 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 
 	}
 
-
-
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("How To Play init");
+
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -162,7 +160,7 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 	}
 
 	private void returnToMainMenu() {
-		System.out.println("Return to main menu");
+
 		canvas.removeGLEventListener(this);
 		canvas.removeKeyListener(this);
 		canvas.removeMouseListener(this);
@@ -178,7 +176,7 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 		switch (code) {
 
 		case KeyEvent.VK_ESCAPE:
-			System.out.println("HOWTOPLAY/ESCAPE");
+
 			returnToMainMenu();
 		}
 	}
@@ -222,7 +220,7 @@ public class StateHowToPlay implements GLEventListener, KeyListener,
 	public void mousePressed(MouseEvent arg0) {
 		// NOT USED
 	}
-	
+
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 
