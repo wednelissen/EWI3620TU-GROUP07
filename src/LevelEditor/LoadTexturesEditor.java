@@ -60,9 +60,12 @@ public class LoadTexturesEditor {
 		addTextureToList(loadingTexture("editorCameraInMaze.png"), "editorCameraInMaze");
 		addTextureToList(loadingTexture("editorControlCentreInMaze.png"), "editorControlCentreInMaze");
 		addTextureToList(loadingTexture("editorAddKeyButton.png"), "editorAddKeyButton");
-		addTextureToList(loadingTexture("editorAddSpotButton.png"), "editorAddSpotButton");
-		addTextureToList(loadingTexture("editorAddCameraButton.png"), "editorAddCameraButton");
-		addTextureToList(loadingTexture("editorSetDoor.png"), "editorSetDoor");
+		addTextureToList(loadingTexture("editorSetDoorButton.png"), "editorSetDoorButton");
+		addTextureToList(loadingTexture("editorKeyInMaze.png"), "editorKeyInMaze");
+		addTextureToList(loadingTexture("editorSetSpotButton.png"), "editorSetSpotButton");
+		addTextureToList(loadingTexture("editorSetCameraButton.png"), "editorSetCameraButton");
+		addTextureToList(loadingTexture("editorSetControlCenter.png"), "editorAddControlCenterButton");
+		addTextureToList(loadingTexture("editorDoorSelected.png"), "editorDoorSelected");
 	}
 
 	/**
