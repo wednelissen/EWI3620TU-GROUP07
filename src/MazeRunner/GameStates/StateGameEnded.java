@@ -117,10 +117,10 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
 		startup = false;
-		buttonQuit.draw(gl,
-				LoadTexturesMaze.getTexture("buttonQuit"));
-		buttonMainMenu.draw(gl,
-				LoadTexturesMaze.getTexture("buttonMainMenu"));
+
+		for(Button button: buttonList){
+			button.update(screenWidth, screenHeight);
+		}
 		
 		for (int i = 0; i < MazeRunner.amountofSpots(); i++) {
 			gl.glDisable(GL.GL_LIGHTING) ;
