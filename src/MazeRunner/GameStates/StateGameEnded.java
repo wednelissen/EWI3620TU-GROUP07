@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import LevelEditor.Button;
+import LevelEditor.Window;
 import MazeRunner.Fundamental.*;
 
 import javax.media.opengl.GL;
@@ -19,11 +20,12 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 	private int screenWidth, screenHeight;
 	private HighScore highscore;
 	//layout van de knoppen
-	
+	private float[] windowHighScoreTextCoords = new float[] {300, 50, 200, 75};
 	private float[] buttonMainMenuCoords = new float[] {200, 125, 400, 75};
 	private float[] buttonQuitCoords = new float[] {200, 225, 400, 75};
 	//define buttons
 
+	private Window windowHighScoreText = new Window(windowHighScoreTextCoords, screenWidth, screenHeight);
 	private Button buttonMainMenu = new Button(buttonMainMenuCoords, screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
 	private Button[] buttonList = new Button[] {	buttonMainMenu,
@@ -69,6 +71,7 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 				LoadTexturesMaze.getTexture("buttonMainMenu"));
 		buttonQuit.draw(gl,
 				LoadTexturesMaze.getTexture("buttonQuit"));
+		windowHighScoreText.renderString(gl, "   YOU GOT OUT!\nYour score is: " + highscore.score);
 		
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
@@ -121,6 +124,8 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		for(Button button: buttonList){
 			button.update(screenWidth, screenHeight);
 		}
+		
+		windowHighScoreText.update(screenWidth, screenHeight);
 		
 		for (int i = 0; i < MazeRunner.amountofSpots(); i++) {
 			gl.glDisable(GL.GL_LIGHTING) ;
