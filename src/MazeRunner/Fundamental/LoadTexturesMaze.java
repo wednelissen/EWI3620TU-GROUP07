@@ -62,7 +62,8 @@ public class LoadTexturesMaze {
 	}
 	
 	public void loadModels () {
-		addModelToList(OBJLoader.loadModel("src/modelGuard.obj", getTexture("guardTexture")), "modelGuard");
+		addModelToList(OBJLoader.loadModel("src/modelGuard.obj"), "modelGuard");
+		addModelToList(OBJLoader.loadModel("src/PC.obj"), "PC");
 	}
 
 	/**
