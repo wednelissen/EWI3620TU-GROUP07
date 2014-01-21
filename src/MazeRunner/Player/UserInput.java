@@ -51,7 +51,6 @@ public class UserInput extends Control implements MouseListener,
 		this.canvas.addMouseListener(this);
 		this.canvas.addMouseMotionListener(this);
 		this.canvas.addKeyListener(this);
-		
 	}
 	
 	
@@ -76,7 +75,7 @@ public class UserInput extends Control implements MouseListener,
 
 	}
 	
-	private void restPLayer(){
+	public void restPLayer(){
 		Control.forward = false;
 		Control.back = false;
 		Control.left = false;

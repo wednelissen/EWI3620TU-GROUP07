@@ -66,11 +66,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private ArrayList<Guard> guards = new ArrayList<Guard>();
 	private ArrayList<GuardCamera> cameras = new ArrayList<GuardCamera>();
 
-	RouteAlgoritme route;
-
 	private int checkdistance = 2;
-	private ArrayList<Point> closestGuardRoute = new ArrayList<Point>();
-	private ArrayList<Point> resetRoute = new ArrayList<Point>();
 
 	private ArrayList<Keys> keys = new ArrayList<Keys>();
 
@@ -80,11 +76,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	private WallChecker playerwallchecker;
 
 	private Inventory inventory = new Inventory();
-	private Gun gun;
-	private int closestGuardNumber;
-	private Guard closestGuard;
-	private boolean resettingRoute = false;
-	private boolean resettedRoute = false;
 
 	private boolean gameinitialized = false, gamepaused = false;
 
@@ -159,9 +150,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			visibleObjects.add(temp);
 		}
 
-		gun = new Gun(6, 0, 1, 5);
-		visibleObjects.add(gun);
-
 		createCameras(tempCamera);
 		for (GuardCamera temp : cameras) {
 			visibleObjects.add(temp);
@@ -178,14 +166,15 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 
 		// Initialize the player.
-
+		double startHorAnglePlayer = calculateBestStartAngle();
+		System.out.println("startHorAnglePlayer: "+ startHorAnglePlayer);
 		player = new Player(maze.startPoint.getX() * Maze.SQUARE_SIZE
 				+ Maze.SQUARE_SIZE / 2, // x-position
 				Maze.SQUARE_SIZE / 2, // y-position
 				maze.startPoint.getY() * Maze.SQUARE_SIZE + Maze.SQUARE_SIZE
 
 				/ 2, // z-position
-				90, 0); // horizontal and vertical angle
+				startHorAnglePlayer, 0); // horizontal and vertical angle
 
 		camera = new Camera(player.getLocationX(), player.getLocationY(),
 				player.getLocationZ(), player.getHorAngle(),
@@ -194,8 +183,8 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		input = new UserInput(canvas);
 		input.setMazeRunner(this);
 		player.setControl(input);
-
 		player.setEndPoint(maze.endPoint);
+		input.restPLayer(); //zorgt dat de player altijd start in rust toestand.
 		System.out.println("Klaar met creatie objecten");
 
 	}
@@ -371,6 +360,34 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 */
 
 	/**
+	 * kijkt om het begin punt waar geen muur is en zal dat de starthoek maken. 
+	 * een deur is ook geen muur dus de player kan ook beginnen met het zicht op een deur.
+	 * @return nieuwe hoek van de player
+	 */
+	private double calculateBestStartAngle(){
+		Point begin = maze.startPoint;
+		int x = (int)begin.getX(); 
+		int z = (int)begin.getY(); 
+		
+		if(!maze.isWall(x, z-1)){	//boven v/h startpunt 
+			return 0;
+		}
+		else if(!maze.isWall(x, z+1)){ //onder v/h startpunt 
+			System.out.println("rare true: "+maze.isWall(x, z-1));
+			return 180;
+		}
+		else if(!maze.isWall(x+1, z)){ //rechts v/h startpunt 
+			return -90;
+		}
+		else if(!maze.isWall(x-1, z)){ //links v/h startpunt 
+			return 90;
+		}
+		else{
+			return 0;
+		}
+	}
+	
+	/**
 	 * updateMovement(int) updates the position of all objects that need moving.
 	 * This includes rudimentary collision checking and collision reaction.
 	 */
@@ -378,133 +395,76 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 		// update locations
 
-		player.update(deltaTime);
+		player.update(deltaTime);															//Player
 		if (playerwallchecker != null) {
 			playerwallchecker.check();
 		}
 		playerItemCheck();
 
-		for (GuardCamera cam : cameras) {
+		
+		boolean mazeChange = maze.mazeChanged(); //check het verschil met de maze met de vorige keer.
+												// alleen als de maze veranderd zullen camera's waar eerst geen guard bij kon 
+												// kijken of er nu wel een guard bij kan komen.
+		
+		for (GuardCamera cam : cameras) {													//GuardCameras
 			cam.updatePositie(player.locationX, player.locationZ);
-			if (cam.alarm() && !cam.getGuardSend()) {
-				int i = 0;
+			if (cam.alarm() || (mazeChange && cam.getNeedGuard()) ) {
+				System.out.println("mazeChange: "+ mazeChange);
+				System.out.println("checken nu de maze veranderd is");
+				ArrayList<Point> closestGuardRoute = new ArrayList<Point>();
+				Guard closestGuard = null;
 				int j = Integer.MAX_VALUE;
 				for (Guard guard : guards) {
-					i++;
-					route = new RouteAlgoritme(maze);
-					ArrayList<Point> guardRoute = route.algorithm(
-							cam.getHuidigepositie(), guard.getEindPositie());
-					if (guardRoute.size() < j) {
-						// closestGuardRoute.add(guard.getHuidigepositie());
-						// closestGuardRoute.addAll(guardRoute);
-						closestGuardRoute = guardRoute;
-						closestGuardNumber = i;
-						closestGuard = guard;
+					RouteAlgoritme route = new RouteAlgoritme(maze);
+					ArrayList<Point> guardRoute = route.algorithm(cam.getHuidigepositie(), guard.getEindPositie());
+					if(guardRoute != null){
+						if (guardRoute.size() < j) {
+							j = guardRoute.size();
+							closestGuardRoute = guardRoute;
+							closestGuard = guard;
+						}
 					}
 
 				}
-
-				ArrayList<Point> tempRoute = new ArrayList<Point>();
-				tempRoute.add(closestGuard.getHuidigepositie());
-				tempRoute.addAll(closestGuardRoute);
-				closestGuardRoute = tempRoute;
-				closestGuard.setPatrol(false);
-				closestGuard.setAlarmed(true);
-				cam.guardSended(true);
-				if (closestGuard.isAlarmed()) {
-					closestGuard.setCoordinaten(closestGuardRoute);
-					ArrayList<Point> alarmedCoordinates = closestGuard
-							.getCoordinaten();
-					closestGuard.setFinishpositie(alarmedCoordinates
-							.get(alarmedCoordinates.size() - 1));
-					closestGuard.setRichting(true);
-					closestGuard.setTeller(1);
-					// resettingRoute = false;
-
+				//vanaf hier is de guard met de kortste pad naar de camera gevonden of de closestGuard is nog null omdat geen van de guards de camera kon bereiken.
+				
+				if(closestGuard != null){
+					
+					cam.setNeedGuard(false);
+					ArrayList<Point> tempRoute = new ArrayList<Point>();
+					tempRoute.add(closestGuard.getHuidigepositie()); 
+					tempRoute.addAll(closestGuardRoute);
+					closestGuardRoute = tempRoute;
+					//closestGuard.setPatrol(false);
+					closestGuard.setAlarmed(true);
+					closestGuard.setNewPatrolPath(closestGuardRoute);
+					closestGuard.setGuardCamera(cam);
 				}
+				else{
+					cam.setNeedGuard(true); //er moet nog steeds een guard naar de camera worden gestuurd.
+				}
+
 			}
 		}
 
-		for (Guard temp : guards) {
-
-			if (!temp.isAttack() && temp.isPatrol()) {
-				temp.update(deltaTime);
-
-			}
-			if (!GOD_MODE) {
-				temp.playerDetectie(player.locationX, player.locationZ);
-				temp.aanvallen(player.locationX, player.locationZ, deltaTime);
-			}
-			if (temp.isAlarmed() && !temp.isAttack()) {
-				temp.update(deltaTime);
-				if (temp.getHuidigepositie().equals(temp.getFinishpositie())) {
-					System.out.println("zeg het eens");
-					temp.setResettingPatrol(true);
-					temp.setAlarmed(false);
-				}
-
-			}
-			if (temp.isResettingPatrol() && !temp.isAttack()) {
-				if (!resettingRoute) {
-					resetPatrol();
-				}
-				System.out.println("reset mofo");
-				temp.update(deltaTime);
-
-				if (temp.getHuidigepositie().equals(temp.getFinishpositie())) {
-					System.out.println("ja toch arrivatie");
-					temp.setResettingPatrol(false);
-					temp.setPatrol(true);
-					setPatrol();
-					resettingRoute = false;
-				}
-
-			}
-			if (temp.isBusted()) {
+		
+		
+		
+		for (Guard guard : guards) {														//Guards
+			guard.run(deltaTime, player.locationX, player.locationZ);
+			if (guard.isBusted()) {
 				System.out.println("Busted");
 				SoundEffect.SHOT.play();
 				toStateBusted();
 			}
 		}
 
+		//DEBUG:
 		// System.out.println("x: "+player.locationX +
 		// " z: "+player.locationZ+" EDITOR--- x: "
 		// +(int)Math.floor( player.locationX / SQUARE_SIZE
 		// )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
 
-	}
-
-	private void setPatrol() {
-
-		for (Guard guard : guards)
-			if (guard.isPatrol()) {
-				ArrayList<Point> patrolCoordinaten = guard
-						.getPatrolCoordinaten();
-
-				guard.setCoordinaten(patrolCoordinaten);
-				guard.setFinishpositie(patrolCoordinaten.get(patrolCoordinaten
-						.size() - 1));
-				guard.setStartpositie(patrolCoordinaten.get(0));
-				guard.setRichting(true);
-				guard.setTeller(1);
-			}
-	}
-
-	private void resetPatrol() {
-		for (Guard guard : guards)
-			if (guard.isResettingPatrol()) {
-				ArrayList<Point> resetRoute = new RouteAlgoritme(maze)
-						.algorithm(guard.getPatrolStartPositie(),
-								guard.getEindpositie());
-
-				guard.setCoordinaten(resetRoute);
-				ArrayList<Point> resetCoordinates = guard.getCoordinaten();
-				guard.setFinishpositie(resetCoordinates.get(resetCoordinates
-						.size() - 1));
-				guard.setRichting(true);
-				guard.setTeller(1);
-				resettingRoute = true;
-			}
 	}
 
 	/**
@@ -545,7 +505,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			camera.setLocationZ(player.getLocationZ());
 		} else {
 			camera.setLocationX(cameras.get(watchCameraNumber).getLocationX());
-			camera.setLocationY(cameras.get(watchCameraNumber).getLocationY() - 1);
+			camera.setLocationY(cameras.get(watchCameraNumber).getLocationY()*0.8);
 			camera.setLocationZ(cameras.get(watchCameraNumber).getLocationZ());
 		}
 		camera.setHorAngle(player.getHorAngle());
@@ -715,20 +675,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 						.println("aantal Keys: " + inventory.getKeys().size());
 			}
 		}
-
-		// GUN
-
-		if (Math.abs(player.locationX - gun.locationX) < gebied
-				&& Math.abs(player.locationZ - gun.locationZ) < gebied) {
-			// visibleObjects.remove(gun);
-			gun.pickedUp();
-			gun.horAngle = player.horAngle;
-			gun.verAngle = player.verAngle;
-			gun.locationX = player.locationX;
-			gun.locationY = player.locationY;
-			gun.locationZ = player.locationZ;
-		}
-
 	}
 
 	public void openDoor() {

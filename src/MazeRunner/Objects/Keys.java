@@ -91,13 +91,14 @@ public class Keys extends GameObject implements VisibleObject{
 		gl.glEnd();
 		
 		gl.glPopMatrix();
-		gl.glDisable(GL.GL_COLOR_MATERIAL);
+		
 		rotate += rotateSpeed*deltaTime; 
 		if(rotate > 360){
 			rotate -= 360;
 		}
 		//DIT MOET WEG
 		gl.glColor3f(1, 1, 1);
+		gl.glDisable(GL.GL_COLOR_MATERIAL);
 		
 		gl.glEnable(GL.GL_CULL_FACE);
 		
