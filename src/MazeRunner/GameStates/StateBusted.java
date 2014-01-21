@@ -207,7 +207,7 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 			e.printStackTrace();
 		}
 		@SuppressWarnings("unused")
-		MazeRunner mazerunner = new MazeRunner(canvas, "henk");
+		MazeRunner mazerunner = new MazeRunner(canvas);
 
 	}
 

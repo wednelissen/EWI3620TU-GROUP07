@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import LevelEditor.Button;
+import LevelEditor.Window;
 import MazeRunner.Fundamental.*;
 
 import javax.media.opengl.GL;
@@ -14,16 +15,18 @@ import javax.media.opengl.GLEventListener;
 
 public class StateGameEnded implements GLEventListener, KeyListener, MouseListener{
 	
+	private NameSetFrame nameSetFrame = new NameSetFrame();
 	private GLCanvas canvas;
 	private boolean startup = false;
 	private int screenWidth, screenHeight;
 	private HighScore highscore;
 	//layout van de knoppen
-	
+	private float[] windowHighScoreTextCoords = new float[] {300, 50, 200, 75};
 	private float[] buttonMainMenuCoords = new float[] {200, 125, 400, 75};
 	private float[] buttonQuitCoords = new float[] {200, 225, 400, 75};
 	//define buttons
 
+	private Window windowHighScoreText = new Window(windowHighScoreTextCoords, screenWidth, screenHeight);
 	private Button buttonMainMenu = new Button(buttonMainMenuCoords, screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords,screenWidth,screenHeight);
 	private Button[] buttonList = new Button[] {	buttonMainMenu,
@@ -42,8 +45,7 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		screenWidth = canvas.getWidth();
 		startup = true;
 		this.resume();
-//		System.out.println("Highscore: " + score.getPlayerName() + " " + score.getScore() + " " + score.getLevelName());
-		this.highscore.writeToDB();
+		nameSetFrame.appear();
 	}
 
 	public void resume() {
@@ -62,13 +64,22 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
         	init(drawable);
         	startup = false;
         }
-		
+		if (nameSetFrame.getNameSet()) {
+
+			String playerName = nameSetFrame.getName();
+			System.out.println(playerName);
+			nameSetFrame.disappear();
+			nameSetFrame.setNameSet(false);
+			this.highscore.playerName = playerName;
+			this.highscore.writeToDB();
+		}
 		GL gl = drawable.getGL();
 		
 		buttonMainMenu.draw(gl,
 				LoadTexturesMaze.getTexture("buttonMainMenu"));
 		buttonQuit.draw(gl,
 				LoadTexturesMaze.getTexture("buttonQuit"));
+		windowHighScoreText.renderString(gl, "   YOU GOT OUT!\nYour score is: " + highscore.score);
 		
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
@@ -117,10 +128,12 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
 		startup = false;
-		buttonQuit.draw(gl,
-				LoadTexturesMaze.getTexture("buttonQuit"));
-		buttonMainMenu.draw(gl,
-				LoadTexturesMaze.getTexture("buttonMainMenu"));
+
+		for(Button button: buttonList){
+			button.update(screenWidth, screenHeight);
+		}
+		
+		windowHighScoreText.update(screenWidth, screenHeight);
 		
 		for (int i = 0; i < MazeRunner.amountofSpots(); i++) {
 			gl.glDisable(GL.GL_LIGHTING) ;

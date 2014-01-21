@@ -10,7 +10,7 @@ public class NameSetFrame extends JFrame implements ActionListener{
 
  
 	private static final long serialVersionUID = 1L;
-	private JButton startGame   = new JButton("Start Game");  
+	private JButton startGame   = new JButton("Upload High Score");  
 
     private JLabel nameLabel     = new JLabel("Name:");
     private JTextField nameField  = new JTextField();

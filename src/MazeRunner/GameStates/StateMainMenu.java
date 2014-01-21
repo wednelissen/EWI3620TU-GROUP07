@@ -24,8 +24,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	LoadTexturesMaze loadedTexturesMaze;
 	private static GLCanvas canvas;
 	private boolean startup = false;
-	private NameSetFrame nameSetFrame = new NameSetFrame();
-	private String playerName = "";
 	private int screenWidth, screenHeight;
 
 	// layout van het hoofdmenu
@@ -74,7 +72,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		if (!first) {
 			startup = true;
 		}
-		nameSetFrame.appear();
 	}
 
 	@Override
@@ -108,15 +105,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 		// Flush the OpenGL buffer, outputting the result to the screen.
 		gl.glFlush();
-
-		if (nameSetFrame.getNameSet()) {
-
-			playerName = nameSetFrame.getName();
-			System.out.println(playerName);
-			nameSetFrame.disappear();
-			nameSetFrame.setNameSet(false);
-		}
-
 	}
 
 	@Override
@@ -251,7 +239,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 			e.printStackTrace();
 		}
 		@SuppressWarnings("unused")
-		MazeRunner mazerunner = new MazeRunner(canvas, playerName);
+		MazeRunner mazerunner = new MazeRunner(canvas);
 
 		System.out.println("Game started");
 	}

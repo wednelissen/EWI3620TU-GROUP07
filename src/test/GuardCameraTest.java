@@ -1,18 +1,25 @@
 package test;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+
+import javax.media.opengl.GLCanvas;
 
 import org.junit.Test;
 
+import MazeRunner.Fundamental.MazeRunner;
 import MazeRunner.Opponents.GuardCamera;
 
 public class GuardCameraTest {
 
-	GuardCamera testcamera = new GuardCamera(3, 2, 3, runner);
+	private GLCanvas canvas;
+	private MazeRunner mazerunner = new MazeRunner(canvas);
+
+	GuardCamera testcamera = new GuardCamera(3, 2, 3, mazerunner);
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testResetAlarm() {
+		testcamera.resetAlarm();
+		assertEquals(testcamera.alarm(), false);
 	}
 
 }
