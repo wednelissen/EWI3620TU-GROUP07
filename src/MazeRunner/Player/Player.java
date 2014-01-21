@@ -4,10 +4,12 @@ import java.awt.Point;
 
 import javax.media.opengl.GL;
 
-import com.sun.opengl.util.GLUT;
+
+import MazeRunner.Fundamental.LoadTexturesMaze;
 import MazeRunner.Fundamental.MazeRunner;
 import MazeRunner.Objects.Maze;
 import MazeRunner.Objects.GameObject;
+import MazeRunner.Objects.Model;
 import MazeRunner.Objects.VisibleObject;
 import MazeRunner.Sound.SoundEffect;
 
@@ -41,6 +43,7 @@ public class Player extends GameObject implements VisibleObject {
 	private boolean reachedEndOfLevel = false;
 	private Point endPoint;
 	private double checkarea = 0.5 * Maze.SQUARE_SIZE;
+	private Model modelPlayer;
 
 	/**
 	 * The Player constructor.
@@ -68,6 +71,7 @@ public class Player extends GameObject implements VisibleObject {
 		horAngle = h;
 		verAngle = v;
 		speed = 0.01;
+		modelPlayer = LoadTexturesMaze.getModel("modelPlayer");
 	}
 
 	/**
@@ -396,18 +400,18 @@ public class Player extends GameObject implements VisibleObject {
 
 	@Override
 	public void display(GL gl) {
-		GLUT glut = new GLUT();
 
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 
-		gl.glTranslated(locationX, locationY, locationZ);
+		gl.glTranslated(locationX, 0, locationZ);
+		gl.glScaled(0.14, 0.14, 0.14);
+		gl.glRotatef(0, (float) horAngle, 0, 0);
 
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
 		
-		glut.glutSolidTeapot(2);
-
+		modelPlayer.draw(gl, LoadTexturesMaze.getTexture("modelPlayer"));
 		gl.glPopMatrix();
 
 		gl.glEnable(GL.GL_CULL_FACE); // zet de instellingen weer terug zoals ze
