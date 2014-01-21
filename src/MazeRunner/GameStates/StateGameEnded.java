@@ -15,6 +15,7 @@ import javax.media.opengl.GLEventListener;
 
 public class StateGameEnded implements GLEventListener, KeyListener, MouseListener{
 	
+	private NameSetFrame nameSetFrame = new NameSetFrame();
 	private GLCanvas canvas;
 	private boolean startup = false;
 	private int screenWidth, screenHeight;
@@ -44,8 +45,7 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		screenWidth = canvas.getWidth();
 		startup = true;
 		this.resume();
-//		System.out.println("Highscore: " + score.getPlayerName() + " " + score.getScore() + " " + score.getLevelName());
-		this.highscore.writeToDB();
+		nameSetFrame.appear();
 	}
 
 	public void resume() {
@@ -64,7 +64,15 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
         	init(drawable);
         	startup = false;
         }
-		
+		if (nameSetFrame.getNameSet()) {
+
+			String playerName = nameSetFrame.getName();
+			System.out.println(playerName);
+			nameSetFrame.disappear();
+			nameSetFrame.setNameSet(false);
+			this.highscore.playerName = playerName;
+			this.highscore.writeToDB();
+		}
 		GL gl = drawable.getGL();
 		
 		buttonMainMenu.draw(gl,
