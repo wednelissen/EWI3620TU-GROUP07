@@ -81,7 +81,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	private boolean startup = true;
 	private boolean initialize = true;
-	private String playerName = "";
 
 	private StatePauseMenu pausemenu;
 	private HighScore score;
@@ -94,11 +93,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * Initializes the MazeRunner game. The MazeRunner is drawn on the canvas
 	 * defined by GameDriver. It adds itself as a GLEventListener.
 	 */
-	public MazeRunner(GLCanvas canvas, String playerName) {
+	public MazeRunner(GLCanvas canvas) {
 
 		GOD_MODE = false;
 		this.canvas = canvas;
-		this.playerName = playerName;
 		screenHeight = canvas.getHeight();
 		screenWidth = canvas.getWidth();
 		canvas.addGLEventListener(this);
@@ -131,7 +129,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// Add the maze that we will be using.
 		maze = new Maze();
 		LoadLevel loadLevelMaze = maze.getLoadLevel();
-		score = new HighScore(playerName, 0, maze.getLevelName());
+		score = new HighScore(null, 0, maze.getLevelName());
 
 		ArrayList<Guardian> tempGuard = loadLevelMaze.getGuardians();
 		ArrayList<Point> tempCamera = loadLevelMaze.getCameras();

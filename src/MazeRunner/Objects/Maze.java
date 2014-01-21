@@ -65,6 +65,19 @@ public class Maze implements VisibleObject {
 	}
 	
 	/**
+	 * Constructor with predefined maze. Used for JUnit testing.
+	 * 
+	 * @param maze
+	 *            : The predefined maze. <b>Must be 3x3!</b>
+	 */
+	public Maze(int[][] maze) {
+		MAZE_SIZE_X = 3;
+		MAZE_SIZE_Z = 3;
+
+		this.maze = maze;
+	}
+
+	/**
 	 * isWall(int x, int z) checks for a wall.
 	 * <p>
 	 * It returns whether maze[x][z] contains a 1.

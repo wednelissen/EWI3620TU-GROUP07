@@ -93,7 +93,11 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		}
 		GLUT glut = new GLUT();
 
+		gl.glEnable(GL.GL_COLOR_MATERIAL);
+		
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
+		gl.glColor3f(1f, 0.5f, 0.5f);
+		
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 		gl.glTranslated(locationX, SQUARE_SIZE, locationZ);
@@ -101,6 +105,9 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		gl.glPopMatrix();
 
 		if (thread.visible) {
+			float scanColor[] = { 1f, 0.0f, 0.0f, 0.7f };
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, scanColor, 0);
+			gl.glColor3f(1f, 0.0f, 0.0f);
 			gl.glPushMatrix();
 			gl.glTranslated(locationX, -SQUARE_SIZE * 3, locationZ);
 			
@@ -108,6 +115,9 @@ public class GuardCamera extends GameObject implements VisibleObject {
 			glut.glutWireCone(SQUARE_SIZE * 2, SQUARE_SIZE * 4, 50, 50);
 			gl.glPopMatrix();
 		}
+		
+		gl.glColor3f(1f, 1f, 1f);
+		gl.glDisable(GL.GL_COLOR_MATERIAL);
 	}
 
 	/**
