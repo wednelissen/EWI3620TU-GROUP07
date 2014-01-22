@@ -43,7 +43,7 @@ public class FinishPoint extends GameObject implements VisibleObject {
 		}
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, flagColor, 0);
 		gl.glBegin(GL.GL_QUADS);
-		// Voorzijde muur ERROR
+		// Voorzijde muur 
 		gl.glNormal3d(0, 0, -1);
 		// Eerste texture coordinaat
 		gl.glTexCoord2d(1, 0);

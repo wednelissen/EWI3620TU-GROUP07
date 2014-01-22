@@ -40,7 +40,7 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 			screenWidth, screenHeight);
 	private Button[] buttonList = new Button[] { buttonMainMenu, buttonQuit,
 			buttonPlayAgain };
-	private String bustedString = "YOU HAVE BEEN CAUGHT BY A GAURD!";
+	private String bustedString = "YOU HAVE BEEN CAUGHT BY A GUARD!";
 
 	/**
 	 * Loads the Busted State on the given Canvas. Switches to the default
