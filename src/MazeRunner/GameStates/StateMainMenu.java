@@ -7,13 +7,16 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import LevelEditor.Button;
-import MazeRunner.Fundamental.*;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
+
+import LevelEditor.Button;
+import MazeRunner.Fundamental.GameDriver;
+import MazeRunner.Fundamental.LoadTexturesMaze;
+import MazeRunner.Fundamental.MazeRunner;
+import MazeRunner.Fundamental.NameSetFrame;
 
 public class StateMainMenu implements GLEventListener, KeyListener,
 		MouseListener {
@@ -30,7 +33,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	private float[] buttonHowToPlayCoords = new float[] { 200, 325, 400, 75 };
 	private float[] buttonQuitCoords = new float[] { 200, 425, 400, 75 };
-	
+
 	// define buttons
 	private Button buttonStartGame = new Button(buttonStartGameCoords,
 			screenWidth, screenHeight);
@@ -46,7 +49,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	private Button[] buttonList = new Button[] { buttonStartGame,
 			buttonHighScores, buttonLevelEditor, buttonHowToPlay, buttonQuit };
 	private boolean texturesLoaded = false;
-	
+
 	/**
 	 * Constructor Also calls init(), initializing the main menu on the given
 	 * canvas (when first = false).
@@ -88,14 +91,13 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 		// *************************HUIB***************************************
 		// Draw the buttons.
-		buttonStartGame.draw(gl,
-				LoadTexturesMaze.getTexture("buttonStart"));
+		buttonStartGame.draw(gl, LoadTexturesMaze.getTexture("buttonStart"));
 		buttonHighScores.draw(gl,
 				LoadTexturesMaze.getTexture("buttonHighScore"));
 		buttonLevelEditor.draw(gl,
 				LoadTexturesMaze.getTexture("buttonLevelEditor"));
-		buttonHowToPlay.draw(gl,
-				LoadTexturesMaze.getTexture("buttonHowToPlay"));
+		buttonHowToPlay
+				.draw(gl, LoadTexturesMaze.getTexture("buttonHowToPlay"));
 		buttonQuit.draw(gl, LoadTexturesMaze.getTexture("buttonQuit"));
 
 		// gl.glLoadIdentity(); //Wanneer je deze inschakeld begint hij te

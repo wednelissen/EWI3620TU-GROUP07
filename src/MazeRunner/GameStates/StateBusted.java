@@ -1,20 +1,22 @@
 package MazeRunner.GameStates;
 
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLEventListener;
 
 import LevelEditor.Button;
 import LevelEditor.Window;
 import MazeRunner.Fundamental.GameDriver;
 import MazeRunner.Fundamental.LoadTexturesMaze;
 import MazeRunner.Fundamental.MazeRunner;
-
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLEventListener;
 
 public class StateBusted implements GLEventListener, KeyListener, MouseListener {
 
@@ -24,8 +26,9 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 
 	// layout van het hoofdmenu
 	private float[] textWindowCoords = new float[] { 200, 25, 400, 75 };
-	private float[] buttonMainMenuCoords = new float[] { 200, 125, 400, 75 };
-	private float[] buttonQuitCoords = new float[] { 200, 225, 400, 75 };
+	private float[] buttonPlayAgainCoords = new float[] { 200, 125, 400, 75 };
+	private float[] buttonMainMenuCoords = new float[] { 200, 225, 400, 75 };
+	private float[] buttonQuitCoords = new float[] { 200, 325, 400, 75 };
 	// define buttons
 	private Window textWindow = new Window(textWindowCoords, screenWidth,
 			screenHeight);
@@ -33,8 +36,11 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 			screenWidth, screenHeight);
 	private Button buttonQuit = new Button(buttonQuitCoords, screenWidth,
 			screenHeight);
-	private Button[] buttonList = new Button[] { buttonMainMenu, buttonQuit };
-	private String bustedString = "HA FEUTMANS JE BENT GEPAKT DOOR EEN GUARD";
+	private Button buttonPlayAgain = new Button(buttonPlayAgainCoords,
+			screenWidth, screenHeight);
+	private Button[] buttonList = new Button[] { buttonMainMenu, buttonQuit,
+			buttonPlayAgain };
+	private String bustedString = "YOU HAVE BEEN CAUGHT BY A GAURD!";
 
 	/**
 	 * Loads the Busted State on the given Canvas. Switches to the default
@@ -57,7 +63,7 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 			this.canvas.addGLEventListener(this);
 			this.canvas.addMouseListener(this);
 			startup = true;
-			System.out.println("Busted state loaded");
+
 		}
 	}
 
@@ -69,10 +75,9 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 		}
 
 		GL gl = drawable.getGL();
-		buttonMainMenu.draw(gl,
-				LoadTexturesMaze.getTexture("buttonMainMenu"));
-		buttonQuit.draw(gl,
-				LoadTexturesMaze.getTexture("buttonQuit"));
+		buttonMainMenu.draw(gl, LoadTexturesMaze.getTexture("buttonMainMenu"));
+		buttonQuit.draw(gl, LoadTexturesMaze.getTexture("buttonQuit"));
+		buttonPlayAgain.draw(gl, LoadTexturesMaze.getTexture("buttonStart"));
 
 		textWindow.renderString(gl, bustedString);
 		// Flush the OpenGL buffer, outputting the result to the screen.
@@ -82,7 +87,7 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("Pause menu init");
+
 		// Retrieve the OpenGL handle, this allows us to use OpenGL calls.
 		GL gl = drawable.getGL();
 
@@ -113,11 +118,11 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
 		startup = false;
-		
+
 		for (int i = 0; i < MazeRunner.amountofSpots(); i++) {
-			gl.glDisable(GL.GL_LIGHTING) ;
+			gl.glDisable(GL.GL_LIGHTING);
 		}
-		
+
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].update(screenWidth, screenHeight);
 		}
@@ -138,7 +143,6 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].update(screenWidth, screenHeight);
 		}
-		
 
 		// Update the projection to an orthogonal projection using the new
 		// screen size
@@ -160,6 +164,10 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 		case KeyEvent.VK_2:
 			returnToMainMenu();
 			break;
+
+		case KeyEvent.VK_3:
+			playAgain();
+			break;
 		}
 	}
 
@@ -174,14 +182,33 @@ public class StateBusted implements GLEventListener, KeyListener, MouseListener 
 		if (buttonQuit.clickedOnIt(xclick, yclick)) {
 			System.exit(0);
 		}
+		if (buttonPlayAgain.clickedOnIt(xclick, yclick)) {
+			playAgain();
+		}
 	}
 
 	private void returnToMainMenu() {
-		System.out.println("Return to main menu");
+
 		canvas.removeGLEventListener(this);
 		canvas.removeMouseListener(this);
 		canvas.removeKeyListener(this);
 		GameDriver.mainMenu.returnTo();
+	}
+
+	private void playAgain() {
+		canvas.removeGLEventListener(this);
+		canvas.removeMouseListener(this);
+		canvas.removeKeyListener(this);
+
+		try {
+			Robot robot = new Robot();
+			robot.mouseMove(100, 100);
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+		@SuppressWarnings("unused")
+		MazeRunner mazerunner = new MazeRunner(canvas);
+
 	}
 
 	// /////////////////////////NOT USED////////////////////////////////////
