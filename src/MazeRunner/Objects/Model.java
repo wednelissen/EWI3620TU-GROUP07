@@ -11,8 +11,6 @@ public class Model {
 	private ArrayList<ArrayList<Float>> textures = new ArrayList<ArrayList<Float>>();
 	private ArrayList<Face> faces = new ArrayList<Face>();
 
-	private Texture myTexture;
-
 	public void addVertice(float x, float y, float z) {
 		ArrayList<Float> verticeCoords = new ArrayList<Float>();
 		verticeCoords.add(x);
@@ -40,13 +38,13 @@ public class Model {
 		faces.add(face);
 	}
 
-	public void draw(GL gl) {
+	public void draw(GL gl, Texture myTexture) {
+		if (myTexture != null) {
+			myTexture.enable();
+			myTexture.bind();
+		}
 		gl.glBegin(GL.GL_TRIANGLES);
 		for (Face face : faces) {
-			if (myTexture != null) {
-				myTexture.enable();
-				myTexture.bind();
-			}
 			ArrayList<Integer> vertexIndices = face.getVertexIndices();
 			ArrayList<Integer> normalIndices = face.getNormalIndices();
 			ArrayList<Integer> textureIndices = face.getTextureIndices();
@@ -81,9 +79,5 @@ public class Model {
 		if (myTexture != null) {
 			myTexture.disable();
 		}
-	}
-	
-	public void setTexture (Texture myTexture) {
-		myTexture = this.myTexture;
 	}
 }

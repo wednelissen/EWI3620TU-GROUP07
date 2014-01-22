@@ -59,10 +59,15 @@ public class LoadTexturesMaze {
 		addTextureToList(loadingTexture("mazeMenuBackground.png"), "menuBackground");
 		addTextureToList(loadingTexture("mazeButtonBack.png"), "buttonBack");
 		addTextureToList(loadingTexture("mazeWASD.png"), "wasdImage");
+		addTextureToList(loadingTexture("mazeModelGuard.png"), "modelGuard");
+		addTextureToList(loadingTexture("mazeModelTable.png"), "modelTable");
+		addTextureToList(loadingTexture("mazeModelPlayer.png"), "modelPlayer");
 	}
 	
 	public void loadModels () {
-		addModelToList(OBJLoader.loadModel("src/modelGuard.obj", getTexture("guardTexture")), "modelGuard");
+		addModelToList(OBJLoader.loadModel("src/modelGuard.obj"), "modelGuard");
+		addModelToList(OBJLoader.loadModel("src/modelTable.obj"), "modelTable");
+		addModelToList(OBJLoader.loadModel("src/modelPlayer.obj"), "modelPlayer");
 	}
 
 	/**
