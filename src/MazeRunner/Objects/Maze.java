@@ -569,5 +569,9 @@ public class Maze implements VisibleObject {
 		}
 		return change;
 	}
+	
+	public Point getEndPoint() {
+		return endPoint;
+	}
 
 }
