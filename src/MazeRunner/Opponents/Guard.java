@@ -30,11 +30,11 @@ public class Guard extends GameObject implements VisibleObject {
 	public Maze maze;
 	private GuardCamera guardCamera = null;
 	private double speed;
-	private boolean richting = true;
+	private boolean direction = true;
 
-	private Point startpositie;
+	private Point startposition;
 
-	private Point eindpositie;
+	private Point endposition;
 	private Point huidigepositie;
 
 	private Point finishpositie;
@@ -79,10 +79,10 @@ public class Guard extends GameObject implements VisibleObject {
 		coordinaten = points;
 		patrolCoordinaten = points;
 
-		startpositie = coordinaten.get(0);
+		startposition = coordinaten.get(0);
 		patrolStartPositie = coordinaten.get(0);
 		finishpositie = coordinaten.get(coordinaten.size() - 1);
-		huidigepositie = startpositie;
+		huidigepositie = startposition;
 	}
 
 	public void run(int deltaTime, double xPlayer, double zPlayer ){
@@ -127,9 +127,9 @@ public class Guard extends GameObject implements VisibleObject {
 		startCheck = true;
 		finishCheck = false;
 		teller = 1;
-		richting = true;
+		direction = true;
 		this.coordinaten = newRoute;
-		startpositie = coordinaten.get(0); 
+		startposition = coordinaten.get(0); 
 		finishpositie = coordinaten.get(coordinaten.size() - 1);
 	}
 	
@@ -140,26 +140,26 @@ public class Guard extends GameObject implements VisibleObject {
 	 * @param deltaTime
 	 */
 	public void update(int deltaTime) {
-		huidigepositie();
+		currentPosition();
 		if (huidigepositie.equals(finishpositie) && !finishCheck) {
-			richting = false;
+			direction = false;
 			startCheck = false;
 			finishCheck = true;
-		} else if (huidigepositie.equals(startpositie) && !startCheck) {
-			richting = true;
+		} else if (huidigepositie.equals(startposition) && !startCheck) {
+			direction = true;
 			startCheck = true;
 			finishCheck = false;
 		}
 		if (!attack) {
 			resetWalkingDirection();
-			if (richting) {
+			if (direction) {
 
-				eindpositie = coordinaten.get(teller);
+				endposition = coordinaten.get(teller);
 
-				if (!(eindpositie.equals(huidigepositie))) {
-					int diffX = (int) (eindpositie.getX() - huidigepositie
+				if (!(endposition.equals(huidigepositie))) {
+					int diffX = (int) (endposition.getX() - huidigepositie
 							.getX());
-					int diffZ = (int) (eindpositie.getY() - huidigepositie
+					int diffZ = (int) (endposition.getY() - huidigepositie
 							.getY());
 					
 					if (diffX > 0) {
@@ -182,17 +182,17 @@ public class Guard extends GameObject implements VisibleObject {
 						System.out.println("Fucking grote error biatch");
 					}
 
-				} else if (huidigepositie.equals(eindpositie)) {
+				} else if (huidigepositie.equals(endposition)) {
 					teller++;
 				}
-			} else if (!richting) {
+			} else if (!direction) {
 
-				eindpositie = coordinaten.get(teller);
+				endposition = coordinaten.get(teller);
 
-				if (!(eindpositie.equals(huidigepositie))) {
-					int diffX = (int) (eindpositie.getX() - huidigepositie
+				if (!(endposition.equals(huidigepositie))) {
+					int diffX = (int) (endposition.getX() - huidigepositie
 							.getX());
-					int diffZ = (int) (eindpositie.getY() - huidigepositie
+					int diffZ = (int) (endposition.getY() - huidigepositie
 							.getY());
 
 					if (diffX > 0) {
@@ -211,11 +211,11 @@ public class Guard extends GameObject implements VisibleObject {
 					} else {
 						System.out.println("Fucking grote error biatch");
 					}
-				} else if (huidigepositie.equals(eindpositie)) {
+				} else if (huidigepositie.equals(endposition)) {
 					teller--;
 				}
 			}
-			richtingDraaier();
+			directionTurn();
 		}
 
 	}
@@ -232,7 +232,7 @@ public class Guard extends GameObject implements VisibleObject {
 	 * wordt de hoek van de guard aangepast. Als de Guard geen richting heeft behoud hij
 	 * zijn oude hoek.
 	 */
-	private void richtingDraaier() {
+	private void directionTurn() {
 		if (zplus) {
 			horAngle = 0;
 		}
@@ -250,7 +250,7 @@ public class Guard extends GameObject implements VisibleObject {
 	/**
 	 * Geeft de huidige positie van het object Guard.
 	 */
-	public void huidigepositie() {
+	public void currentPosition() {
 		int xTemp = (int) Math.floor(locationX / SQUARE_SIZE);
 		int zTemp = (int) Math.floor(locationZ / SQUARE_SIZE);
 
@@ -408,7 +408,7 @@ public class Guard extends GameObject implements VisibleObject {
 	 * @param deltatime
 	 */
 	public void aanvallen(double xPlayer, double zPlayer, int deltaTime) {
-		huidigepositie();
+		currentPosition();
 		if (attack) {
 			double diffX = xPlayer - locationX;
 			double diffZ = zPlayer - locationZ;
@@ -537,19 +537,19 @@ public class Guard extends GameObject implements VisibleObject {
 	}
 
 	public Point getStartpositie() {
-		return startpositie;
+		return startposition;
 	}
 
 	public void setStartpositie(Point startpositie) {
-		this.startpositie = startpositie;
+		this.startposition = startpositie;
 	}
 
 	public Point getEindpositie() {
-		return eindpositie;
+		return endposition;
 	}
 
 	public void setEindpositie(Point eindpositie) {
-		this.eindpositie = eindpositie;
+		this.endposition = eindpositie;
 	}
 
 	public Point getHuidigepositie() {
@@ -597,11 +597,11 @@ public class Guard extends GameObject implements VisibleObject {
 	}
 
 	public boolean isRichting() {
-		return richting;
+		return direction;
 	}
 
 	public void setRichting(boolean richting) {
-		this.richting = richting;
+		this.direction = richting;
 	}
 
 	public void setCanMoveForward(boolean b) {
@@ -626,7 +626,7 @@ public class Guard extends GameObject implements VisibleObject {
 
 
 	public Point getEindPositie() {
-		return eindpositie;
+		return endposition;
 	}
 	
 	public void setGuardCamera(GuardCamera cam){
