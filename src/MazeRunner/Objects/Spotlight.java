@@ -8,6 +8,7 @@ import com.sun.opengl.util.texture.Texture;
 public class Spotlight extends GameObject implements VisibleObject {
 
 	private Texture spotTexture;
+	private GLUT glut = new GLUT();
 	private int spotNumber;
 	private boolean lightStatus = true;
 
@@ -30,8 +31,6 @@ public class Spotlight extends GameObject implements VisibleObject {
 		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_POSITION, updatedLightPosition, 0);
 		gl.glLightfv(GL.GL_LIGHT0 + spotNumber, GL.GL_SPOT_DIRECTION,
 				updatedLightDirection, 0);
-
-		GLUT glut = new GLUT();
 
 		double lightBulbRadius = 0.1;
 		double lightBulbSize = 0.2;

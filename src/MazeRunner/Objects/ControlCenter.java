@@ -27,13 +27,15 @@ public class ControlCenter extends GameObject implements VisibleObject{
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
-
-		gl.glTranslated(locationX, 1, locationZ);
-		
-		
+		// Draw tafel
+		gl.glTranslated(locationX, 0.75, locationZ);
 		gl.glDisable(GL.GL_CULL_FACE);//zorgt dat de achterkant zichtbaar is
 		gl.glScaled(2, 2, 2);
 		modelTable.draw(gl, LoadTexturesMaze.getTexture("modelTable"));
+		// Draw computer
+		
+		
+		
 		gl.glPopMatrix();
 
 		gl.glEnable(GL.GL_CULL_FACE); // zet de instellingen weer terug zoals ze stonden
