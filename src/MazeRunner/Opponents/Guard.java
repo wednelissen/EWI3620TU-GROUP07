@@ -276,7 +276,7 @@ public class Guard extends GameObject implements VisibleObject {
 
 		//attackAngle zorgt dat de guard altijd met zijn gezicht naar de player toe is gericht.
 		gl.glRotatef((float) (attackAngle + horAngle), 0f, 1f, 0f);
-		gl.glScaled(0.15, 0.15, 0.15);
+		gl.glScaled(0.5, 0.5, 0.5);
 
 		gl.glDisable(GL.GL_CULL_FACE);// zorgt dat de achterkant zichtbaar is
 		modelGuard.draw(gl, LoadTexturesMaze.getTexture("modelGuard"));
