@@ -152,7 +152,6 @@ public class Maze implements VisibleObject {
 		for (ControlCenter c : controlCenters) {
 			if (Math.abs(x - c.locationX) < c.getSizeX()
 					&& Math.abs(z - c.locationZ) < c.getSizeZ()) {
-				System.out.println("kom je hier wel contrtolcenter");
 				return true;
 			}
 		}
