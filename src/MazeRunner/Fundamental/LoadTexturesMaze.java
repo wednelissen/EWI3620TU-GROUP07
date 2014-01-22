@@ -62,6 +62,7 @@ public class LoadTexturesMaze {
 		addTextureToList(loadingTexture("mazeModelGuard.png"), "modelGuard");
 		addTextureToList(loadingTexture("mazeModelTable.png"), "modelTable");
 		addTextureToList(loadingTexture("mazeModelPlayer.png"), "modelPlayer");
+		addTextureToList(loadingTexture("mazeBackgroundImage.png"), "backgroundImage");
 	}
 	
 	public void loadModels () {

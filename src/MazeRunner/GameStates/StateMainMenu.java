@@ -13,6 +13,7 @@ import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 
 import LevelEditor.Button;
+import LevelEditor.Window;
 import MazeRunner.Fundamental.GameDriver;
 import MazeRunner.Fundamental.LoadTexturesMaze;
 import MazeRunner.Fundamental.MazeRunner;
@@ -33,6 +34,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	private float[] buttonHowToPlayCoords = new float[] { 200, 325, 400, 75 };
 	private float[] buttonQuitCoords = new float[] { 200, 425, 400, 75 };
+	
+	private float[] backgroundImageCoords = new float [] {0, 0, 800, 600 };
 
 	// define buttons
 	private Button buttonStartGame = new Button(buttonStartGameCoords,
@@ -49,6 +52,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	private Button[] buttonList = new Button[] { buttonStartGame,
 			buttonHighScores, buttonLevelEditor, buttonHowToPlay, buttonQuit };
 	private boolean texturesLoaded = false;
+	
+	private Window backgroundImage = new Window(backgroundImageCoords, screenWidth, screenHeight);
 
 	/**
 	 * Constructor Also calls init(), initializing the main menu on the given
@@ -88,8 +93,10 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		GL gl = drawable.getGL();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+		
+		// Draw backgroundimage
+		backgroundImage.draw(gl, LoadTexturesMaze.getTexture("backgroundImage"));
 
-		// *************************HUIB***************************************
 		// Draw the buttons.
 		buttonStartGame.draw(gl, LoadTexturesMaze.getTexture("buttonStart"));
 		buttonHighScores.draw(gl,
@@ -144,7 +151,8 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		// We have a simple 2D application, so we do not need to check for depth
 		// when rendering.
 		gl.glDisable(GL.GL_DEPTH_TEST);
-
+		
+		backgroundImage.update(screenWidth, screenHeight);
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].update(screenWidth, screenHeight);
 		}
@@ -162,6 +170,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		System.out.println(screenWidth + " " + screenHeight);
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 
+		backgroundImage.update(screenWidth, screenHeight);
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].update(screenWidth, screenHeight);
 		}
