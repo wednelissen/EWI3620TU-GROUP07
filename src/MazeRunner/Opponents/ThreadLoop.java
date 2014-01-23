@@ -4,6 +4,7 @@ package MazeRunner.Opponents;
  * Deze klasse wordt gebruikt om de camera uit en aan te zetten.
  * het idee om het alarm direct af te laten gaan komt van onderstaande website van gebruiker curioustechizen. 
  * http://stackoverflow.com/questions/8708473/waking-up-a-sleeping-thread-interrupt-versus-splitting-the-sleep-into-mult
+ * verder is de implementatie zelf gemaakt.
  * 
  * @author Stijn
  * 
