@@ -36,6 +36,7 @@ public class ControlCenter extends GameObject implements VisibleObject {
 	public void display(GL gl) {
 		float cubeColor[] = { 0f, 0f, 0f, 0f };
 		gl.glDisable(GL.GL_CULL_FACE);// zorgt dat de achterkant zichtbaar is
+		gl.glEnable(GL.GL_COLOR_MATERIAL);
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 		// Draw tafel
@@ -45,7 +46,8 @@ public class ControlCenter extends GameObject implements VisibleObject {
 		// Draw computer
 		gl.glTranslated(0, -0.49, 0);
 		modelTable.draw(gl, LoadTexturesMaze.getTexture("modelTable"));
-		gl.glEnable(GL.GL_CULL_FACE);// zorgt dat de achterkant zichtbaar is
+		gl.glDisable(GL.GL_COLOR_MATERIAL);
+		gl.glEnable(GL.GL_CULL_FACE);// zorgt dat de achterkant onzichtbaar is
 		gl.glPopMatrix();
 	}
 
@@ -53,6 +55,7 @@ public class ControlCenter extends GameObject implements VisibleObject {
 		// Onderkant computerkast
 		float pcColor[] = { 1f, 1f, 1f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, pcColor, 0);
+		gl.glColor3f(1f, 1f, 1f);
 		gl.glBegin(GL.GL_QUADS);
 		// onderzijde computer
 		gl.glNormal3d(0, -1, 0);
@@ -95,7 +98,8 @@ public class ControlCenter extends GameObject implements VisibleObject {
 		gl.glVertex3d(0.5, 0.15, -0.4);
 
 		// beeldscherm
-		float monitorColor[] = { 0f, 0f, 0f, 0f };
+		gl.glColor3f(0.5f, 0.5f, 0.5f);
+		float monitorColor[] = { 0.5f, 0.5f, 0.5f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, monitorColor, 0);
 		// onder
 		gl.glNormal3d(0, -1, 0);
@@ -188,6 +192,7 @@ public class ControlCenter extends GameObject implements VisibleObject {
 		}
 		float screenColor[] = { 1f, 1f, 1f, 1f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, screenColor, 0);
+		gl.glColor3f(1f, 1f, 1f);
 		gl.glBegin(GL.GL_QUADS);
 		gl.glNormal3d(0, 0, -1);
 		gl.glTexCoord2d(1, 0);
