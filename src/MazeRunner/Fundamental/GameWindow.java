@@ -34,5 +34,10 @@ public class GameWindow extends Frame {
 	public GLCanvas getCanvas() {
 		return this.canvas;
 	}
+	
+	public void setSizeScreen(int screenWidth, int screenHeight){
+		setSize(screenWidth, screenHeight);
+		
+	}
 
 }

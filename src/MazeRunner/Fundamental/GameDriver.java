@@ -34,6 +34,7 @@ public class GameDriver {
 		SoundEffect.init();
 		// Show Main Menu
 		mainMenu = new StateMainMenu(canvas, true);
+		mainMenu.driver = window;
 		anim = new Animator(canvas);
 		anim.start();
 	}

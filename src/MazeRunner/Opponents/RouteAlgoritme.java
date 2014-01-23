@@ -45,7 +45,9 @@ public class RouteAlgoritme {
 	public void mapConversion() {
 		for (int i = 0; i < mazeCoord.length; i++) {
 			for (int j = 0; j < mazeCoord[i].length; j++) {
-				if (mazeCoord[i][j] == 0) {
+				double x = (double)i*maze.SQUARE_SIZE + 0.5*maze.SQUARE_SIZE;
+				double z = (double)j*maze.SQUARE_SIZE + 0.5*maze.SQUARE_SIZE;
+				if (!maze.isWall(x, z)) {
 					Point temp = new Point(i, j);
 					distance.put(temp, Integer.MAX_VALUE);
 					openList.add(temp);

@@ -436,6 +436,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	 * Stops the game and initializes the game ended state.
 	 */
 	public void endGame() {
+		SoundEffect.WALK.stop();
 		canvas.removeMouseListener(input);
 		canvas.removeMouseMotionListener(input);
 		canvas.removeKeyListener(input);
@@ -449,6 +450,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	}
 
 	public void toStateBusted() {
+		SoundEffect.WALK.stop();
 		canvas.removeMouseListener(input);
 		canvas.removeMouseMotionListener(input);
 		canvas.removeKeyListener(input);
@@ -531,7 +533,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			canvas.removeKeyListener(input);
 			gamepaused = true;
 			canvas.removeGLEventListener(this);
-
+			SoundEffect.WALK.stop();
 			if (pausemenu == null) {
 				pausemenu = new StatePauseMenu(canvas, this);
 			} else {

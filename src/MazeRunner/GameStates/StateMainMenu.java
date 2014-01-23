@@ -1,7 +1,9 @@
 package MazeRunner.GameStates;
 
 import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -14,6 +16,7 @@ import javax.media.opengl.GLEventListener;
 
 import LevelEditor.Button;
 import LevelEditor.Window;
+import MazeRunner.Fundamental.GameWindow;
 import MazeRunner.Fundamental.GameDriver;
 import MazeRunner.Fundamental.LoadTexturesMaze;
 import MazeRunner.Fundamental.MazeRunner;
@@ -53,6 +56,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	private boolean texturesLoaded = false;
 	
 	private Window backgroundImage = new Window(backgroundImageCoords, screenWidth, screenHeight);
+	public GameWindow driver;
 
 	/**
 	 * Constructor Also calls init(), initializing the main menu on the given
@@ -155,6 +159,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		for (int i = 0; i < buttonList.length; i++) {
 			buttonList[i].update(screenWidth, screenHeight);
 		}
+		this.fullScreen();
 	}
 
 	@Override
@@ -185,7 +190,6 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 	@Override
 	public void keyReleased(KeyEvent event) {
 		int code = event.getKeyCode();
-
 		switch (code) {
 		case KeyEvent.VK_SPACE:
 			startGame();
@@ -193,6 +197,18 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 		}
 	}
 
+	public void fullScreen(){
+		 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		 screenWidth = (int) screenSize.getWidth();
+		 screenHeight = (int) screenSize.getHeight();
+		 driver.setSizeScreen(screenWidth, screenHeight);
+		 canvas.setSize(screenWidth, screenHeight);
+	}
+	
+	public void setGameDriver(GameWindow driverr){
+		driver = driverr;
+	}
+	
 	/**
 	 * Detects whether a button is clicked, and which button is clicked.
 	 */
@@ -296,6 +312,7 @@ public class StateMainMenu implements GLEventListener, KeyListener,
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		
 		// NOT USED
 
 	}
