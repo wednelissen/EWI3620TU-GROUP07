@@ -135,7 +135,7 @@ public class LoadLevel {
 	}
 
 	/**
-	 * geeft breedte van de Maze
+	 * Geeft breedte van de Maze
 	 * 
 	 * @return
 	 */
@@ -144,7 +144,7 @@ public class LoadLevel {
 	}
 
 	/**
-	 * geeft hoogte van de Maze
+	 * Geeft hoogte van de Maze
 	 * 
 	 * @return
 	 */
@@ -153,7 +153,7 @@ public class LoadLevel {
 	}
 
 	/**
-	 * geeft de naam van het uit te lezen bestand
+	 * Geeft de naam van het uit te lezen bestand
 	 * 
 	 * @return
 	 */
@@ -192,9 +192,9 @@ public class LoadLevel {
 	}
 
 	/**
-	 * 
-	 * @return geeft een tweedimensionale int array die direct gebruikt kan
+	 * Geeft een tweedimensionale int array die direct gebruikt kan
 	 *         worden door de mazerunner om te spelen.
+	 * @return Een 2D int array
 	 */
 	public int[][] outputForMazeRunner() {
 		int[][] maze = new int[width][height];
@@ -205,16 +205,6 @@ public class LoadLevel {
 				maze[i][j] = temp2;
 			}
 		}
-
-		// DEBUG output
-		// for(int j = 0; j < height; j++){
-		// System.out.println();
-		// for(int i = 0; i < width; i++){
-		// System.out.print(maze[i][j] + " ");
-		//
-		// }
-		// }
-
 		return maze;
 	}
 
@@ -299,12 +289,6 @@ public class LoadLevel {
 			}
 			guards.add(tempGuard);
 		}
-
-		// DEBUG guardians printen:
-		// System.out.println(guards.size());
-		// for(Guardian g: guards){
-		// System.out.println(g.getCopyRoutes());
-		// }
 		return guards;
 	}
 
@@ -334,14 +318,6 @@ public class LoadLevel {
 			tempKey.setDoor(pointDoor);
 
 			keyList.add(tempKey);
-		}
-
-		// DEBUG keys printen:
-		System.out.println(keyList.size());
-		for (Key k : keyList) {
-			System.out.println("Key Positie: " + k.getKey().getX() + ", "
-					+ k.getKey().getY() + " door Positie: "
-					+ k.getDoor().getX() + ", " + k.getDoor().getY());
 		}
 		return keyList;
 	}

@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import javax.media.opengl.GL;
 import com.sun.opengl.util.texture.Texture;
 
+/**
+ * Receives all the info from the OBJ loader and puts them into their 2D
+ * arraylists. Also has his draw function which will go through every face and
+ * draws the face with all the right coords
+ * 
+ * @author Huib
+ * 
+ */
 public class Model {
 	private ArrayList<ArrayList<Float>> vertices = new ArrayList<ArrayList<Float>>();
 	private ArrayList<ArrayList<Float>> normals = new ArrayList<ArrayList<Float>>();

@@ -67,28 +67,4 @@ public class MazePlan {
 	public int getHeight(){
 		return height;
 	}
-
-	
-
 }
-
-
-
-/*
-  
- 	//wordt gebruikt voor een vierkant maze van grote MAZE_SIZE
-  	public final double MAZE_SIZE = 10;
-	public final double SQUARE_SIZE = 5;
-
-	private int[][] maze = 
-	{	{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-		{  1,  0,  0,  0,  0,  0,  1,  1,  1,  1 },
-		{  1,  0,  1,  0,  0,  0,  1,  0,  0,  1 },
-		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-		{  1,  0,  1,  0,  1,  0,  1,  0,  0,  1 },
-		{  1,  0,  0,  0,  1,  0,  1,  0,  0,  1 },
-		{  1,  0,  0,  0,  1,  1,  1,  0,  0,  1 },
-		{  1,  0,  0,  0,  0,  0,  0,  0,  0,  1 },
-		{  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 }	};
-*/

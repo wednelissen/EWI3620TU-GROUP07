@@ -195,11 +195,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 	}
 
-	/*
-	 * **********************************************
-	 * * OpenGL event handlers **********************************************
-	 */
-
 	/**
 	 * init(GLAutodrawable) is called to initialize the OpenGL context, giving
 	 * it the proper parameters for viewing.
@@ -220,15 +215,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		GLU glu = new GLU();
 		if (initialize) {
 			initObjects(gl); // Initialize all the objects!
-			playerwallchecker = new WallChecker(player, checkdistance, maze); // must
-																				// be
-																				// done
-																				// after
-																				// the
-																				// maze
-																				// has
-																				// been
-																				// created
+			playerwallchecker = new WallChecker(player, checkdistance, maze);
 			initialize = false;
 		}
 
@@ -237,12 +224,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		// Now we set up our viewpoint.
 		gl.glMatrixMode(GL.GL_PROJECTION); // We'll use orthogonal projection.
 		gl.glLoadIdentity(); // Reset the current matrix.
-		glu.gluPerspective(60, screenWidth / screenHeight, .1, 200); // Set up
-																		// the
-																		// parameters
-																		// for
-																		// perspective
-																		// viewing.
+		glu.gluPerspective(60, screenWidth / screenHeight, .1, 200);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		// Enable back-face culling.
@@ -312,12 +294,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 				if (!(obj instanceof Spotlight))
 					obj.display(gl);
 
-			// for (VisibleObject obj : visibleObjects
-			// obj.display(gl);
-
 			gl.glLoadIdentity();
 			// Flush the OpenGL buffer.
-			// gl.glFlush();
+			gl.glFlush();
 		}
 	}
 
@@ -356,11 +335,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 
 		canvas.requestFocus();
 	}
-
-	/*
-	 * **********************************************
-	 * * Methods **********************************************
-	 */
 
 	/**
 	 * kijkt om het begin punt waar geen muur is en zal dat de starthoek maken.
@@ -401,15 +375,10 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			playerwallchecker.check();
 		}
 		playerItemCheck();
-
-		boolean mazeChange = maze.mazeChanged(); // check het verschil met de
-													// maze met de vorige keer.
-													// alleen als de maze
-													// veranderd zullen camera's
-													// waar eerst geen guard bij
-													// kon
-													// kijken of er nu wel een
-													// guard bij kan komen.
+		// check het verschil met de maze met de vorige keer. Alleen als de maze
+		// veranderd zullen camera's waar eerst geen guard bij kon kijken of er
+		// nu wel een guard bij kan komen.
+		boolean mazeChange = maze.mazeChanged();
 
 		for (GuardCamera cam : cameras) { // GuardCameras
 			cam.updatePosition(player.locationX, player.locationZ);
@@ -430,7 +399,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 							closestGuard = guard;
 						}
 					}
-
 				}
 				// vanaf hier is de guard met de kortste pad naar de camera
 				// gevonden of de closestGuard is nog null omdat geen van de
@@ -451,7 +419,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 					cam.setNeedGuard(true); // er moet nog steeds een guard naar
 											// de camera worden gestuurd.
 				}
-
 			}
 		}
 
@@ -463,13 +430,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 				toStateBusted();
 			}
 		}
-
-		// DEBUG:
-		// System.out.println("x: "+player.locationX +
-		// " z: "+player.locationZ+" EDITOR--- x: "
-		// +(int)Math.floor( player.locationX / SQUARE_SIZE
-		// )+" z: "+(int)Math.floor( player.locationZ / SQUARE_SIZE ));
-
 	}
 
 	/**
@@ -519,10 +479,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	}
 
 	public boolean watchFromCamera() {
-		//int gebied = 2;
 		for (ControlCenter c : controlCenters) {
 			if (Math.abs(player.locationX - c.locationX) < (c.getSizeX() + checkdistance)
-					&& Math.abs(player.locationZ - c.locationZ) < (c.getSizeZ()+checkdistance)) {
+					&& Math.abs(player.locationZ - c.locationZ) < (c.getSizeZ() + checkdistance)) {
 				watchFromCamera = !watchFromCamera;
 				if (watchFromCamera) {
 					visibleObjects.add(player);
@@ -621,6 +580,9 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		}
 	}
 
+	/**
+	 * Turns on the lights for every spot 
+	 */
 	public void turnLightsOn() {
 		for (VisibleObject temp : visibleObjects) {
 			if (temp instanceof Spotlight) {
@@ -720,8 +682,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 		Kogel kogel = new Kogel(xMouse, yMouse, 0);
 		kogel.updateShoot(player.getHorAngle(), player.getVerAngle(), deltaTime);
 		visibleObjects.add(kogel);
-
-		// visibleObjects.add(kogel);
 	}
 
 	public void setWalkingSpeed(double speed) {
@@ -731,9 +691,6 @@ public class MazeRunner implements GLEventListener, MouseListener {
 	public double getWalkingSpeed() {
 		return player.getSpeed();
 	}
-
-	// /////////////////////////////////////NOT
-	// USED////////////////////////////////////
 
 	/**
 	 * displayChanged(GLAutoDrawable, boolean, boolean) is called upon whenever

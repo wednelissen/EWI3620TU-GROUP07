@@ -86,14 +86,10 @@ public class StateGameEnded implements GLEventListener, KeyListener, MouseListen
 		
 	}
 
-
-
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 		
 	}
-
-
 
 	@Override
 	public void init(GLAutoDrawable drawable) {

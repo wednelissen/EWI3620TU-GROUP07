@@ -12,7 +12,7 @@ import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
 
 /**
- * Deze class maakt alle textures aan en slaat deze op.
+ * Deze class maakt alle textures aan voor de level editor en slaat deze op.
  * 
  * @author Huib
  * 
@@ -31,7 +31,6 @@ public class LoadTexturesEditor {
 	 * halen in de getter
 	 */
 	public LoadTexturesEditor() {
-
 		addTextureToList(loadingTexture("default.png"), "default");
 		addTextureToList(loadingTexture("editorWall.png"), "editorWall");
 		addTextureToList(loadingTexture("editorFloor.png"), "editorFloor");

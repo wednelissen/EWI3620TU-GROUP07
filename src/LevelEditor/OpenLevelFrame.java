@@ -25,10 +25,6 @@ public class OpenLevelFrame extends JFrame{
 	 */
 	public void runLoadFile(){
 		int returnVal = fileChooser.showOpenDialog(rootPane);
-		
-		//int returnVal = fileChooser.showSaveDialog(rootPane);
-		
-
 	    if (returnVal == JFileChooser.APPROVE_OPTION) {
 	    	System.out.println("File "+fileChooser.getSelectedFile().getName()+" has openend");
 	    	openFile = fileChooser.getSelectedFile().getAbsolutePath();

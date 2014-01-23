@@ -26,10 +26,10 @@ public class LoadTexturesMaze {
 
 	private static ArrayList<Texture> textureList = new ArrayList<Texture>();
 	private static ArrayList<String> textureListNames = new ArrayList<String>();
-	
+
 	private static ArrayList<Model> modelList = new ArrayList<Model>();
 	private static ArrayList<String> modelListNames = new ArrayList<String>();
-	
+
 	/**
 	 * Hier maak je alle textures aan en zet je ze in een arraylijst met
 	 * textures. Daarnaast geef je de textures ook een naam en zet je deze in de
@@ -40,37 +40,48 @@ public class LoadTexturesMaze {
 		loadTextures();
 		loadModels();
 	}
-	
-	public void loadTextures () {
+
+	public void loadTextures() {
 		defaultTexture = loadingTexture("default.png");
 		addTextureToList(loadingTexture("default.png"), "default");
 		addTextureToList(loadingTexture("mazeWall.png"), "wallTexture");
 		addTextureToList(loadingTexture("mazeFloor.png"), "floorTexture");
 		addTextureToList(loadingTexture("mazeDoor.png"), "doorTexture");
-		addTextureToList(loadingTexture("mazeDoorBottom.png"), "doorBottomTexture");
-		addTextureToList(loadingTexture("mazeModelGuard.png"), "modelGuardTexture");
-		addTextureToList(loadingTexture("mazeButtonHighScore.png"), "buttonHighScore");
-		addTextureToList(loadingTexture("mazeButtonHowToPlay.png"), "buttonHowToPlay");
-		addTextureToList(loadingTexture("mazeButtonLevelEditor.png"), "buttonLevelEditor");
-		addTextureToList(loadingTexture("mazeButtonMainMenu.png"), "buttonMainMenu");
+		addTextureToList(loadingTexture("mazeDoorBottom.png"),
+				"doorBottomTexture");
+		addTextureToList(loadingTexture("mazeModelGuard.png"),
+				"modelGuardTexture");
+		addTextureToList(loadingTexture("mazeButtonHighScore.png"),
+				"buttonHighScore");
+		addTextureToList(loadingTexture("mazeButtonHowToPlay.png"),
+				"buttonHowToPlay");
+		addTextureToList(loadingTexture("mazeButtonLevelEditor.png"),
+				"buttonLevelEditor");
+		addTextureToList(loadingTexture("mazeButtonMainMenu.png"),
+				"buttonMainMenu");
 		addTextureToList(loadingTexture("mazeButtonQuit.png"), "buttonQuit");
 		addTextureToList(loadingTexture("mazeButtonResume.png"), "buttonResume");
-		addTextureToList(loadingTexture("mazeButtonStartGame.png"), "buttonStart");
-		addTextureToList(loadingTexture("mazeMenuBackground.png"), "menuBackground");
+		addTextureToList(loadingTexture("mazeButtonStartGame.png"),
+				"buttonStart");
+		addTextureToList(loadingTexture("mazeMenuBackground.png"),
+				"menuBackground");
 		addTextureToList(loadingTexture("mazeButtonBack.png"), "buttonBack");
 		addTextureToList(loadingTexture("mazeWASD.png"), "wasdImage");
 		addTextureToList(loadingTexture("mazeModelGuard.png"), "modelGuard");
 		addTextureToList(loadingTexture("mazeModelTable.png"), "modelTable");
 		addTextureToList(loadingTexture("mazeModelPlayer.png"), "modelPlayer");
-		addTextureToList(loadingTexture("mazeBackgroundImage.png"), "backgroundImage");
+		addTextureToList(loadingTexture("mazeBackgroundImage.png"),
+				"backgroundImage");
 		addTextureToList(loadingTexture("mazeFlag.png"), "mazeFlag");
-		addTextureToList(loadingTexture("mazeComputerScreen.png"), "modelComputerScreen");
+		addTextureToList(loadingTexture("mazeComputerScreen.png"),
+				"modelComputerScreen");
 	}
-	
-	public void loadModels () {
+
+	public void loadModels() {
 		addModelToList(OBJLoader.loadModel("src/modelGuard.obj"), "modelGuard");
 		addModelToList(OBJLoader.loadModel("src/modelTable.obj"), "modelTable");
-		addModelToList(OBJLoader.loadModel("src/modelPlayer.obj"), "modelPlayer");
+		addModelToList(OBJLoader.loadModel("src/modelPlayer.obj"),
+				"modelPlayer");
 	}
 
 	/**
@@ -123,7 +134,7 @@ public class LoadTexturesMaze {
 		}
 		return null;
 	}
-	
+
 	public static Model getModel(String modelName) {
 		for (int i = 0; i < modelListNames.size(); i++) {
 			if (modelListNames.get(i).equals(modelName)) {
@@ -147,7 +158,7 @@ public class LoadTexturesMaze {
 		textureList.add(myTexture);
 		textureListNames.add(textureName);
 	}
-	
+
 	public void addModelToList(Model myModel, String modelName) {
 		modelList.add(myModel);
 		modelListNames.add(modelName);

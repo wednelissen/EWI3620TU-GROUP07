@@ -108,7 +108,7 @@ public class MapMenu extends Window {
 	}
 	
 	/**
-	 * creert uit een eerder opgeslagen level de bijbehorende hoeveelheid blokken met de
+	 * creëert uit een eerder opgeslagen level de bijbehorende hoeveelheid blokken met de
 	 * gesetten waardes zoals vloer,muur,deur.
 	 * 
 	 * @param floorPlan String van 0,1 en 2 van de plattegrond van de Maze.
