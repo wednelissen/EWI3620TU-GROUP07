@@ -412,7 +412,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 													// guard bij kan komen.
 
 		for (GuardCamera cam : cameras) { // GuardCameras
-			cam.updatePositie(player.locationX, player.locationZ);
+			cam.updatePosition(player.locationX, player.locationZ);
 			if (cam.alarm() || (mazeChange && cam.getNeedGuard())) {
 				System.out.println("mazeChange: " + mazeChange);
 				System.out.println("checken nu de maze veranderd is");
@@ -422,7 +422,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 				for (Guard guard : guards) {
 					RouteAlgoritme route = new RouteAlgoritme(maze);
 					ArrayList<Point> guardRoute = route.algorithm(
-							cam.getHuidigepositie(), guard.getEindPositie());
+							cam.getCurrentPosition(), guard.getEindPositie());
 					if (guardRoute != null) {
 						if (guardRoute.size() < j) {
 							j = guardRoute.size();
