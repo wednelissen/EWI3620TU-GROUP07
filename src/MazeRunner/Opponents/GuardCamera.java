@@ -26,16 +26,16 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	private boolean needGuardSend = false;
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
-	double playerLocatieX;
-	double playerLocatieZ;
-	private Point huidigepositie;
+	double playerLocationX;
+	double playerLocationZ;
+	private Point currentposition;
 
 	private long alarmOnTime;
 	private long currentTime;
 	private long resetTime = 60; // in seconden wordt het alarm automatisch uit
 									// gezet.
 
-	private Point playerPositie;
+	private Point playerPosition;
 	private ThreadLoop thread = new ThreadLoop();
 	private MazeRunner mazerunner;
 
@@ -43,7 +43,7 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		super((x * SQUARE_SIZE) + (SQUARE_SIZE / 2), y, (z * SQUARE_SIZE)
 				+ (SQUARE_SIZE / 2));
 		this.mazerunner = mazerunner;
-		huidigepositie();
+		currentPosition();
 
 		thread.start();
 	}
@@ -53,7 +53,7 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	 * wanneer deze aan staat.
 	 */
 	public boolean alarm() {
-		if (thread.visible && playerPositie.equals(huidigepositie) && !alarm) {
+		if (thread.visible && playerPosition.equals(currentposition) && !alarm) {
 			System.out.println("Camera ALARM");
 			alarm = true;
 			alarmOnTime = Calendar.getInstance().getTimeInMillis();
@@ -95,10 +95,10 @@ public class GuardCamera extends GameObject implements VisibleObject {
 		GLUT glut = new GLUT();
 
 		gl.glEnable(GL.GL_COLOR_MATERIAL);
-		
+
 		float cubeColor[] = { 1f, 0.5f, 0.5f, 0.7f };
 		gl.glColor3f(1f, 0.5f, 0.5f);
-		
+
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, cubeColor, 0);
 		gl.glPushMatrix();
 		gl.glTranslated(locationX, SQUARE_SIZE, locationZ);
@@ -116,7 +116,7 @@ public class GuardCamera extends GameObject implements VisibleObject {
 			glut.glutWireCone(SQUARE_SIZE * 2, SQUARE_SIZE * 4, 50, 50);
 			gl.glPopMatrix();
 		}
-		
+
 		gl.glColor3f(1f, 1f, 1f);
 		gl.glDisable(GL.GL_COLOR_MATERIAL);
 	}
@@ -127,31 +127,30 @@ public class GuardCamera extends GameObject implements VisibleObject {
 	 * @param x
 	 * @param z
 	 */
-	public void updatePositie(double x, double z) {
+	public void updatePosition(double x, double z) {
 		int xx = (int) Math.floor(x / SQUARE_SIZE);
 		int zz = (int) Math.floor(z / SQUARE_SIZE);
 
-		playerPositie = new Point(xx, zz);
+		playerPosition = new Point(xx, zz);
 	}
 
 	/**
 	 * De positie van de camera.
 	 */
-	public void huidigepositie() {
+	public void currentPosition() {
 		int x = (int) Math.floor(locationX / SQUARE_SIZE);
 		int z = (int) Math.floor(locationZ / SQUARE_SIZE);
 
-		huidigepositie = new Point(x, z);
-		System.out.println(huidigepositie);
+		currentposition = new Point(x, z);
 
 	}
 
-	public Point getPositie() {
-		return huidigepositie;
+	public Point getPosition() {
+		return currentposition;
 	}
 
-	public Point getHuidigepositie() {
-		return huidigepositie;
+	public Point getCurrentPosition() {
+		return currentposition;
 	}
 
 }

@@ -20,52 +20,60 @@ public class ThreadLoop extends Thread {
 		T.start();
 	}
 
-	public void setAlarmOn(){
-		synchronized(lockObj){
+	/**
+	 * Setter voor het alarm aan en synchroniseert.
+	 */
+	public void setAlarmOn() {
+		synchronized (lockObj) {
 			fullRandom = false;
 			lockObj.notify();
 		}
 	}
-	
-	public void setAlarmOff(){
-		synchronized(lockObj){
+
+	/**
+	 * Zet het alarm uit en synchroniseert.
+	 */
+	public void setAlarmOff() {
+		synchronized (lockObj) {
 			fullRandom = true;
 			lockObj.notify();
 		}
 	}
-	
-	public void stopSleeping(){
-		//Thread.interrupted();
+
+	public void stopSleeping() {
+		// Thread.interrupted();
 		Thread.currentThread().interrupt();
 	}
 
+	/**
+	 * Deze methode runt de juiste thread.
+	 */
 	public void run() {
-		while(true){
-			synchronized(lockObj){
+		while (true) {
+			synchronized (lockObj) {
 				try {
 					if (offset) {
 						lockObj.wait(offsetSleepTime);
-						//Thread.sleep();
+						// Thread.sleep();
 						offset = false;
 					}
-					
-					if(fullRandom){
-						lockObj.wait((long)(Math.random() * 8000));
-						//Thread.sleep((long)(Math.random() * 8000));
-					}
-					else{
+
+					if (fullRandom) {
+						lockObj.wait((long) (Math.random() * 8000));
+						// Thread.sleep((long)(Math.random() * 8000));
+					} else {
 						lockObj.wait(alarmTime);
-						//Thread.sleep(alarmTime);
+						// Thread.sleep(alarmTime);
 					}
-					
+
 					// System.out.println(visible + " -> " + !visible);
 					visible = !visible;
-					}
-						
-					//run();
-				  catch (InterruptedException e) {
+				}
+
+				// run();
+				catch (InterruptedException e) {
 					e.printStackTrace();
-				  }
+				}
 			}
 		}
 	}
