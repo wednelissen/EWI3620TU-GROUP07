@@ -13,18 +13,16 @@ public class BuildingBlock extends Window {
 
 	/**
 	 * @param sizes
-	 *            , een array van float met 4 coordinaten. linksboven,
+	 *            een array van float met 4 coordinaten. linksboven,
 	 *            rechtsboven, breedte, hoogte.
 	 * @param screenWidthFrame
-	 *            , breedte van het hele frame.
+	 *            Breedte van het hele frame.
 	 * @param screenHeightFrame
-	 *            , hoogte van het hele frame.
+	 *            Hoogte van het hele frame.
 	 * @param i
-	 *            , x-positie van het blok ten opzichten van alle andere
-	 *            blokken.
+	 *            x-positie van het blok ten opzichten van alle andere blokken.
 	 * @param j
-	 *            , y-positie van het blok ten opzichten van alle andere
-	 *            blokken.
+	 *            y-positie van het blok ten opzichten van alle andere blokken.
 	 */
 	public BuildingBlock(float[] sizes, int screenWidthFrame,
 			int screenHeightFrame, int i, int j) {
@@ -33,11 +31,12 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
-	 * Creert een blok in maze met een texture. Maar alleen wanneer er een
+	 * Creëert een blok in maze met een texture. Maar alleen wanneer er een
 	 * texture aanwezig is.
 	 * 
 	 * @param gl
 	 * @param myTexture
+	 *            De meegegeven texture
 	 */
 	public void drawBlock(GL gl, Texture myTexture) {
 		float blockColor[] = { 1.0f, 1.0f, 1.0f, 0f };
@@ -61,18 +60,15 @@ public class BuildingBlock extends Window {
 		}
 	}
 
+	/**
+	 * Creëert een key in de maze met een texture. Maar alleen wanneer er een
+	 * texture aanwezig is
+	 * 
+	 * @param gl
+	 * @param myTexture
+	 *            De meegegeven texture
+	 */
 	public void drawKey(GL gl, Texture myTexture) {
-		// gl.glBegin(GL.GL_QUADS);
-		// gl.glVertex2f(x + sizeX * 2 / 6, y);
-		// gl.glVertex2f(x + sizeX * 4 / 7, y);
-		// gl.glVertex2f(x + sizeX * 4 / 7, y - sizeY);
-		// gl.glVertex2f(x + sizeX * 2 / 6, y - sizeY);
-		//
-		// gl.glVertex2f(x, y);
-		// gl.glVertex2f(x + sizeX, y);
-		// gl.glVertex2f(x + sizeX, y - sizeY * 2 / 8);
-		// gl.glVertex2f(x, y - sizeY * 2 / 8);
-		// gl.glEnd();
 		float keyColor[] = { 1.0f, 1.0f, 1.0f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, keyColor, 0);
 		if (myTexture != null) {
@@ -94,8 +90,14 @@ public class BuildingBlock extends Window {
 		}
 	}
 
-	// tekent een kruisje in het vlak wanneer een bewaker langs deze route
-	// loopt.
+	/**
+	 * Creëert een guard in de maze met een texture. Maar alleen wanneer er een
+	 * texture aanwezig is
+	 * 
+	 * @param gl
+	 * @param myTexture
+	 *            De meegegeven texture
+	 */
 	public void drawGuardianPath(GL gl, Texture myTexture) {
 		float guardianPathColor[] = { 1.0f, 1.0f, 1.0f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, guardianPathColor, 0);
@@ -118,6 +120,14 @@ public class BuildingBlock extends Window {
 		}
 	}
 
+	/**
+	 * Creëert een camera in de maze met een texture. Maar alleen wanneer er een
+	 * texture aanwezig is
+	 * 
+	 * @param gl
+	 * @param myTexture
+	 *            De meegegeven texture
+	 */
 	public void drawCameras(GL gl, Texture myTexture) {
 		float CameraColor[] = { 1.0f, 1.0f, 1.0f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, CameraColor, 0);
@@ -140,6 +150,14 @@ public class BuildingBlock extends Window {
 		}
 	}
 
+	/**
+	 * Creëert een control center in de maze met een texture. Maar alleen
+	 * wanneer er een texture aanwezig is
+	 * 
+	 * @param gl
+	 * @param myTexture
+	 *            De meegegeven texture
+	 */
 	public void drawControlCenter(GL gl, Texture myTexture) {
 		float ControlCenterColor[] = { 1.0f, 1.0f, 1.0f, 0f };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, ControlCenterColor, 0);
@@ -162,9 +180,14 @@ public class BuildingBlock extends Window {
 		}
 	}
 
-	// aangepaste methode van http://www.java-gaming.org/index.php/topic,4140.
-	// van user: overnhet
-
+	/**
+	 * Creëert een spot in de maze met een texture. Maar alleen wanneer er een
+	 * texture aanwezig is
+	 * 
+	 * @param gl
+	 * @param myTexture
+	 *            De meegegeven texture
+	 */
 	public void drawSpot(GL gl, Texture myTexture) {
 		float radius = sizeX / 4;
 		float slices = 20;
@@ -190,15 +213,16 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
+	 * De get functie om de positie (x, y) van het opgevraagde blok te krijgen
 	 * 
-	 * @return Positie van het BuildingBlock
+	 * @return een punt bestaande uit een x en y positie
 	 */
 	public Point getPosition() {
 		return positie;
 	}
 
 	/**
-	 * maakt wall true en de rest false.
+	 * Set de wall op true en zet de floor, door en keyRequired boolean op fale
 	 */
 	public void setWall() {
 		wall = true;
@@ -208,7 +232,7 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
-	 * maakt floor true en de rest false.
+	 * Set de floor op true en zet de wall, door en keyRequired boolean op fale
 	 */
 	public void setFloor() {
 		wall = false;
@@ -218,7 +242,7 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
-	 * maakt Door true en de rest false.
+	 * Set de door op true en zet de floor, wall en keyRequired boolean op fale
 	 */
 	public void setDoor() {
 		wall = false;
@@ -235,13 +259,15 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
-	 * maakt 'keyRequired' false er is geen sleutel gekoppeld aan dit blok.
+	 * maakt 'keyRequired' false zodat er is geen sleutel gekoppeld aan dit
+	 * blok.
 	 */
 	public void removeKeyRequired() {
 		keyRequired = false;
 	}
 
 	/**
+	 * De get functie om te kijken of op dit punt een wall is of niet
 	 * 
 	 * @return true als dit blok een muur is.
 	 */
@@ -250,6 +276,7 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
+	 * De get functie om te kijken of op dit punt een floor is of niet
 	 * 
 	 * @return true als dit blok een vloer is.
 	 */
@@ -258,6 +285,7 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
+	 * De get functie om te kijken of op dit punt een door is of niet
 	 * 
 	 * @return true als dit blok een door is.
 	 */
@@ -266,6 +294,7 @@ public class BuildingBlock extends Window {
 	}
 
 	/**
+	 * De get functie om te kijken of de deur een sleutel nodig heeft
 	 * 
 	 * @return true als dit blok, een deur, een sleutel nodig heeft.
 	 */

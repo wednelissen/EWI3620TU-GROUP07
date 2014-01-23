@@ -2,18 +2,21 @@ package LevelEditor;
 
 import java.awt.Point;
 
-public class Key extends Window{
-	
+public class Key extends Window {
+
 	private Point keyPosition;
 	private Point doorPosition;
 	private boolean setKey;
 	private boolean setDoor;
 
 	/**
-	 * hier wordt een key gemaakt maar de positie die wordt opgegeven is nog niet belangrijk
-	 * deze wordt geautomatiseerd goed geset doordat de functie updatePositie wordt aangeroepen,
-	 * door de classe PlacedItems.
+	 * Hier wordt een key gemaakt maar de positie die wordt opgegeven is nog
+	 * niet belangrijk deze wordt geautomatiseerd goed geset doordat de functie
+	 * updatePositie wordt aangeroepen, door de classe PlacedItems.
+	 * 
 	 * @param sizes
+	 *            een array van float met 4 coordinaten. linksboven,
+	 *            rechtsboven, breedte, hoogte.
 	 * @param screenWidthFrame
 	 * @param screenHeightFrame
 	 */
@@ -24,15 +27,21 @@ public class Key extends Window{
 		setKey = false;
 		setDoor = false;
 	}
-	
+
 	/**
-	 * hier wordt de werkelijke positie van een Key geset. wanneer hij in het placedItems menu
-	 * is geplaatst.
+	 * Hier wordt de werkelijke positie van een Key geset, wanneer hij in het
+	 * placedItems menu is geplaatst.
+	 * 
 	 * @param sizes
+	 *            Een floatarray waar de positie en grootte van de knop in
+	 *            staat.
 	 * @param screenWidthFrame
+	 *            De breedte van het scherm
 	 * @param screenHeightFrame
+	 *            De hoogte van het scherm
 	 */
-	public void updatePosition(float[] sizes, int screenWidthFrame, int screenHeightFrame){
+	public void updatePosition(float[] sizes, int screenWidthFrame,
+			int screenHeightFrame) {
 		if (sizes.length == 4) {
 
 			originalSizes = sizes;
@@ -46,88 +55,96 @@ public class Key extends Window{
 
 			x = x_linksOnder / 800 * screenWidth;
 			y = (600 - y_rechtsOnder) / 600 * screenHeight;
-			
+
 			sizeX = buttonSizeX / 800 * screenWidth;
 			sizeY = buttonSizeY / 600 * screenHeight;
 		} else {
 			System.out.println("geen geldige lengte voor input");
-		}		
-		
+		}
+
 	}
 
 	/**
-	 * set de positie waar de sleutel staat en set 'setKey' op true
+	 * Set de positie waar de sleutel staat en set 'setKey' op true
+	 * 
 	 * @param a
+	 *            Het coöordinaat (x, z) waar de key moet worden geset
 	 */
-	public void setKey(Point a){
+	public void setKey(Point a) {
 		keyPosition = a;
 		setKey = true;
 	}
-	
+
 	/**
-	 * verwijderd de positie waar de sleutel staat en set 'setKey' op false
+	 * Verwijderd de positie waar de sleutel staat en set 'setKey' op false
 	 */
-	public void removeKey(){
+	public void removeKey() {
 		keyPosition = null;
 		setKey = false;
 	}
-	
+
 	/**
-	 * geeft de positie van de sleutel terug indien deze is geset. returnt anders null
-	 * @return
+	 * Geeft de positie van de sleutel terug indien deze is geset, returnt
+	 * anders null
+	 * 
+	 * @return Een punt van de positie van de key (x, z)
 	 */
-	public Point getKey(){
-		if(setKey){
+	public Point getKey() {
+		if (setKey) {
 			return keyPosition;
-		}
-		else
-			return null;
-	}
-	
-	/**
-	 * geeft true wanneer er een positie is geset
-	 * @return
-	 */
-	public boolean hasPosition(){
-		return setKey;
-	}
-	
-	/**
-	 * set de positie van de deur die bij de sleutel hoort en maakt 'setDoor' true
-	 * @param a
-	 */
-	public void setDoor(Point a){
-		doorPosition = a;
-		setDoor = true;
-	}
-	
-	/**
-	 * verwijderd de positie van de deur die bij de sleutel hoort en maakt 'setDoor' false
-	 * de posite van de deur wordt null
-	 */
-	public void removeDoor(){
-		doorPosition = null;
-		setDoor = false;
-	}
-	
-	/**
-	 * returnt de positie van de deur indien deze is geset.
-	 * @return
-	 */
-	public Point getDoor(){
-		if(setDoor){
-			return doorPosition;
-		}
-		else
+		} else
 			return null;
 	}
 
 	/**
-	 * return true indien de deur positie is geset
-	 * @return
+	 * Een get functie die kijkt of er een sleutel ligt op de positie
+	 * 
+	 * @return De boolean setKey
 	 */
-	boolean hasDoor(){
+	public boolean hasPosition() {
+		return setKey;
+	}
+
+	/**
+	 * Set de positie van de deur die bij de sleutel hoort en maakt 'setDoor'
+	 * true
+	 * 
+	 * @param a
+	 *            Het coöordinaat (x, z) waar de deur moet worden geset
+	 */
+	public void setDoor(Point a) {
+		doorPosition = a;
+		setDoor = true;
+	}
+
+	/**
+	 * Verwijderd de positie van de deur die bij de sleutel hoort en maakt
+	 * 'setDoor' false De positie van de deur wordt null
+	 */
+	public void removeDoor() {
+		doorPosition = null;
+		setDoor = false;
+	}
+
+	/**
+	 * De get functie die het punt terug geeft van de deur op een bepaald punt
+	 * 
+	 * @return Het coöordinaat (x, z) van de deur anders null
+	 */
+	public Point getDoor() {
+		if (setDoor) {
+			return doorPosition;
+		} else
+			return null;
+	}
+
+	/**
+	 * Return true indien de deur positie is geset
+	 * 
+	 * @return Een boolean als de positie is geset
+	 */
+	boolean hasDoor() {
 		return setDoor;
 	}
-	
+
 }

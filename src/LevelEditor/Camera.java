@@ -2,51 +2,59 @@ package LevelEditor;
 
 import java.awt.Point;
 
+/**
+ * 
+ * 
+ *
+ */
 public class Camera {
-	
+
 	Point position;
 	boolean setCamera;
-	
+
 	/**
-	 * maakt een camera met plek voor een positie
+	 * Creëert een camera met plek voor een positie
 	 */
-	public Camera(){
+	public Camera() {
 		position = new Point();
 		setCamera = false;
 	}
-	
+
 	/**
-	 * set de positie van een camera en maakt 'setCamera' true
-	 * @param a Point
+	 * Set de positie van een camera en maakt 'setCamera' true
+	 * 
+	 * @param a
+	 *            Point De positie van de camera (x, z)
 	 */
-	public void setCamera(Point a){
+	public void setCamera(Point a) {
 		position = a;
 		setCamera = true;
 	}
-	
+
 	/**
-	 * returnt true als camera op een positie is geset.
-	 * dit moet altijd worden bekeken voordat de positie wordt opgevraagd anders is de
-	 * standaard positie 0,0.
-	 * @return
+	 * Bekijkt of er een camera is dit moet altijd worden bekeken voordat de
+	 * positie wordt opgevraagd anders is de standaard positie 0,0.
+	 * 
+	 * @return True wanneer de positie een camera heeft
 	 */
-	public boolean hasCamera(){
+	public boolean hasCamera() {
 		return setCamera;
 	}
-	
+
 	/**
-	 * verwijderd de positie van de camera en maakt 'setCamera' false.
+	 * Verwijderd de positie van de camera en maakt 'setCamera' false.
 	 */
-	public void removeCamera(){
+	public void removeCamera() {
 		position = null;
-		setCamera =  false;
+		setCamera = false;
 	}
-	
+
 	/**
+	 * De get functie van de camera
 	 * 
 	 * @return de positie van de Camera.
 	 */
-	public Point getPosition(){
+	public Point getPosition() {
 		return position;
 	}
 }

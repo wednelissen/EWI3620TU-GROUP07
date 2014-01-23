@@ -19,6 +19,7 @@ public class CameraList {
 	 * de arraylist zit wordt niet toegevoegt.
 	 * 
 	 * @param s
+	 *            De camera die toegevoegd moet worden aan de camera lijst
 	 */
 	public void addCamera(Camera s) {
 		boolean duplicated = false;
@@ -37,9 +38,10 @@ public class CameraList {
 	}
 
 	/**
-	 * genereert een arraylist van camera's en vervangt de oude arraylist
+	 * Genereert een arraylist van camera's en vervangt de oude arraylist
 	 * 
 	 * @param loadedCameraPoints
+	 *            Een lijst met alle punten waar camera's moeten komen te staan
 	 */
 	public void loadCameras(ArrayList<Point> loadedCameraPoints) {
 
@@ -51,19 +53,20 @@ public class CameraList {
 	}
 
 	/**
-	 * aantal camera's in de ArrayList.
+	 * De get functie die de hoeveelheid camera's terug geeft
 	 * 
-	 * @return
+	 * @return Een int waarde die aangeeft hoeveel camera's er zijn
 	 */
 	public int size() {
 		return cameras.size();
 	}
 
 	/**
-	 * verwijderd een camera indien deze in de lijst zit. anders gebeurd er
+	 * Verwijderd een camera indien deze in de lijst zit. anders gebeurd er
 	 * niets.
 	 * 
 	 * @param s
+	 *            De camera die verwijderd moet worden uit de lijst met camera's
 	 */
 	public void removeCamera(Camera s) {
 		Point a = s.getPosition();
@@ -76,6 +79,7 @@ public class CameraList {
 	}
 
 	/**
+	 * De get functie die de alle camera's van het level heeft
 	 * 
 	 * @return een ArrayList van opgeslagen camera's
 	 */
