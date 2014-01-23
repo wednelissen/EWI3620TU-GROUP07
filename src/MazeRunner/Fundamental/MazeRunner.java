@@ -389,14 +389,16 @@ public class MazeRunner implements GLEventListener, MouseListener {
 				Guard closestGuard = null;
 				int j = Integer.MAX_VALUE;
 				for (Guard guard : guards) {
-					RouteAlgoritme route = new RouteAlgoritme(maze);
-					ArrayList<Point> guardRoute = route.algorithm(
-							cam.getCurrentPosition(), guard.getEindPositie());
-					if (guardRoute != null) {
-						if (guardRoute.size() < j) {
-							j = guardRoute.size();
-							closestGuardRoute = guardRoute;
-							closestGuard = guard;
+					if(!guard.isAttack()){
+						RouteAlgoritme route = new RouteAlgoritme(maze);
+						ArrayList<Point> guardRoute = route.algorithm(
+								cam.getCurrentPosition(), guard.getEindPositie());
+						if (guardRoute != null) {
+							if (guardRoute.size() < j) {
+								j = guardRoute.size();
+								closestGuardRoute = guardRoute;
+								closestGuard = guard;
+							}
 						}
 					}
 				}
@@ -566,6 +568,7 @@ public class MazeRunner implements GLEventListener, MouseListener {
 			Point a = temp.getRoute(0);
 			Guard res = new Guard(a.getX(), 6, a.getY(), temproute);
 			res.maze = this.maze;
+			res.setOtherGuards(guards);
 			guards.add(res);
 		}
 	}

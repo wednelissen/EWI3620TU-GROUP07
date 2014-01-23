@@ -8,6 +8,7 @@ import javax.media.opengl.GL;
 import MazeRunner.Fundamental.LoadTexturesMaze;
 import MazeRunner.Fundamental.MazeRunner;
 import MazeRunner.Objects.GameObject;
+import MazeRunner.Objects.Keys;
 import MazeRunner.Objects.Maze;
 import MazeRunner.Objects.Model;
 import MazeRunner.Objects.VisibleObject;
@@ -24,6 +25,7 @@ import MazeRunner.Objects.VisibleObject;
 
 public class Guard extends GameObject implements VisibleObject {
 
+	private ArrayList<Guard> otherGuards;
 	private ArrayList<Point> coordinaten;
 	public final double MAZE_SIZE = 10;
 	public final static double SQUARE_SIZE = 5;
@@ -471,6 +473,30 @@ public class Guard extends GameObject implements VisibleObject {
 		canMoveRight = true;
 	}
 
+	/*
+	int gebied = 1;
+	// KEYS
+	for (Keys k : keys) {
+		if (Math.abs(player.locationX - k.locationX) < gebied
+				&& Math.abs(player.locationZ - k.locationZ) < gebied) {
+	
+	*/
+	
+	public boolean detectOtherGuard(double x, double z){
+		int gebied = 1;
+		for(Guard g: otherGuards){
+			if(!g.equals(this)){
+				System.out.println(g);
+				if (Math.abs(g.locationX - x) < gebied
+						&& Math.abs(g.locationZ - z) < gebied) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	private void wallChecker() {
 		double checkdistance = SQUARE_SIZE / 2;
 		// check forward
@@ -478,12 +504,18 @@ public class Guard extends GameObject implements VisibleObject {
 				locationX - checkdistance / 2
 						* Math.cos(Math.PI * horAngle / 180),
 				locationZ + checkdistance / 2
-						* Math.sin(Math.PI * horAngle / 180))) {
+						* Math.sin(Math.PI * horAngle / 180)) || this.detectOtherGuard(locationX - checkdistance / 2
+								* Math.cos(Math.PI * horAngle / 180),
+								locationZ + checkdistance / 2
+										* Math.sin(Math.PI * horAngle / 180))) {
 			canMoveForward = false;
 		}
 		// Check left direction for obstacles
 		if (maze.isWall(
 				locationX - checkdistance
+						* Math.cos(Math.PI * (horAngle + 90) / 180),
+				locationZ + checkdistance
+						* Math.sin(Math.PI * (horAngle + 90) / 180)) || this.detectOtherGuard(locationX - checkdistance
 						* Math.cos(Math.PI * (horAngle + 90) / 180),
 				locationZ + checkdistance
 						* Math.sin(Math.PI * (horAngle + 90) / 180))) {
@@ -492,6 +524,9 @@ public class Guard extends GameObject implements VisibleObject {
 		// Check right direction for obstacles
 		if (maze.isWall(
 				locationX - checkdistance
+						* Math.cos(Math.PI * (horAngle - 90) / 180),
+				locationZ + checkdistance
+						* Math.sin(Math.PI * (horAngle - 90) / 180)) || this.detectOtherGuard(locationX - checkdistance
 						* Math.cos(Math.PI * (horAngle - 90) / 180),
 				locationZ + checkdistance
 						* Math.sin(Math.PI * (horAngle - 90) / 180))) {
@@ -629,6 +664,10 @@ public class Guard extends GameObject implements VisibleObject {
 
 	public void setGuardCamera(GuardCamera cam) {
 		guardCamera = cam;
+	}
+	
+	public void setOtherGuards(ArrayList<Guard> GuardList){
+		otherGuards = GuardList;
 	}
 
 }
