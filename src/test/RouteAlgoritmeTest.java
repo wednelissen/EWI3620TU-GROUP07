@@ -6,38 +6,24 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.junit.Test;
 
-import LevelEditor.LoadLevel;
-import MazeRunner.Objects.ControlCenter;
-import MazeRunner.Objects.Keys;
 import MazeRunner.Objects.Maze;
 import MazeRunner.Opponents.RouteAlgoritme;
 
 public class RouteAlgoritmeTest {
 
-	private String levelName = "level1";
 	public double MAZE_SIZE_X;
 	public double MAZE_SIZE_Z;
-	private LoadLevel newMaze;
 	public static final double SQUARE_SIZE = 5;
 	public Point startPoint;
 	public Point endPoint;
-	private ArrayList<Keys> doorKeys;
-	private ArrayList<ControlCenter> controlCenters = new ArrayList<ControlCenter>();
-	private int[][] maze;
-	private int[][] oldMaze;
 
 	Maze testmaze = new Maze();
 	RouteAlgoritme testroute = new RouteAlgoritme(testmaze);
 	private Point cam = new Point(1, 1);
 	private Point guard = new Point(2, 5);
-
-	private ArrayList<Point> openlist = testroute.getOpenList();
-	private ArrayList<Point> closedlist = testroute.getClosedList();
-	private Map<Point, Integer> distance = testroute.getDistance();
 
 	@Test
 	public void testMapConversionSetDistance() {

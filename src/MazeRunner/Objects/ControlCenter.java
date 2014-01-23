@@ -2,7 +2,6 @@ package MazeRunner.Objects;
 
 import javax.media.opengl.GL;
 
-import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
 
 import MazeRunner.Fundamental.LoadTexturesMaze;
@@ -12,7 +11,6 @@ public class ControlCenter extends GameObject implements VisibleObject {
 	Model modelTable;
 	private double sizeX = 2; // geef hier de maten van de tafel in
 	private double sizeZ = 1; // geef hier de maten van de tafel in
-	private GLUT glut;
 	private Texture myTexture;
 
 	public ControlCenter(double xPosition, double yPosition, double zPosition) {
@@ -20,7 +18,6 @@ public class ControlCenter extends GameObject implements VisibleObject {
 				yPosition, zPosition * Maze.SQUARE_SIZE
 						+ (0.5 * Maze.SQUARE_SIZE));
 		modelTable = LoadTexturesMaze.getModel("modelTable");
-		glut = new GLUT();
 		myTexture = LoadTexturesMaze.getTexture("modelComputerScreen");
 	}
 

@@ -7,7 +7,6 @@ import com.sun.opengl.util.texture.Texture;
 
 public class Spotlight extends GameObject implements VisibleObject {
 
-	private Texture spotTexture;
 	private GLUT glut = new GLUT();
 	private int spotNumber;
 	private boolean lightStatus = true;
@@ -16,7 +15,6 @@ public class Spotlight extends GameObject implements VisibleObject {
 			double yCoord, double zCoord, int number) {
 		super((xCoord * size) + (size / 2), yCoord, (zCoord * size)
 				+ (size / 2));
-		spotTexture = myTexture;
 		spotNumber = number;
 		initLights(gl);
 	}

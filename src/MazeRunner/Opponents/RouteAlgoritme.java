@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import MazeRunner.Objects.Maze;
@@ -24,7 +23,6 @@ public class RouteAlgoritme {
 	private ArrayList<Point> openList = new ArrayList<Point>();
 
 	private ArrayList<Point> closedList = new ArrayList<Point>();
-	private List<Point> nodes = new ArrayList<Point>();
 	public Map<Point, Integer> distance = new HashMap<Point, Integer>();
 
 	private Maze maze;

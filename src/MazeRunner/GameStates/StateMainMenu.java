@@ -17,7 +17,6 @@ import LevelEditor.Window;
 import MazeRunner.Fundamental.GameDriver;
 import MazeRunner.Fundamental.LoadTexturesMaze;
 import MazeRunner.Fundamental.MazeRunner;
-import MazeRunner.Fundamental.NameSetFrame;
 
 public class StateMainMenu implements GLEventListener, KeyListener,
 		MouseListener {

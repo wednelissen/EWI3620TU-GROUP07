@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
-import com.sun.opengl.util.texture.Texture;
-
 public class MapMenu extends Window {
 	
 	private BuildingBlock[][] BuildingBlocks; 
