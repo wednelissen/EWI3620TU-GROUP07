@@ -17,6 +17,7 @@ public class OpenLevelFrame extends JFrame{
 	 */
 	public OpenLevelFrame(){
 		fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File("C:\\Java Workspace\\Level database"));
 	}
 	
 	/**

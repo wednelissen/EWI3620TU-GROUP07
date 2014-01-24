@@ -17,6 +17,7 @@ public class SaveLevelFrame extends JFrame{
 	 */
 	public SaveLevelFrame(){
 		fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File("C:\\Java Workspace\\Level database"));
 	}
 	
 	/**
