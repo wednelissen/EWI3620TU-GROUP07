@@ -1,7 +1,9 @@
 package LevelEditor;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -51,6 +53,9 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener,
 
 	// Screen size.
 	private int screenWidth = 800, screenHeight = 600;
+	
+
+	
 	// A GLCanvas is a component that can be added to a frame. The drawing
 	// happens on this component.
 	private GLCanvas canvas;
@@ -178,8 +183,10 @@ public class JOGLFrame extends Frame implements GLEventListener, MouseListener,
 	 * is created to continuously render the canvas.
 	 */
 	public JOGLFrame() {
-		super("Level Editor MazeRunner");
-
+		super("Level Editor The Escape");
+		 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		 screenWidth = (int) screenSize.getWidth();
+		 screenHeight = (int) screenSize.getHeight() - 40;
 		// Set the desired size and background color of the frame
 		setSize(screenWidth, screenHeight);
 		// setBackground(Color.white);
